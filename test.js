@@ -20,9 +20,11 @@ mongoose
 
     // In ra user sau khi đã lưu (mật khẩu đã được mã hóa)
     console.log("User đã lưu:", user);
-    // Xóa toàn bộ user sau khi chạy xong
-    await User.deleteMany({});
 
+
+
+    // Xóa toàn bộ user sau khi chạy xong
+    // await User.deleteMany({});
     // Đóng kết nối
     mongoose.connection.close();
   })

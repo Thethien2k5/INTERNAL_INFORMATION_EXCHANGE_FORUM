@@ -14,13 +14,13 @@ UserSchema.pre("save", function (next) {
   });
 });
 //So sánh mật khẩu
-UserSchema.methods.comparePassword = function (password, cb) {
-  bcrypt.compare(password, this.password, (err, isMatch) => {
-    if (err) return cb(err);
-    else {
-      if (!isMatch) return cb(null, isMatch);
-      return cb(null, isMatch);
-    }
-  });
-};
+// UserSchema.methods.comparePassword = function (password, cb) {
+//   bcrypt.compare(password, this.password, (err, isMatch) => {
+//     if (err) return cb(err);
+//     else {
+//       if (!isMatch) return cb(null, isMatch);
+//       return cb(null, isMatch);
+//     }
+//   });
+// };
 module.exports = mongoose.model("User", UserSchema);

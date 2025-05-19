@@ -1,3 +1,4 @@
+//Lớp người dùng User
 const mongoose = require("mongoose");
 
 //Đối tượng người dùng
@@ -35,7 +36,7 @@ UserSchema.methods.getPassword = function () {
 };
 UserSchema.methods.setPassword = function (password) {
   this.password = password;
-}
+};
 UserSchema.methods.getEmail = function () {
   return this.email;
 };
