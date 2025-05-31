@@ -5,6 +5,9 @@ const cors = require("cors");
 const fs = require("fs").promises; // Để đọc tệp không đồng bộ
 const { authenticate } = require("@google-cloud/local-auth");
 const { google } = require("googleapis");
+const UserSchema = require("../models/user");
+
+const { CheckEmail, CheckUserName } = require("../mysql/dbUser");
 require("dotenv").config(); // Vẫn hữu ích cho các biến env tiềm năng khác
 
 const app = express();
@@ -105,12 +108,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Giả sử logoT3V.png nằm trong thư mục templates hoặc thư mục gốc dự án.
 // Điều chỉnh đường dẫn này nếu logo của bạn nằm ở nơi khác.
 // Đối với email, sẽ đọc ảnh từ đường dẫn tương đối với script.
-const LOGO_FILE_PATH = path.join(__dirname, "..", "templates", "static", "images", "logoT3V.png"); // Hoặc vị trí khác của logo
+const LOGO_FILE_PATH = path.join(
+  __dirname,
+  "..",
+  "templates",
+  "static",
+  "images",
+  "logoT3V.png"
+); // Hoặc vị trí khác của logo
 app.use("/templates", express.static(path.join(__dirname, "..", "templates")));
-app.use(
-  "/static",
-  express.static(path.join(__dirname, "..", "static"))
-); // Nếu logo nằm trong thư mục static
+app.use("/static", express.static(path.join(__dirname, "..", "static"))); // Nếu logo nằm trong thư mục static
 
 // Route chính - trả về login.html
 app.get("/", (req, res) => {
@@ -141,12 +148,16 @@ async function createMessageWithAttachment(
   let emailBody = [];
   emailBody.push(`From: T3V <${senderEmail}>`); // Hiển thị tên "T3V"
   emailBody.push(`To: ${toEmail}`);
-  emailBody.push(`Subject: =?utf-8?B?${Buffer.from(subject).toString("base64")}?=`); // Mã hóa tiêu đề cho ký tự không phải ASCII
+  emailBody.push(
+    `Subject: =?utf-8?B?${Buffer.from(subject).toString("base64")}?=`
+  ); // Mã hóa tiêu đề cho ký tự không phải ASCII
   emailBody.push("MIME-Version: 1.0");
   emailBody.push(`Content-Type: multipart/related; boundary="${boundary}"`);
   emailBody.push("");
   emailBody.push(`--${boundary}`);
-  emailBody.push(`Content-Type: multipart/alternative; boundary="${alternativeBoundary}"`);
+  emailBody.push(
+    `Content-Type: multipart/alternative; boundary="${alternativeBoundary}"`
+  );
   emailBody.push("");
   emailBody.push(`--${alternativeBoundary}`);
   emailBody.push("Content-Type: text/html; charset=utf-8");
@@ -161,7 +172,10 @@ async function createMessageWithAttachment(
   try {
     const imageContent = await fs.readFile(attachmentFilePath);
     const base64Image = imageContent.toString("base64");
-    const imageMimeType = path.extname(attachmentFilePath).toLowerCase() === ".png" ? "image/png" : "image/jpeg";
+    const imageMimeType =
+      path.extname(attachmentFilePath).toLowerCase() === ".png"
+        ? "image/png"
+        : "image/jpeg";
 
     emailBody.push(`--${boundary}`);
     emailBody.push(`Content-Type: ${imageMimeType}`);
@@ -194,14 +208,26 @@ app.post("/api/send-otp", async (req, res) => {
   }
 
   const { email, username, otp } = req.body;
-
+  // Kiểm tra các trường bắt buộc
   if (!email || !username || !otp) {
-    console.error("Thiếu trường bắt buộc:", { email, username, otp });
     return res.status(400).json({
       success: false,
       message: "Thiếu trường bắt buộc",
       received: req.body,
     });
+  } else {
+    if (await CheckEmail(email)) {
+      return res.status(409).json({
+        success: false,
+        message: `Email đã tồn tại trong hệ thống: ${email}`,
+      });
+    }
+    if (await CheckUserName(username)) {
+      return res.status(409).json({
+        success: false,
+        message: `Tên người dùng đã tồn tại trong hệ thống: ${username}`,
+      });
+    }
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -235,7 +261,10 @@ app.post("/api/send-otp", async (req, res) => {
     const profile = await gmailService.users.getProfile({ userId: "me" });
     senderEmailAddress = profile.data.emailAddress || senderEmailAddress;
   } catch (error) {
-    console.warn("Không lấy được email người gửi, dùng mặc định. Lỗi:", error.message);
+    console.warn(
+      "Không lấy được email người gửi, dùng mặc định. Lỗi:",
+      error.message
+    );
   }
 
   // Nội dung HTML động
@@ -345,9 +374,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server đang chạy trên cổng ${PORT}`);
   console.log(`Mở http://localhost:${PORT} trên trình duyệt`);
-  console.log(
-    "Đảm bảo 'credentials.json' nằm cùng thư mục với script."
-  );
+  console.log("Đảm bảo 'credentials.json' nằm cùng thư mục với script.");
   console.log(
     "Lần chạy đầu tiên, bạn cần xác thực qua link được cung cấp trên console."
   );
