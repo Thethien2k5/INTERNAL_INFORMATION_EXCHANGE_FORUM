@@ -26,9 +26,29 @@ async function CheckUserName(email) {
     );
     return rows.length > 0;
 }
+
+//Thêm user
+async function AddUser(username, email, password) {
+    const [result] = await pool.execute(
+        'INSERT INTO if_users (username, email, password_hash) VALUES (?, ?, ?)',
+        [username, email, password]
+    );
+    // return result.insertId; // Trả về ID của user mới thêm
+    return result.affectedRows > 0; // Trả về true nếu thêm thành công
+}
+//Get name 
+async function GetPassword_hasd(username) {
+    const [rows] = await pool.execute(
+        'SELECT password_hash FROM if_users WHERE username = ? LIMIT 1',
+        [username]
+    );
+    return rows.length > 0 ? rows[0].password_hash : null; // Trả về password hash nếu tìm thấy
+}
 //xuất (export) các biến/hàm ra ngoài file
 module.exports = {
     pool,
     CheckEmail,
-    CheckUserName
+    CheckUserName,
+    AddUser,
+    GetPassword_hasd
 };

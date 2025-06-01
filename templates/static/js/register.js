@@ -7,9 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const username = document.getElementById("reg-username").value;
-    const email = document.getElementById("reg-email").value;
-    const password = document.getElementById("reg-password").value;
+    const username = document.getElementById("reg-username").value.trim();
+    const email = document.getElementById("reg-email").value.trim();
+    const password = document.getElementById("reg-password").value.trim();
     const otpInput = document.getElementById("otp-input")?.value || "";
 
     console.log("Form submitted with:", {
@@ -37,11 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         console.log("Chuẩn bị gửi OTP đến:", email);
-        console.log("Dữ liệu gửi đi:", {
-          email,
-          username,
-          otp: generatedOTP,
-        });
+        console.log("Dữ liệu gửi đi:", { email, username });
 
         // Gọi API để gửi OTP
         const response = await fetch("http://localhost:5000/api/send-otp", {
@@ -53,27 +49,29 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({
             email,
             username,
-            otp: generatedOTP,
           }),
         });
 
-        console.log("Response status:", response.status);
-        //Lỗi khi name và email đã tồn tại
+        // Lỗi khi name và email đã tồn tại
         if (!response.ok) {
           const errorData = await response.json();
           alert(errorData.message || `HTTP error! status: ${response.status}`);
           return;
         }
-        // Lưu email người dùng // Tạo OTP
+
+        // Đến đây mới tạo OTP và lưu email
         userEmail = email;
-        generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+
+        console.log("Response status:", response.status);
 
         const data = await response.json();
         console.log("Server response:", data);
 
         if (data.success) {
-          console.log("Email đã được gửi tới:", email);
-          // Hiển thị ô nhập OTP
+          generatedOTP = data.otp;
+          userEmail = email;
+          console.log("OTP nhận từ backend:", generatedOTP);
+
           otpBox.style.display = "block";
           alert(
             `Mã OTP đã được gửi đến email: ${email}\nVui lòng kiểm tra cả thư mục spam nếu không thấy trong hộp thư đến.`
@@ -103,10 +101,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (otpInput === generatedOTP && email === userEmail) {
         console.log("OTP validation successful");
-        alert("Đăng ký thành công!");
-
-        // F5 quay về trạng thái đăng nhập
-        window.location.reload();
+        // Gọi API thêm user mới
+        try {
+          const res = await fetch("http://localhost:5000/api/add-user", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({
+              username,
+              email,
+              password,
+            }),
+          });
+          const result = await res.json();
+          if (result.success) {
+            alert("Đăng ký thành công!");
+            window.location.reload();
+          } else {
+            alert(result.message || "Đăng ký thất bại!");
+          }
+        } catch (err) {
+          alert("Lỗi đăng ký: " + err.message);
+        }
       } else {
         console.log("OTP validation failed");
         if (otpInput !== generatedOTP) {

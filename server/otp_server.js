@@ -6,11 +6,12 @@ const fs = require("fs").promises; // Để đọc tệp không đồng bộ
 const { authenticate } = require("@google-cloud/local-auth");
 const { google } = require("googleapis");
 const UserSchema = require("../models/user");
+const bcrypt = require("bcrypt");
+const { CheckEmail, CheckUserName, AddUser } = require("../mysql/dbUser");
 
-const { CheckEmail, CheckUserName } = require("../mysql/dbUser");
 require("dotenv").config(); // Vẫn hữu ích cho các biến env tiềm năng khác
 
-const app = express();
+const router = express.Router();
 
 // --- Gmail API Configuration ---
 const SCOPES = ["https://www.googleapis.com/auth/gmail.send"];
@@ -82,7 +83,7 @@ authorize()
 // --- Kết thúc cấu hình API Gmail ---
 
 // Cấu hình CORS chi tiết
-app.use(
+router.use(
   cors({
     origin: "*", // Cho phép tất cả các origin trong môi trường phát triển
     methods: ["GET", "POST"], // Cho phép các phương thức HTTP
@@ -95,14 +96,14 @@ const otpTimestamps = new Map();
 const OTP_COOLDOWN = 60 * 1000; // 60 giây tính bằng milliseconds
 
 // Middleware để log tất cả các request
-app.use((req, res, next) => {
+router.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
 });
 
 // Middleware để phân tích body của request
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+router.use(express.json());
+router.use(bodyParser.urlencoded({ extended: true }));
 
 // Phục vụ file tĩnh từ thư mục templates
 // Giả sử logoT3V.png nằm trong thư mục templates hoặc thư mục gốc dự án.
@@ -116,11 +117,14 @@ const LOGO_FILE_PATH = path.join(
   "images",
   "logoT3V.png"
 ); // Hoặc vị trí khác của logo
-app.use("/templates", express.static(path.join(__dirname, "..", "templates")));
-app.use("/static", express.static(path.join(__dirname, "..", "static"))); // Nếu logo nằm trong thư mục static
+router.use(
+  "/templates",
+  express.static(path.join(__dirname, "..", "templates"))
+);
+router.use("/static", express.static(path.join(__dirname, "..", "static"))); // Nếu logo nằm trong thư mục static
 
 // Route chính - trả về login.html
-app.get("/", (req, res) => {
+router.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "templates", "login.html"));
 });
 
@@ -197,7 +201,7 @@ async function createMessageWithAttachment(
 }
 
 // API endpoint để gửi OTP
-app.post("/api/send-otp", async (req, res) => {
+router.post("/send-otp", async (req, res) => {
   console.log("Nhận yêu cầu gửi OTP:", req.body);
 
   if (!gmailService) {
@@ -207,28 +211,7 @@ app.post("/api/send-otp", async (req, res) => {
     });
   }
 
-  const { email, username, otp } = req.body;
-  // Kiểm tra các trường bắt buộc
-  if (!email || !username || !otp) {
-    return res.status(400).json({
-      success: false,
-      message: "Thiếu trường bắt buộc",
-      received: req.body,
-    });
-  } else {
-    if (await CheckEmail(email)) {
-      return res.status(409).json({
-        success: false,
-        message: `Email đã tồn tại trong hệ thống: ${email}`,
-      });
-    }
-    if (await CheckUserName(username)) {
-      return res.status(409).json({
-        success: false,
-        message: `Tên người dùng đã tồn tại trong hệ thống: ${username}`,
-      });
-    }
-  }
+  const { email, username } = req.body;
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
@@ -236,6 +219,20 @@ app.post("/api/send-otp", async (req, res) => {
     return res.status(400).json({
       success: false,
       message: "Định dạng email không hợp lệ",
+    });
+  }
+
+  // Kiểm tra xem email và username đã có chưa
+  if (await CheckEmail(email)) {
+    return res.status(409).json({
+      success: false,
+      message: `Email đã tồn tại trong hệ thống: ${email}`,
+    });
+  }
+  if (await CheckUserName(username)) {
+    return res.status(409).json({
+      success: false,
+      message: `Tên người dùng đã tồn tại trong hệ thống: ${username}`,
     });
   }
 
@@ -266,6 +263,9 @@ app.post("/api/send-otp", async (req, res) => {
       error.message
     );
   }
+
+  // để sinh OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
   // Nội dung HTML động
   const subject = "Xác thực tài khoản Diễn đàn T3V"; // Tiêu đề
@@ -342,10 +342,10 @@ app.post("/api/send-otp", async (req, res) => {
 
     otpTimestamps.set(email, now);
     console.log("Gửi email thành công tới:", email);
-    res.json({
+    return res.json({
       success: true,
-      message: "OTP đã được gửi thành công qua Gmail",
-      cooldown: OTP_COOLDOWN / 1000,
+      message: "Đã gửi OTP",
+      otp, // trả về mã OTP cho frontend
     });
   } catch (error) {
     console.error("Lỗi khi gửi email qua Gmail:", error);
@@ -358,24 +358,26 @@ app.post("/api/send-otp", async (req, res) => {
   }
 });
 
-// Xử lý 404 - Không tìm thấy file
-app.use((req, res, next) => {
-  console.log("404 - Không tìm thấy file:", req.url);
-  res.status(404).send("404 - Không tìm thấy file");
+// API thêm user mới (sau khi xác thực OTP)
+router.post("/add-user", async (req, res) => {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
+    return res.status(400).json({ success: false, message: "Thiếu thông tin!" });
+  }
+  try {
+    // Mã hóa mật khẩu
+    const hashedPassword = await bcrypt.hash(password, 10);
+    // Thêm vào DB
+    const ok = await AddUser(username, email, hashedPassword);
+    if (ok) {
+      res.json({ success: true, message: "Đăng ký thành công!" });
+    } else {
+      res.status(500).json({ success: false, message: "Không thể thêm user!" });
+    }
+  } catch (err) {
+    console.error("Lỗi thêm user:", err);
+    res.status(500).json({ success: false, message: "Lỗi server!" });
+  }
 });
 
-// Xử lý lỗi server
-app.use((err, req, res, next) => {
-  console.error("Lỗi server:", err);
-  res.status(500).send("500 - Lỗi server");
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server đang chạy trên cổng ${PORT}`);
-  console.log(`Mở http://localhost:${PORT} trên trình duyệt`);
-  console.log("Đảm bảo 'credentials.json' nằm cùng thư mục với script.");
-  console.log(
-    "Lần chạy đầu tiên, bạn cần xác thực qua link được cung cấp trên console."
-  );
-});
+module.exports = router;
