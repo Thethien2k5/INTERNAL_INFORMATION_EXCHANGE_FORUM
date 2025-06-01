@@ -11,42 +11,30 @@ loginBtn.addEventListener("click", () => {
   container.classList.remove("active");
 });
 
-
-
 //xử lý đăng nhập
-document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("loginForm");
-  const messageDiv = document.getElementById("message");
-
-  form.addEventListener("submit", async function (e) {
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("loginForm");
+  loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-
-    const username = form.username.value.trim();
-    const password = form.password.value.trim();
-
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
     try {
-      const response = await fetch("/api/login", {
+      const res = await fetch("http://localhost:5000/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
         body: JSON.stringify({ username, password }),
       });
-
-      const result = await response.json();
-      if (result.success) {
-        messageDiv.textContent = "Đăng nhập thành công!";
-        messageDiv.style.color = "green";
-        // Ví dụ chuyển hướng:
-        // window.location.href = "/dashboard";
+      const data = await res.json();
+      if (data.success) {
+        window.location.href = "index.html"; // Đổi sang trang chính
       } else {
-        messageDiv.textContent = result.message || "Sai tài khoản hoặc mật khẩu.";
-        messageDiv.style.color = "red";
+        alert(data.message || "Sai tên đăng nhập hoặc mật khẩu!");
       }
-    } catch (error) {
-      console.error("Lỗi khi gửi yêu cầu đăng nhập:", error);
-      messageDiv.textContent = "Lỗi máy chủ.";
-      messageDiv.style.color = "red";
+    } catch (err) {
+      alert("Lỗi đăng nhập: " + err.message);
     }
   });
 });

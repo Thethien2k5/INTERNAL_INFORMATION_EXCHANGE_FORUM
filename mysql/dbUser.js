@@ -37,7 +37,7 @@ async function AddUser(username, email, password) {
     return result.affectedRows > 0; // Trả về true nếu thêm thành công
 }
 //Get name 
-async function GetPassword_hasd(username) {
+async function GetPassword_hash(username) {
     const [rows] = await pool.execute(
         'SELECT password_hash FROM if_users WHERE username = ? LIMIT 1',
         [username]
@@ -50,5 +50,5 @@ module.exports = {
     CheckEmail,
     CheckUserName,
     AddUser,
-    GetPassword_hasd
+    GetPassword_hash
 };
