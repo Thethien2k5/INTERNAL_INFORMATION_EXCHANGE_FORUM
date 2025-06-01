@@ -5,7 +5,6 @@ const cors = require("cors");
 const fs = require("fs").promises; // Để đọc tệp không đồng bộ
 const { authenticate } = require("@google-cloud/local-auth");
 const { google } = require("googleapis");
-const UserSchema = require("../models/user");
 const bcrypt = require("bcrypt");
 const { CheckEmail, CheckUserName, AddUser } = require("../mysql/dbUser");
 
