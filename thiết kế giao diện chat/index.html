@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Forum</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="chat-app">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="user-profile">
+                <div class="profile-header">
+                    <img src="asses/z6661575818471_d5d2d560b07e3f39bdb04551fb36bd7c.jpg" alt="Profile"
+                        class="profile-img">
+                    <div class="profile-info">
+                        <h3>Nhóm lập trình Mạng</h3>
+                        <span class="status">4 thành viên</span>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <button title="Thành viên"><i class="fas fa-users"></i></button>
+                    <button title="Gọi thoại"><i class="fas fa-phone"></i></button>
+                    <button title="Gọi video"><i class="fas fa-video"></i></button>
+                    <button title="Tìm kiếm"><i class="fas fa-search"></i></button>
+                    <button title="Thêm"><i class="fas fa-ellipsis-h"></i></button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-main">
+            <!-- Chat Header -->
+            <header class="chat-header">
+                <div class="header-title">
+                    <h2>Tin nhắn</h2>
+                </div>
+                <div class="header-actions">
+                    <span class="pin-count">+1 ghim</span>
+                    <button class="more-options" id="moreOptionsBtn"><i class="fas fa-ellipsis-h"></i></button>
+                </div>
+            </header>
+
+            <!-- Messages Area -->
+            <div class="messages-container" id="messagesContainer">
+                <!-- Pinned Messages Section -->
+                <div class="pinned-messages-section" id="pinnedMessagesSection">
+                    <div class="pinned-header">
+                        <span>Danh sách ghim (3)</span>
+                        <button class="collapse-btn" id="collapsePinnedBtn">
+                            Thu gọn <i class="fas fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div class="pinned-messages-list" id="pinnedMessagesList">
+                        <!-- Pinned messages will be inserted here -->
+                    </div>
+                </div>
+                <!-- Regular messages will be inserted here -->
+            </div>
+
+            <!-- Chat Input Area -->
+            <div class="chat-input-area">
+                <div class="input-container">
+                    <input type="text" id="messageInput" placeholder="Nhập @, tin nhắn tới Nhóm lập trình Mạng"
+                        autocomplete="off">
+                    <div class="input-actions">
+                        <button title="Biểu tượng cảm xúc"><i class="far fa-smile"></i></button>
+                        <button title="Gửi ảnh"><i class="far fa-image"></i></button>
+                        <button title="Đính kèm file"><i class="fas fa-paperclip"></i></button>
+                        <button title="Gửi quà"><i class="fas fa-gift"></i></button>
+                    </div>
+                </div>
+                <button id="sendButton" class="send-button" title="Gửi tin nhắn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </main>
+    </div>
+    <div class="dropdown-menu" id="optionsDropdown">
+        <button class="dropdown-item" id="copyBtn"><i class="fas fa-copy"></i> Copy</button>
+        <button class="dropdown-item" id="unpinBtn"><i class="fas fa-thumbtack"></i> Bỏ ghim</button>
+    </div>
+    <div class="context-menu" id="messageContextMenu">
+        <button class="context-menu-item" id="replyMessageBtn">
+            <i class="fas fa-reply"></i> Trả lời
+        </button>
+        <button class="context-menu-item" id="pinMessageBtn">
+            <i class="fas fa-thumbtack"></i> Ghim tin nhắn
+        </button>
+        <div class="context-menu-divider"></div>
+        <button class="context-menu-item" id="shareMessageBtn">
+            <i class="fas fa-share"></i> Chia sẻ
+        </button>
+    </div>
+    <script src="/app.js"></script>
+</body>
+
+</html>
