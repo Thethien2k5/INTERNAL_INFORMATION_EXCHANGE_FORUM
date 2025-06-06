@@ -29,7 +29,23 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       const data = await res.json();
       if (data.success) {
-        window.location.href = "index.html"; // Đổi sang trang chính
+        localStorage.setItem("token", data.token); // Lưu trữ trong Storage(tự thêm vào)
+        
+        // Lấy thông tin profile đã lưu (nếu có)
+        const savedProfile = JSON.parse(localStorage.getItem('userProfile')) || {};
+        
+        // Tạo object user với thông tin từ server và profile đã lưu
+        const user = {
+          ho: savedProfile.ho || data.user?.ho || "",
+          ten: savedProfile.ten || data.user?.ten || "",
+          avatar: savedProfile.avatar || data.user?.avatar || "/templates/static/images/default-avatar.png",
+          name: savedProfile.name || (data.user?.ho && data.user?.ten ? data.user.ho + ' ' + data.user.ten : ""),
+          gioitinh: savedProfile.gioitinh || data.user?.gioitinh || ""
+        };
+        
+        localStorage.setItem("user", JSON.stringify(user));
+        
+        window.location.href = "forums.html"; // Đổi sang trang chính
       } else {
         alert(data.message || "Sai tên đăng nhập hoặc mật khẩu!");
       }

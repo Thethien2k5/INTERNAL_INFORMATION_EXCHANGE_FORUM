@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/templates/static/css/sidebar.css">
+    <link rel="stylesheet" href="/templates/static/css/imformation.css">
+    <link rel="icon" href="/templates/static/images/logoT3V.png">
+
+    <title>T3V - Thông tin tài khoản</title>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+    <script src="/templates/static/js/sidebar.js"></script>
+    <script>
+        fetch('/templates/web/sidebar.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+                initSidebar();
+            });
+    </script>
+
+    <div class="main-content">
+        <div class="avatar-container">
+            <img id="avatar-preview" src="/templates/static/images/default-avatar.png" alt="Avatar">
+            <input type="file" id="avatar-input" accept="image/*" hidden>
+            <button type="button" class="avatar-button" onclick="document.getElementById('avatar-input').click()">Chọn hình</button>
+            <p class="avatar-note">Dùng hình 18+ sẽ bị khóa tài khoản vĩnh viễn.</p>
+        </div>
+
+        <div class="profile-container">
+            <h2>Thông tin cá nhân</h2>
+            <form>
+                <label for="ho">Họ</label>
+                <input type="text" id="ho" name="ho">
+
+                <label for="ten">Tên</label>
+                <input type="text" id="ten" name="ten">
+
+                <div class="gender-group">
+                    <label>Giới tính:</label>
+                    <label><input type="radio" name="gioitinh" value="Nam" checked> Nam</label>
+                    <label><input type="radio" name="gioitinh" value="Nữ"> Nữ</label>
+                </div>
+
+                <button type="submit" class="save-button">Lưu</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/templates/static/js/imformation.js"></script>
+</body>
+</html>

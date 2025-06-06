@@ -1,0 +1,134 @@
+body {
+    color: white;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+body .menu-toggle {
+    top: 0px ;
+}
+
+.main-content {
+    padding-top: 100px;
+    height: 100vh;
+    overflow: hidden;
+    align-items: flex-start;
+}
+
+.avatar-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#avatar-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ff2e63;
+    display: block;
+    margin: 0 auto 10px;
+}
+
+.avatar-button {
+    background-color: #ff2e63;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.avatar-button:hover {
+    background-color: #e6004c;
+}
+
+.avatar-note {
+    font-size: 12px;
+    color: #ccc;
+    margin-top: 8px;
+}
+
+.profile-container {
+    padding: 30px;
+    border-radius: 10px;
+    width: 400px;
+    margin: 40px auto 0 auto;
+}
+
+.profile-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input[type="text"],
+input[type="email"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+}
+
+.gender-group {
+    margin-top: 10px;
+}
+
+.gender-group label {
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.save-button {
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #ff2e63;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.save-button:hover {
+    background-color: #e6004c;
+}
+
+/* Dùng selector theo [data-theme="..."] */
+:root[data-theme="light"] .profile-container {
+    background-color: #f0f0f0;
+    color: #000000;
+}
+
+:root[data-theme="dark"] .profile-container {
+    background-color: #000000;
+    color: #f0f0f0;
+}
+
+/* Input field màu theo theme */
+:root[data-theme="light"] input[type="text"],
+:root[data-theme="light"] input[type="email"] {
+    background-color: #f0f0f0;
+    color: #000;
+}
+
+:root[data-theme="dark"] input[type="text"],
+:root[data-theme="dark"] input[type="email"] {
+    background-color: #1a1a1a;
+    color: #fff;
+}
+
+/* Bạn cũng có thể thêm border nếu muốn dễ nhìn */
+input[type="text"],
+input[type="email"] {
+    border: 1px solid #ccc;
+}
