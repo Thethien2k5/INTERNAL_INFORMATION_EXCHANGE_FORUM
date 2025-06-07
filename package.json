@@ -1,11 +1,4 @@
 {
-  "name": "internal_information_exchange_forum",
-  "version": "1.0.0",
-  "description": "Mô tả chung...",
-  "main": "server/otp_server.js",
-  "directories": {
-    "doc": "docs"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server/index.js"

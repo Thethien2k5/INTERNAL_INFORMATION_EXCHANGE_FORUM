@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 31, 2025 lúc 08:39 AM
+-- Thời gian đã tạo: Th6 07, 2025 lúc 11:12 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -80,15 +80,16 @@ CREATE TABLE `if_users` (
   `id` int(10) UNSIGNED NOT NULL,
   `username` varchar(50) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `password_hash` varchar(255) NOT NULL
+  `password_hash` varchar(255) NOT NULL,
+  `AvatarsUser` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `if_users`
 --
 
-INSERT INTO `if_users` (`id`, `username`, `email`, `password_hash`) VALUES
-(1, 'thien', 'thienobita0203@gmail.com', 'fqjkfbnkjbfddlknf');
+INSERT INTO `if_users` (`id`, `username`, `email`, `password_hash`, `AvatarsUser`) VALUES
+(4, 'thien123', 'thienobita0203@gmail.com', '$2b$10$GqTMT6nu3klQN6J2p4EhmekK5WUuqnUp.XiIftTZFbKlp4DN9MKBq', '');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -151,7 +152,7 @@ ALTER TABLE `if_messages`
 -- AUTO_INCREMENT cho bảng `if_users`
 --
 ALTER TABLE `if_users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Các ràng buộc cho các bảng đã đổ

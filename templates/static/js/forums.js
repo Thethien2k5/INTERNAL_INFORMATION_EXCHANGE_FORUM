@@ -35,9 +35,13 @@ function createPostHTML(post) {
     <div class="post-card" data-id="${post.id}">
       <div class="post-header" style="display:flex; align-items:center; gap:10px;">
         <span class="avatar">
-          <img src="${post.avatar}" alt="avatar" style="width:40px; height:40px; border-radius:50%;" />
+          <img src="${
+            post.avatar
+          }" alt="avatar" style="width:40px; height:40px; border-radius:50%;" />
         </span>
-        <a href="profile.html?user=${encodeURIComponent(post.name)}" class="user-link" style="text-decoration:none; font-weight:bold; color:#333;">
+        <a href="profile.html?user=${encodeURIComponent(
+          post.name
+        )}" class="user-link" style="text-decoration:none; font-weight:bold; color:#333;">
           ${post.name}
         </a>
         <button class="delete-btn" title="Xóa bài" style="margin-left:auto; background:none; border:none; cursor:pointer; font-size:24px; color:#888;">&times;</button>
@@ -45,8 +49,8 @@ function createPostHTML(post) {
       <h3>${post.title}</h3>
       <p>${post.content}</p>
       <div class="actions">
-        <button class="icon-btn like-btn ${post.liked ? 'liked' : ''}">
-          <i class="${post.liked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+        <button class="icon-btn like-btn ${post.liked ? "liked" : ""}">
+          <i class="${post.liked ? "fa-solid" : "fa-regular"} fa-heart"></i>
         </button>
         <button class="icon-btn share-btn">
           <i class="fa-solid fa-share"></i>
@@ -58,33 +62,42 @@ function createPostHTML(post) {
 
 // Lấy danh sách bài viết từ localStorage (trả về mảng bài hoặc [] nếu chưa có)
 function getPostsFromStorage() {
-  const posts = localStorage.getItem('posts');
+  const posts = localStorage.getItem("posts");
   return posts ? JSON.parse(posts) : [];
 }
 
 // Lưu danh sách bài viết vào localStorage
 function savePostsToStorage(posts) {
-  localStorage.setItem('posts', JSON.stringify(posts));
+  localStorage.setItem("posts", JSON.stringify(posts));
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const avatar = localStorage.getItem("avatar");
   const postsContainer = document.getElementById("posts-container");
   const submitBtn = document.querySelector("#modal .submit");
-  const titleInput = document.querySelector("#modal input[placeholder='Chủ đề']");
-  const contentInput = document.querySelector("#modal textarea[placeholder='Mô tả...']");
+  const titleInput = document.querySelector(
+    "#modal input[placeholder='Chủ đề']"
+  );
+  const contentInput = document.querySelector(
+    "#modal textarea[placeholder='Mô tả...']"
+  );
 
-  if (!user || !postsContainer || !submitBtn || !titleInput || !contentInput) {
-    console.warn("Thiếu phần tử hoặc user chưa đăng nhập");
+  if (
+    !avatar ||
+    !postsContainer ||
+    !submitBtn ||
+    !titleInput ||
+    !contentInput
+  ) {
+    console.warn("Thiếu avatar hoặc phần tử UI");
     return;
   }
 
   // Load bài viết từ storage ra UI
   let posts = getPostsFromStorage();
-  postsContainer.innerHTML = posts.map(createPostHTML).join('');
+  postsContainer.innerHTML = posts.map(createPostHTML).join("");
 
-  // Gán sự kiện like và xóa cho các bài viết load lên
-  postsContainer.querySelectorAll(".post-card").forEach(postCard => {
+  postsContainer.querySelectorAll(".post-card").forEach((postCard) => {
     const likeBtn = postCard.querySelector(".like-btn");
     const deleteBtn = postCard.querySelector(".delete-btn");
     const postId = postCard.getAttribute("data-id");
@@ -93,17 +106,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     deleteBtn.addEventListener("click", () => {
       if (confirm("Bạn có chắc muốn xóa bài viết này?")) {
-        // Xóa UI
         postCard.remove();
-        // Xóa khỏi storage
-        posts = posts.filter(p => p.id !== postId);
+        posts = posts.filter((p) => p.id !== postId);
         savePostsToStorage(posts);
       }
     });
 
-    // Thêm sự kiện toggle like lưu trạng thái vào storage
     likeBtn.addEventListener("click", () => {
-      posts = posts.map(p => {
+      posts = posts.map((p) => {
         if (p.id === postId) {
           p.liked = !p.liked;
         }
@@ -113,7 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Đăng bài mới
   submitBtn.addEventListener("click", () => {
     const title = titleInput.value.trim();
     const content = contentInput.value.trim();
@@ -123,25 +132,21 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Tạo object bài viết mới
     const newPost = {
-      id: Date.now().toString(), // id duy nhất theo timestamp
-      avatar: user.avatar,
-      name: user.name,
+      id: Date.now().toString(),
+      avatar: avatar,
+      name: "Bạn", // hoặc không cần name nếu không dùng
       title,
       content,
-      liked: false
+      liked: false,
     };
 
-    // Thêm vào mảng posts và lưu
     posts.unshift(newPost);
     savePostsToStorage(posts);
 
-    // Thêm vào UI
     const postHTML = createPostHTML(newPost);
     postsContainer.insertAdjacentHTML("afterbegin", postHTML);
 
-    // Lấy bài viết vừa tạo và gán sự kiện
     const newPostCard = postsContainer.querySelector(".post-card:first-child");
     const newLikeBtn = newPostCard.querySelector(".like-btn");
     const deleteBtn = newPostCard.querySelector(".delete-btn");
@@ -151,13 +156,13 @@ document.addEventListener("DOMContentLoaded", () => {
     deleteBtn.addEventListener("click", () => {
       if (confirm("Bạn có chắc muốn xóa bài viết này?")) {
         newPostCard.remove();
-        posts = posts.filter(p => p.id !== newPost.id);
+        posts = posts.filter((p) => p.id !== newPost.id);
         savePostsToStorage(posts);
       }
     });
 
     newLikeBtn.addEventListener("click", () => {
-      posts = posts.map(p => {
+      posts = posts.map((p) => {
         if (p.id === newPost.id) {
           p.liked = !p.liked;
         }
@@ -166,7 +171,6 @@ document.addEventListener("DOMContentLoaded", () => {
       savePostsToStorage(posts);
     });
 
-    // Đóng modal và reset form
     closeModal();
     titleInput.value = "";
     contentInput.value = "";

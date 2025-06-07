@@ -1,4 +1,4 @@
-//animation cho phần đăng nhập/ đăng kíkí
+// animation cho phần đăng nhập/ đăng ký
 const container = document.querySelector(".container");
 const registerBtn = document.querySelector(".register-btn");
 const loginBtn = document.querySelector(".login-btn");
@@ -11,13 +11,16 @@ loginBtn.addEventListener("click", () => {
   container.classList.remove("active");
 });
 
-//xử lý đăng nhập
+// xử lý đăng nhập
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
+
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
+
     try {
       const res = await fetch("http://localhost:5000/api/login", {
         method: "POST",
@@ -27,25 +30,21 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         body: JSON.stringify({ username, password }),
       });
+
       const data = await res.json();
+
       if (data.success) {
-        localStorage.setItem("token", data.token); // Lưu trữ trong Storage(tự thêm vào)
-        
-        // Lấy thông tin profile đã lưu (nếu có)
-        const savedProfile = JSON.parse(localStorage.getItem('userProfile')) || {};
-        
-        // Tạo object user với thông tin từ server và profile đã lưu
-        const user = {
-          ho: savedProfile.ho || data.user?.ho || "",
-          ten: savedProfile.ten || data.user?.ten || "",
-          avatar: savedProfile.avatar || data.user?.avatar || "/templates/static/images/default-avatar.png",
-          name: savedProfile.name || (data.user?.ho && data.user?.ten ? data.user.ho + ' ' + data.user.ten : ""),
-          gioitinh: savedProfile.gioitinh || data.user?.gioitinh || ""
-        };
-        
-        localStorage.setItem("user", JSON.stringify(user));
-        
-        window.location.href = "forums.html"; // Đổi sang trang chính
+        // Lưu username
+        localStorage.setItem("username", username);
+
+        // Lưu avatar (nếu có), nếu không thì dùng ảnh mặc định
+        const avatar = data.user?.avatar?.trim() || "templates/static/images/logoT3V.png";
+        localStorage.setItem("avatar", avatar);
+
+        // Nếu muốn lưu thêm token thì cần server trả về token (chưa thấy có)
+        // localStorage.setItem("token", data.token); // Nếu server có trả về
+
+        window.location.href = "index.html"; // Chuyển sang trang chính
       } else {
         alert(data.message || "Sai tên đăng nhập hoặc mật khẩu!");
       }

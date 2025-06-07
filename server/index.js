@@ -1,11 +1,11 @@
 const express = require("express");
 const app = express();
-const otpRoutes = require("./otp_server");
+const RegisRoutes = require("./RegisterAndSendEmail");
 const loginRoutes = require("./Repair_Login");
 
 
 app.use(express.json());
-app.use("/api", otpRoutes);
+app.use("/api", RegisRoutes);
 app.use("/api", loginRoutes);
 
 

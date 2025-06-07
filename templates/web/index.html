@@ -1,12 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang chủ</title>
-      <link rel="icon" type="image/png" href="/templates/static/images/logoT3V.png">
+    <title>T3V Helper - Diễn đàn hỏi đáp</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="/templates/static/css/sidebar.css">
+    <link rel="stylesheet" href="/templates/static/css/forums.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+    <link rel="icon" href="/templates/static/images/logoT3V.png">
 </head>
 <body>
-    <a href="/templates/web/forums.html">o day</a>
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+    <script src="/templates/static/js/sidebar.js"></script>
+    <script>
+        fetch('/templates/web/sidebar.html')
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+                initSidebar();
+            });
+    </script>
+
+    <div class="background-banner">
+        <img src="/templates/static/images/banner.webp" alt="#">
+        <h1>
+            Diễn đàn Học phần Tự động – Nơi trao đổi kiến thức chuyên sâu
+        </h1>
+        <p>
+            Cùng thảo luận, chia sẻ kinh nghiệm và giải đáp các vấn đề liên quan đến học phần Tự động. Tập trung vào điều khiển,
+             tự động hóa, hệ thống thông minh và các ứng dụng trong thực tiễn.
+        </p>
+    </div>
+
+    <!-- Thanh nhập câu hỏi -->
+    <div class="ask-box" onclick="openModal()">
+        <input type="text" placeholder="Tạo chủ đề..." readonly>
+        <button type="button">
+            <i class="fa-regular fa-message"></i> 
+        </button>
+    </div>
+
+    <!-- Popup Bài viết mới -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="title">Bài viết mới</span>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="text" placeholder="Chủ đề">
+                <textarea placeholder="Mô tả..."></textarea>
+                <div class="modal-footer">
+                    <button class="submit">Tạo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Container để chứa các bài viết sẽ được tạo động -->
+    <div id="posts-container"></div>
+    
+    
+    <!-- JavaScript -->
+    <script src="/templates/static/js/forums.js"></script>
 </body>
 </html>
