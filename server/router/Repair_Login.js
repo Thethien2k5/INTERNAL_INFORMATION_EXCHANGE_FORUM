@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const { GetPassword_hash } = require("../mysql/dbUser");
+const { GetPassword_hash } = require("../../mysql/dbUser");
 
 // Xử lý POST /api/login
 router.post("/login", async (req, res) => {

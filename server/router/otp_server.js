@@ -6,7 +6,7 @@ const fs = require("fs").promises; // Để đọc tệp không đồng bộ
 const { authenticate } = require("@google-cloud/local-auth");
 const { google } = require("googleapis");
 const bcrypt = require("bcrypt");
-const { CheckEmail, CheckUserName, AddUser } = require("../mysql/dbUser");
+const { CheckEmail, CheckUserName, AddUser } = require("../../mysql/dbUser");
 
 require("dotenv").config(); // Vẫn hữu ích cho các biến env tiềm năng khác
 

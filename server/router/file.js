@@ -36,7 +36,7 @@ const upload = multer({
     limits: {
         fileSize: 100 * 1024 * 1024 // Giới hạn 100MB
     }
-});
+}).array('file', 10); // Cho phép upload tối đa 10 file cùng lúc
 
 // API endpoint để upload file
     // 200 : Ok
@@ -66,6 +66,13 @@ router.post('/upload', upload.array('file',10),async(req, res) => {
                 originalname: file.originalname, // Tên gốc của file
                 size: file.size, // Kích thước của file
                 mimetype: file.mimetype // Kiểu MIME của file
+                created_at: new Date().toISOString() // Thời gian tạo file
+                
             };
             // Lưu thông tin file vào mảng
         }
+        
+
+
+    }
+}
