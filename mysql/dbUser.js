@@ -1,3 +1,5 @@
+// Nạp import thư viện mysql2/promise để sử dụng kết nối Promise-based
+// Thư viện này cho phép sử dụng async/await để xử lý kết nối cơ sở dữ liệu một cách dễ dàng hơn
 const mysql = require('mysql2/promise');
 
 // Tạo pool kết nối dùng chung
