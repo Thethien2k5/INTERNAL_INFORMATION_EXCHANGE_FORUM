@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Dữ liệu gửi đi:", { email, username });
 
         // Gọi API để gửi OTP
-        const response = await fetch("http://localhost:5000/api/send-otp", {
+        const response = await fetch("https://localhost:5000/api/send-otp", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

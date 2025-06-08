@@ -14,8 +14,8 @@ const router = express.Router();
 
 // --- Gmail API Configuration ---
 const SCOPES = ["https://www.googleapis.com/auth/gmail.send"];
-const TOKEN_PATH = path.join(__dirname, "token.json");
-const CREDENTIALS_PATH = path.join(__dirname, "credentials.json"); // Hãy chắc chắn rằng tập tin này tồn tại
+const TOKEN_PATH = path.join(__dirname,'..',"certs","token.json");
+const CREDENTIALS_PATH = path.join(__dirname,'..',"certs","credentials.json"); // Hãy chắc chắn rằng tập tin này tồn tại
 
 /**
  * Tải hoặc yêu cầu hoặc ủy quyền để gọi API.

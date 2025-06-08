@@ -8,7 +8,7 @@ const fs = require('fs'); // fs = file system, xử lý file
 const router = express.Router(); // Tạo router (bộ định tuyến)
 
 // Tạo thư mục uploads nếu chưa tồn tại
-const uploadsDir = path.join(__dirname, 'uploads');// "__dirname" là thư mục hiện tại của file đang chạy
+const uploadsDir = path.join(__dirname,'..','..','uploads');// "__dirname" là thư mục hiện tại của file đang chạy
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
 }
