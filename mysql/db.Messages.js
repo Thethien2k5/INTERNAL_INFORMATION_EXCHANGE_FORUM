@@ -22,7 +22,12 @@ async function saveMessage(messageData) {
             fileMimeType
             // Không cần thêm created_at, nó sẽ tự động được quản lý bởi MySQL nếu đã cấu hình đúng
         ]);
-        return result.affectedRows > 0;
+        if (result.affectedRows > 0) {
+            // Lấy lại tin nhắn vừa tạo để trả về
+            const [rows] = await pool.execute('SELECT * FROM if_messages WHERE id = ?', [result.insertId]);
+            return { success: true, data: rows[0] };
+        }
+        return { success: false };
     } catch (error) {
         console.error('Lỗi khi lưu tin nhắn vào DB:', error);
         return false;

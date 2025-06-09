@@ -2,13 +2,15 @@
   "name": "internal_information_exchange_forum",
   "version": "1.0.0",
   "description": "Mô tả chung...",
-  "main": "server/otp_server.js",
+  "main": "server/index.js",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server/index.js"
+    "start:backend": "node server/BE_server.js",
+    "start:frontend": "node server/FE_server.js",
+    "t3v_chat": "npm install && node server/creat-cer.js && npm run start:backend & npm run start:frontend"
   },
   "keywords": [],
   "author": "",
