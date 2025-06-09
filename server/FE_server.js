@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const https = require("https");
 
 const app = express();
 
@@ -9,10 +10,11 @@ const app = express();
 app.use(express.static(path.join(__dirname,'..',"templates","web")));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'templates', 'web', 'index.html'));
+  res.sendFile(path.join(__dirname, '..', 'templates', 'web', 'login.html'));
 });
 
 // --------------------Cấu hình HTTPS--------------------
+let httpsServer;
 const certDir =  path.join(__dirname, "certs");
 const keyPath = path.join(certDir, "server.key");
 const certPath = path.join(certDir, "server.cert");
@@ -24,7 +26,7 @@ if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
     cert: fs.readFileSync(certPath)
   };
   // Tạo server HTTPS
-  const httpsServer = https.createServer(httpsOptions, app);
+  httpsServer = https.createServer(httpsOptions, app);
   console.log("Đã khởi tạo server HTTPS.");
 }
 else {
@@ -35,15 +37,15 @@ else {
 }
 
 // --------------------Khởi tạo Server---------------------
-const FE_PORT = 5000;
+const FE_PORT = 5500;
 httpsServer.listen(FE_PORT, () => {
-  console.log(`FE_Server đang chạy trên cổng ${PORT}`);
+  console.log(`FE_Server đang chạy trên cổng ${FE_PORT}`);
 });
 
 // --------------------Xử lý lỗi--------------------
 httpsServer.on("error", (err) => {
   if (err.code === "EADDRINUSE") {
-    console.error(`Cổng FE_Server ${PORT} đã được sử dụng. Vui lòng chọn cổng khác.`);
+    console.error(`Cổng FE_Server ${FE_PORT} đã được sử dụng. Vui lòng chọn cổng khác.`);
   }
   else {
     console.error("Lỗi khi khởi tạo FE_Server:", err);

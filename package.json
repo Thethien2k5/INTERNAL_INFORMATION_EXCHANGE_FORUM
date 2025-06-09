@@ -8,9 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start:certs": "npm install && node server/creat-cer.js",
     "start:backend": "node server/BE_server.js",
-    "start:frontend": "node server/FE_server.js",
-    "t3v_chat": "npm install && node server/creat-cer.js && npm run start:backend & npm run start:frontend"
+    "start:frontend": "node server/FE_server.js"
   },
   "keywords": [],
   "author": "",

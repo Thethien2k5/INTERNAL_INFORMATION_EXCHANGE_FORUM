@@ -10,6 +10,7 @@ const fs = require("fs");
 const otpRoutes = require("./router/otp_server.js");
 const loginRoutes = require("./router/Repair_Login.js");
 const {initializeSocket} = require("./socket.js"); // Import hàm khởi tạo Socket.IO
+const createFileRouter = require("./router/file.js"); // Import router để xử lý upload file
 
 
 // --------------------Khởi tạo--------------------
@@ -66,13 +67,13 @@ app.use("/api", loginRoutes);
 //const PORT = process.env.PORT || 5000; //// Nào up lên môi trường thì dùng
 const BE_PORT = 5000;
 httpsServer.listen(BE_PORT, () => {
-  console.log(`BE_Server đang chạy trên cổng ${PORT}`);
+  console.log(`BE_Server đang chạy trên cổng ${BE_PORT}`);
 });
 
 // --------------------Xử lý lỗi--------------------
-https.on("error", (err) => {
+httpsServer.on("error", (err) => {
   if (err.code === "EADDRINUSE") {
-    console.error(`Cổng BE_Server ${PORT} đã được sử dụng. Vui lòng chọn cổng khác.`);
+    console.error(`Cổng BE_Server ${BE_PORT} đã được sử dụng. Vui lòng chọn cổng khác.`);
   }
   else {
     console.error("Lỗi khi khởi tạo BE_Server:", err);
