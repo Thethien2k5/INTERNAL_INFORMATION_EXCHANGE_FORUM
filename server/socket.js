@@ -32,17 +32,12 @@ function initializeSocket(io) {
             };
         
             // Gọi hàm lưu tin nhắn vào CSDL
-            const isSaved = await saveMessage(messageData);
+           const savedResult = await saveMessage(messageData);
             // Nếu lưu thành công, gửi tin nhắn đến tất cho các client khác trong nhóm
-            if (isSaved) {
+           if (savedResult && savedResult.success) {
                 // Tạo dữ Object để gửi đi cho client
-                const messageForClient = {
-                    id: newMessageId,
-                    user_id: userId,
-                    content_type: 'text',
-                    content_text: messageText,
-                    created_at: new Date().toISOString()
-                };
+               const messageForClient = savedResult.data;
+
                 // .to (Gửi sự kiện đến ....)
                 // .emit (Phát sự kiện tới client hiện tại gửi)
                 io.to(`forum_${forumId}`).emit('newMessage', messageForClient);

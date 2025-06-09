@@ -192,7 +192,7 @@ const updatePinnedMessagesList = () => {
 
     // Update pinned count in header
     const pinnedCount = pinnedMessages.size;
-    document.querySelector('.pin-count').textContent = pinnedCount > 0 ? `+${pinnedCount} ghim` : '0 ghim';
+    document.querySelector('.pin-count').textContent = pinnedCount > 0 ? `+${pinnedCount} ghim` : '5 ghim';
     document.querySelector('.pinned-header span').textContent = `Danh sách ghim (${pinnedCount})`;
 
     // Show/hide pinned section based on whether there are pinned messages
