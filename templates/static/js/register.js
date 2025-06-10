@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("OTP validation successful");
         // Gọi API thêm user mới
         try {
-          const res = await fetch("http://localhost:5000/api/add-user", {
+          const res = await fetch("https://localhost:5000/api/add-user", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

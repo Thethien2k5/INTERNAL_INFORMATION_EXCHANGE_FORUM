@@ -14,7 +14,8 @@ function initializeSocket(io) {
        // Bắt (lắng nghe) sự kiện client 
         socket.on('joinRoom', (forumId) => {
             // Gán tên phòng (room) cho socket
-            socket.join(forumId);
+            const roomName = `forum_${forumId}`
+            socket.join(roomName);
             console.log(`Client ${socket.id} tham gia ${forumId}`);
         });
 
@@ -36,11 +37,11 @@ function initializeSocket(io) {
             // Nếu lưu thành công, gửi tin nhắn đến tất cho các client khác trong nhóm
            if (savedResult && savedResult.success) {
                 // Tạo dữ Object để gửi đi cho client
-               const messageForClient = savedResult.data;
-
+                const messageForClient = savedResult.data;
+                const roomName = `forum_${forumId}`
                 // .to (Gửi sự kiện đến ....)
                 // .emit (Phát sự kiện tới client hiện tại gửi)
-                io.to(`forum_${forumId}`).emit('newMessage', messageForClient);
+                io.to(roomName).emit('newMessage', messageForClient);
             }
         });
 

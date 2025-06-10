@@ -5,13 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Forum</title>
-    <link rel="stylesheet" href="/templates/static/css/chat_clients.css">
+    <link rel="stylesheet" href="/templates/static/css/chat_clients.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
     <div class="chat-app">
-        <!-- Left Sidebar -->
         <aside class="sidebar">
             <div class="user-profile">
                 <div class="profile-header">
@@ -32,9 +31,7 @@
             </div>
         </aside>
 
-        <!-- Main Chat Area -->
         <main class="chat-main">
-            <!-- Chat Header -->
             <header class="chat-header">
                 <div class="header-title">
                     <h2>Tin nhắn</h2>
@@ -45,9 +42,7 @@
                 </div>
             </header>
 
-            <!-- Messages Area -->
-            <div class="messages-container" id="messagesContainer">
-                <!-- Pinned Messages Section -->
+            <div class="messages-container" id="chat-box"> 
                 <div class="pinned-messages-section" id="pinnedMessagesSection">
                     <div class="pinned-header">
                         <span>Danh sách ghim (3)</span>
@@ -56,30 +51,25 @@
                         </button>
                     </div>
                     <div class="pinned-messages-list" id="pinnedMessagesList">
-                        <!-- Pinned messages will be inserted here -->
                     </div>
                 </div>
-                <!-- Regular messages will be inserted here -->
             </div>
 
-            <!-- Chat Input Area -->
             <div class="chat-input-area">
-                <!-- -Code này của Thông phụ thôi- -->
-     <!--------------------------------------------------------------------------- -->
-                <input type = 'file' id = 'fileInput' style = 'display: none;' multiple>
-                <input type = 'file' id = 'imageInput' style = 'display: none;' accept = 'image/*'>
+                <input type='file' id='image-input' style='display: none;' accept='image/*' multiple>
+                <input type='file' id='file-input' style='display: none;' multiple>
 
                 <div class="input-container">
-                    <input type="text" id="messageInput" placeholder="Nhập @, tin nhắn tới Nhóm lập trình Mạng"
+                    <input type="text" id="message-input" placeholder="Nhập @, tin nhắn tới Nhóm lập trình Mạng"
                         autocomplete="off">
                     <div class="input-actions">
                         <button title="Biểu tượng cảm xúc"><i class="far fa-smile"></i></button>
-                        <button title="Gửi ảnh"  id ='btn_sendImage'><i class="far fa-image"></i></button>
-                        <button title="Đính kèm file" id = 'btn_sendFile'><i class="fas fa-paperclip"></i></button>
+                        <button title="Gửi ảnh" id='image-button'><i class="far fa-image"></i></button>
+                         <button title="Đính kèm file" id='file-button'><i class="fas fa-paperclip"></i></button>
                         <button title="Gửi quà"><i class="fas fa-gift"></i></button>
                     </div>
                 </div>
-                <button id="sendButton" class="send-button" title="Gửi tin nhắn">
+                 <button id="send-button" class="send-button" title="Gửi tin nhắn">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
@@ -90,18 +80,12 @@
         <button class="dropdown-item" id="unpinBtn"><i class="fas fa-thumbtack"></i> Bỏ ghim</button>
     </div>
     <div class="context-menu" id="messageContextMenu">
-        <button class="context-menu-item" id="replyMessageBtn">
-            <i class="fas fa-reply"></i> Trả lời
-        </button>
-        <button class="context-menu-item" id="pinMessageBtn">
-            <i class="fas fa-thumbtack"></i> Ghim tin nhắn
-        </button>
+        <button class="context-menu-item" id="replyMessageBtn"><i class="fas fa-reply"></i> Trả lời</button>
+        <button class="context-menu-item" id="pinMessageBtn"><i class="fas fa-thumbtack"></i> Ghim tin nhắn</button>
         <div class="context-menu-divider"></div>
-        <button class="context-menu-item" id="shareMessageBtn">
-            <i class="fas fa-share"></i> Chia sẻ
-        </button>
+        <button class="context-menu-item" id="shareMessageBtn"><i class="fas fa-share"></i> Chia sẻ</button>
     </div>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="/templates/static/js/chat_clients.js"></script>
 </body>
-
 </html>

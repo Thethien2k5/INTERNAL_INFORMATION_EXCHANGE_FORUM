@@ -1,453 +1,170 @@
-// DOM Elements
-const messagesContainer = document.getElementById('messagesContainer');
-const messageInput = document.getElementById('messageInput');
-const sendButton = document.getElementById('sendButton');
-const moreOptionsBtn = document.getElementById('moreOptionsBtn');
-const optionsDropdown = document.getElementById('optionsDropdown');
-const copyBtn = document.getElementById('copyBtn');
-const unpinBtn = document.getElementById('unpinBtn');
-const messageContextMenu = document.getElementById('messageContextMenu');
-const pinMessageBtn = document.getElementById('pinMessageBtn');
-const replyMessageBtn = document.getElementById('replyMessageBtn');
-const shareMessageBtn = document.getElementById('shareMessageBtn');
-const pinnedMessagesSection = document.getElementById('pinnedMessagesSection');
-const pinnedMessagesList = document.getElementById('pinnedMessagesList');
-const collapsePinnedBtn = document.getElementById('collapsePinnedBtn');
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Các biến tham chiếu đến phần tử HTML ---
+    const chatBox = document.getElementById('chat-box');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+    const imageButton = document.getElementById('image-button');
+    const fileButton = document.getElementById('file-button');
+    const imageInput = document.getElementById('image-input');
+    const fileInput = document.getElementById('file-input');
 
+    // --- Cấu hình Socket.IO và thông tin người dùng ---
+    const socket = io("https://localhost:5000");
 
+    // Giả sử sau khi đăng nhập, bạn đã lưu userId và forumId vào localStorage
+    // Để test, chúng ta sẽ dùng giá trị mặc định.
+    const CURRENT_USER_ID = localStorage.getItem('userId') || '1';
+    const CURRENT_FORUM_ID = localStorage.getItem('forumId') || '1';
 
-// -------------------!Code của Thông------------------------------------------
-const socket = io("https://localhost:5000");
+    // --- Các hàm trợ giúp ---
+    const formatFileSize = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    const displayMessage = (msg) => {
+        const messageWrapper = document.createElement('div');
+        // Phân biệt tin nhắn của mình và của người khác
+        const messageType = msg.user_id.toString() === CURRENT_USER_ID ? 'sent' : 'received';
+        messageWrapper.className = `message ${messageType}`;
+        messageWrapper.dataset.messageId = msg.id;
 
+        let contentHTML = '';
 
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
+        if (msg.content_type === 'text') {
+            contentHTML = `
+                <div class="message-bubble">
+                    <span>${msg.content_text}</span>
+                </div>
+            `;
+        } else if (msg.content_type === 'file') {
+            const isImage = msg.file_mime_type && msg.file_mime_type.startsWith('image/');
+            const downloadUrl = `https://localhost:5000/uploads/${msg.file_name}`; // Đường dẫn để tải file
 
-
-
-
-
-
-
-// Message Store
-let messages = [];
-let pinnedMessages = new Set();
-let selectedMessage = null;
-let replyingTo = null;
-
-
-// ~ Đoạn này sẽ được sử dụng lại (Thông)
-// Message Templates
-const createMessageElement = (message) => {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${message.type}`;
-    messageDiv.dataset.messageId = message.id;
-
-    // Add reply container if this message is a reply
-    if (message.replyTo) {
-        const replyContainer = document.createElement('div');
-        replyContainer.className = 'reply-container';
-        const replyMessage = messages.find(m => m.id === message.replyTo);
-        if (replyMessage) {
-            replyContainer.textContent = replyMessage.text;
-            messageDiv.appendChild(replyContainer);
+            if (isImage) {
+                 contentHTML = `
+                    <div class="message-bubble file-message image-message">
+                         <a href="${downloadUrl}" target="_blank">
+                            <img src="${downloadUrl}" alt="${msg.content_text}" style="max-width: 200px; border-radius: 10px;"/>
+                         </a>
+                    </div>
+                `;
+            } else {
+                 contentHTML = `
+                    <div class="message-bubble file-message">
+                        <a href="${downloadUrl}" target="_blank" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+                           <i class="fas fa-file-alt file-icon"></i>
+                           <div class="file-info">
+                               <div class="file-name">${msg.content_text}</div>
+                               <div class="file-size">${formatFileSize(msg.file_size || 0)}</div>
+                           </div>
+                        </a>
+                    </div>
+                `;
+            }
         }
-    }
+        
+        const timeHTML = `<div class="message-time">${new Date(msg.created_at).toLocaleTimeString('vi-VN')}</div>`;
 
-    const bubbleDiv = document.createElement('div');
-    bubbleDiv.className = 'message-bubble';
+        messageWrapper.innerHTML = contentHTML + timeHTML;
+        chatBox.appendChild(messageWrapper);
+        chatBox.scrollTop = chatBox.scrollHeight; // Tự động cuộn xuống dưới
+    };
 
-    const textSpan = document.createElement('span');
-    textSpan.textContent = message.text;
-    bubbleDiv.appendChild(textSpan);
-
-    // Create options button
-    const optionsBtn = document.createElement('button');
-    optionsBtn.className = 'message-options-btn';
-    optionsBtn.innerHTML = '<i class="fas fa-ellipsis-h"></i>';
-    optionsBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        showContextMenu(e, messageDiv);
-    });
-    bubbleDiv.appendChild(optionsBtn);
-
-    const timeDiv = document.createElement('div');
-    timeDiv.className = 'message-time';
-    timeDiv.textContent = formatTime(message.timestamp);
-
-    messageDiv.appendChild(bubbleDiv);
-    messageDiv.appendChild(timeDiv);
-
-    return messageDiv;
-};
-
-// Message Handling
-const addMessage = (message) => {
-    const messageElement = createMessageElement(message);
-    messagesContainer.appendChild(messageElement);
-    scrollToBottom();
-};
-
-const sendMessage = () => {
-    const text = messageInput.value.trim();
-    if (text) {
-        socket.emit('sendMessage', {
-            forumID: '1',
-            user: '1',
-            messageText: text
-        });
-        messageInput.value = ''; // Xóa ô nhập nội dung sau khi gửi
-        messageInput.focus(); // Đặt lại focus vào ô nhập nội dung
-    }
-};
-
-async function uploadFile (file) {
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('forumID', '1'); // Thay bằng ID phòng chat thực tế
-    formData.append('userID', '1'); // Thay bằng ID người dùng thực tế
-
-    for (const file of files){
-        formData.append('file', file);
-    }
-
-    try {
-        const response = await fetch('https://localhost:5000/api/upload', {
-            method: 'POST',
-            body: formData,
-        });
-       const result = await response.json();
-        if (response.ok) {
-            console.log('Upload thành công:', result.message);
-            // Tin nhắn file sẽ được server gửi về qua socket, không cần làm gì thêm
-        } else {
-            alert('Lỗi upload file: ' + result.error);
-        }
-    } catch (error) {
-        console.error('Lỗi fetch khi upload:', error);
-        alert('Không thể kết nối đến server để upload file.');
-    } finally {
-        // Ẩn spinner/loading
-    }
-}
-
-socket.on('connect', () => {
-    console.log('Đã kết nối tới Socket.IO server với ID:', socket.id);
-    // Tham gia phòng chat sau khi kết nối
-    socket.emit('joinRoom', 'forum_1'); // Tên phòng phải khớp với server
-});
-
-socket.on('newMessage', (message) => {
-    console.log('Nhận tin nhắn mới:', message);
-    addMessage(message);
-});
-
-socket.on('disconnect', () => {
-    console.log('Đã mất kết nối với Socket.IO server.');
-});
-
-
-// --- DOM Event Listeners ---
-sendButton.addEventListener('click', sendMessage);
-messageInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-    }
-});
-
-// Kích hoạt input ẩn khi nhấn nút
-sendImageBtn.addEventListener('click', () => imageInput.click());
-attachFileBtn.addEventListener('click', () => fileInput.click());
-
-// Xử lý khi người dùng đã chọn file
-imageInput.addEventListener('change', (e) => uploadFiles(e.target.files));
-fileInput.addEventListener('change', (e) => uploadFiles(e.target.files));
-
-
-
-
-
-
-// Utility Functions
-const formatTime = (date) => {
-    return new Intl.DateTimeFormat('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit'
-    }).format(date);
-};
-
-const scrollToBottom = () => {
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-};
-
-// Dropdown Menu Functionality
-const toggleDropdown = () => {
-    optionsDropdown.classList.toggle('show');
-};
-
-const handleCopy = () => {
-    // Get all messages text
-    const messagesText = messages.map(msg => msg.text).join('\n');
-    navigator.clipboard.writeText(messagesText)
-        .then(() => {
-            alert('Đã sao chép tin nhắn vào clipboard!');
-            optionsDropdown.classList.remove('show');
-        })
-        .catch(err => {
-            console.error('Không thể sao chép:', err);
-            alert('Không thể sao chép tin nhắn!');
-        });
-};
-
-// Pinned Messages Section
-const togglePinnedSection = () => {
-    pinnedMessagesSection.classList.toggle('collapsed');
-    updateCollapseButtonText();
-};
-
-const updateCollapseButtonText = () => {
-    const isCollapsed = pinnedMessagesSection.classList.contains('collapsed');
-    collapsePinnedBtn.innerHTML = isCollapsed ?
-        'Mở rộng <i class="fas fa-chevron-down"></i>' :
-        'Thu gọn <i class="fas fa-chevron-up"></i>';
-};
-
-const createPinnedMessageElement = (message) => {
-    const div = document.createElement('div');
-    div.className = 'pinned-message';
-    div.dataset.messageId = message.id;
-
-    div.innerHTML = `
-        <div class="pinned-message-content">
-            <div class="pinned-message-text">${message.text}</div>
-            <div class="pinned-message-info">
-                ${message.type === 'sent' ? 'Bạn' : 'Người khác'} · ${formatTime(message.timestamp)}
-            </div>
-        </div>
-        <div class="pinned-message-options">
-            <button class="unpin-btn" title="Bỏ ghim">
-                <i class="fas fa-thumbtack"></i>
-            </button>
-        </div>
-    `;
-
-    // Add click handler to scroll to original message
-    div.addEventListener('click', () => {
-        const originalMessage = document.querySelector(`.message[data-message-id="${message.id}"]`);
-        if (originalMessage) {
-            originalMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            originalMessage.classList.add('highlight');
-            setTimeout(() => originalMessage.classList.remove('highlight'), 2000);
-        }
-    });
-
-    // Add unpin handler
-    div.querySelector('.unpin-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        unpinMessage(message.id);
-    });
-
-    return div;
-};
-
-const updatePinnedMessagesList = () => {
-    // Clear existing pinned messages
-    pinnedMessagesList.innerHTML = '';
-
-    // Add all pinned messages
-    const pinnedMessageElements = Array.from(pinnedMessages)
-        .map(id => messages.find(m => m.id === id))
-        .filter(Boolean)
-        .map(createPinnedMessageElement);
-
-    pinnedMessageElements.forEach(element => {
-        pinnedMessagesList.appendChild(element);
-    });
-
-    // Update pinned count in header
-    const pinnedCount = pinnedMessages.size;
-    document.querySelector('.pin-count').textContent = pinnedCount > 0 ? `+${pinnedCount} ghim` : '5 ghim';
-    document.querySelector('.pinned-header span').textContent = `Danh sách ghim (${pinnedCount})`;
-
-    // Show/hide pinned section based on whether there are pinned messages
-    pinnedMessagesSection.style.display = pinnedCount > 0 ? 'block' : 'none';
-};
-
-const unpinMessage = (messageId) => {
-    pinnedMessages.delete(messageId);
-    const messageElement = document.querySelector(`.message[data-message-id="${messageId}"]`);
-    if (messageElement) {
-        messageElement.classList.remove('pinned');
-    }
-    updatePinnedMessagesList();
-};
-
-// Context Menu Functionality
-const showContextMenu = (e, messageElement) => {
-    // Hide any existing shown menus
-    hideContextMenu();
-
-    selectedMessage = messageElement;
-
-    // Get the button position
-    const rect = e.target.closest('.message-options-btn').getBoundingClientRect();
-
-    // Position the context menu next to the button
-    messageContextMenu.style.top = `${rect.top}px`;
-
-    if (messageElement.classList.contains('sent')) {
-        messageContextMenu.style.left = `${rect.left - 160}px`; // Menu width + some padding
-    } else {
-        messageContextMenu.style.left = `${rect.right}px`;
-    }
-
-    messageContextMenu.classList.add('show');
-};
-
-const hideContextMenu = () => {
-    messageContextMenu.classList.remove('show');
-    selectedMessage = null;
-};
-
-// Update pin message handler
-const handlePinMessage = () => {
-    if (selectedMessage) {
-        const messageId = selectedMessage.dataset.messageId;
-
-        if (!pinnedMessages.has(messageId)) {
-            // Pin the message
-            pinnedMessages.add(messageId);
-            selectedMessage.classList.add('pinned');
-            updatePinnedMessagesList();
-        }
-
-        hideContextMenu();
-    }
-};
-
-// Update unpin all handler
-const handleUnpin = () => {
-    pinnedMessages.clear();
-    document.querySelectorAll('.message.pinned').forEach(msg => {
-        msg.classList.remove('pinned');
-    });
-    updatePinnedMessagesList();
-    optionsDropdown.classList.remove('show');
-};
-
-// Reply Functionality
-const handleReply = () => {
-    if (selectedMessage) {
-        replyingTo = selectedMessage.dataset.messageId;
-        messageInput.placeholder = 'Trả lời tin nhắn...';
-        messageInput.focus();
-        hideContextMenu();
-    }
-};
-
-const clearReplyState = () => {
-    replyingTo = null;
-    messageInput.placeholder = 'Nhập @, tin nhắn tới Nhóm lập trình Mạng';
-};
-
-// Share Functionality
-const handleShare = () => {
-    if (selectedMessage) {
-        const messageText = selectedMessage.querySelector('.message-bubble span').textContent;
-        navigator.clipboard.writeText(messageText)
-            .then(() => {
-                alert('Đã sao chép tin nhắn! Bạn có thể chia sẻ ngay bây giờ.');
-                hideContextMenu();
-            })
-            .catch(err => {
-                console.error('Không thể sao chép tin nhắn:', err);
-                alert('Không thể sao chép tin nhắn!');
+    /**
+     * Gửi tin nhắn văn bản lên server.
+     */
+    const sendTextMessage = () => {
+        const text = messageInput.value.trim();
+        if (text) {
+            socket.emit('sendMessage', {
+                forumId: CURRENT_FORUM_ID,
+                userId: CURRENT_USER_ID,
+                messageText: text
             });
-    }
-};
+            messageInput.value = '';
+            messageInput.focus();
+        }
+    };
 
-// !Tạm thời bỏ phần này đi (Thông)
-/*
-// Event Listeners
-sendButton.addEventListener('click', sendMessage);
+    /**
+     * Tải file lên server.
+     * @param {FileList} files - Danh sách file từ thẻ input.
+     */
+    const uploadFiles = async (files) => {
+        if (!files.length) return;
 
-messageInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-    }
-});
+        const formData = new FormData();
+        formData.append('userID', CURRENT_USER_ID);
+        formData.append('forumID', CURRENT_FORUM_ID);
 
-// Event Listeners for Dropdown
-moreOptionsBtn.addEventListener('click', toggleDropdown);
-copyBtn.addEventListener('click', handleCopy);
-unpinBtn.addEventListener('click', handleUnpin);
+        for (const file of files) {
+            formData.append('file', file);
+        }
+        
+        try {
+            //Lưu ý: Route này phải khớp với route bạn đã định nghĩa trong fileRouter.js
+            const response = await fetch('https://localhost:5000/api/upload', { 
+                method: 'POST',
+                body: formData,
+            });
 
-// Pin Message Event Listener
-pinMessageBtn.addEventListener('click', handlePinMessage);
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.error || 'Upload không thành công');
+            }
+            
+            console.log('Upload thành công:', result);
+            // Tin nhắn sẽ được hiển thị qua sự kiện real-time 'newMessage' từ server, không cần làm gì thêm ở đây.
+        } catch (error) {
+            console.error('Lỗi khi upload file:', error);
+            alert('Đã có lỗi xảy ra khi gửi file.');
+        }
+    };
 
-// Event Listeners
-document.addEventListener('click', (e) => {
-    // Hide context menu when clicking outside
-    if (!messageContextMenu.contains(e.target)) {
-        hideContextMenu();
-    }
 
-    // Existing dropdown click handler
-    if (!moreOptionsBtn.contains(e.target) && !optionsDropdown.contains(e.target)) {
-        optionsDropdown.classList.remove('show');
-    }
-});
+    // --- Gán sự kiện (Event Listeners) ---
 
-// Add new event listeners
-replyMessageBtn.addEventListener('click', handleReply);
-shareMessageBtn.addEventListener('click', handleShare);
+    // 1. Gửi tin nhắn văn bản
+    sendButton.addEventListener('click', sendTextMessage);
+    messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault(); // Ngăn xuống dòng khi nhấn Enter
+            sendTextMessage();
+        }
+    });
 
-// Escape key to clear reply state
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        clearReplyState();
-    }
-});
+    // 2. Mở cửa sổ chọn file khi nhấn nút
+    imageButton.addEventListener('click', () => imageInput.click());
+    fileButton.addEventListener('click', () => fileInput.click());
 
-// Action Buttons
-document.querySelectorAll('.input-actions button').forEach(button => {
-    button.addEventListener('click', () => {
-        alert('Tính năng này đang được phát triển!');
+    // 3. Xử lý khi người dùng đã chọn file
+    imageInput.addEventListener('change', (e) => uploadFiles(e.target.files));
+    fileInput.addEventListener('change', (e) => uploadFiles(e.target.files));
+
+
+    // --- Lắng nghe sự kiện từ Socket.IO Server ---
+
+    socket.on('connect', () => {
+        console.log('Đã kết nối tới Socket.IO server với ID:', socket.id);
+        // Tham gia vào phòng chat mặc định sau khi kết nối
+        socket.emit('joinRoom', `forum_${CURRENT_FORUM_ID}`);
+        console.log(`Đã yêu cầu tham gia phòng: forum_${CURRENT_FORUM_ID}`);
+    });
+
+    socket.on('newMessage', (msg) => {
+        console.log('Nhận được tin nhắn mới:', msg);
+        displayMessage(msg);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Đã mất kết nối tới server.');
+        alert('Mất kết nối với máy chủ chat!');
+    });
+    
+    socket.on('connect_error', (err) => {
+        console.error('Lỗi kết nối Socket.IO:', err.message);
     });
 });
-
-// Event Listeners
-collapsePinnedBtn.addEventListener('click', togglePinnedSection);
-*/
-
-
-// Initial Messages
-/*const initialMessages = [
-    {
-        text: 'Chào mừng bạn đến với nhóm chat!',
-        type: 'received',
-        timestamp: new Date(Date.now() - 60000)
-    },
-    {
-        text: 'Hãy bắt đầu cuộc trò chuyện.',
-        type: 'received',
-        timestamp: new Date()
-    }
-];
-
-// Load initial messages
-initialMessages.forEach(msg => {
-    addMessage(msg.text, msg.type);
-});
-*/
-
-// Initialize pinned section
-updatePinnedMessagesList(); 
