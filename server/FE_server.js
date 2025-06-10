@@ -6,12 +6,14 @@ const https = require("https");
 const app = express();
 
 // --------------------Phục vụ File Tĩnh--------------------
-
-app.use(express.static(path.join(__dirname,'..',"templates","web")));
-
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'templates', 'web', 'login.html'));
 });
+
+app.use(express.static(path.join(__dirname,'..',"templates","web")));
+
+app.use('/templates/static', express.static(path.join(__dirname, '..', 'templates', 'static')));
+
 
 // --------------------Cấu hình HTTPS--------------------
 let httpsServer;

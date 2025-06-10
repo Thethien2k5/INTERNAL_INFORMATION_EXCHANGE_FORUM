@@ -2,7 +2,7 @@ const express = require('express'); //Tạo server
 const multer = require('multer'); // Tạo cầu nối từ tương tác người dùng đến server
 const path = require('path'); // Xử lý đường dẫn file
 const fs = require('fs'); // fs = file system, xử lý file
-const { saveMessage } = require('../../mysql/db.Messages'); // Import hàm saveMessage từ fileController
+const  {saveMessage}  = require('../../mysql/db.Messages'); // Import hàm saveMessage từ fileController
 
 
 

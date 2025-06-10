@@ -14,12 +14,34 @@ const pinnedMessagesSection = document.getElementById('pinnedMessagesSection');
 const pinnedMessagesList = document.getElementById('pinnedMessagesList');
 const collapsePinnedBtn = document.getElementById('collapsePinnedBtn');
 
+
+
+// -------------------!Code của Thông------------------------------------------
+const socket = io("https://localhost:5000");
+
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+
+
+
+
+
+
 // Message Store
 let messages = [];
 let pinnedMessages = new Set();
 let selectedMessage = null;
 let replyingTo = null;
 
+
+// ~ Đoạn này sẽ được sử dụng lại (Thông)
 // Message Templates
 const createMessageElement = (message) => {
     const messageDiv = document.createElement('div');
@@ -64,6 +86,95 @@ const createMessageElement = (message) => {
     return messageDiv;
 };
 
+// Message Handling
+const addMessage = (message) => {
+    const messageElement = createMessageElement(message);
+    messagesContainer.appendChild(messageElement);
+    scrollToBottom();
+};
+
+const sendMessage = () => {
+    const text = messageInput.value.trim();
+    if (text) {
+        socket.emit('sendMessage', {
+            forumID: '1',
+            user: '1',
+            messageText: text
+        });
+        messageInput.value = ''; // Xóa ô nhập nội dung sau khi gửi
+        messageInput.focus(); // Đặt lại focus vào ô nhập nội dung
+    }
+};
+
+async function uploadFile (file) {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('forumID', '1'); // Thay bằng ID phòng chat thực tế
+    formData.append('userID', '1'); // Thay bằng ID người dùng thực tế
+
+    for (const file of files){
+        formData.append('file', file);
+    }
+
+    try {
+        const response = await fetch('https://localhost:5000/api/upload', {
+            method: 'POST',
+            body: formData,
+        });
+       const result = await response.json();
+        if (response.ok) {
+            console.log('Upload thành công:', result.message);
+            // Tin nhắn file sẽ được server gửi về qua socket, không cần làm gì thêm
+        } else {
+            alert('Lỗi upload file: ' + result.error);
+        }
+    } catch (error) {
+        console.error('Lỗi fetch khi upload:', error);
+        alert('Không thể kết nối đến server để upload file.');
+    } finally {
+        // Ẩn spinner/loading
+    }
+}
+
+socket.on('connect', () => {
+    console.log('Đã kết nối tới Socket.IO server với ID:', socket.id);
+    // Tham gia phòng chat sau khi kết nối
+    socket.emit('joinRoom', 'forum_1'); // Tên phòng phải khớp với server
+});
+
+socket.on('newMessage', (message) => {
+    console.log('Nhận tin nhắn mới:', message);
+    addMessage(message);
+});
+
+socket.on('disconnect', () => {
+    console.log('Đã mất kết nối với Socket.IO server.');
+});
+
+
+// --- DOM Event Listeners ---
+sendButton.addEventListener('click', sendMessage);
+messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+// Kích hoạt input ẩn khi nhấn nút
+sendImageBtn.addEventListener('click', () => imageInput.click());
+attachFileBtn.addEventListener('click', () => fileInput.click());
+
+// Xử lý khi người dùng đã chọn file
+imageInput.addEventListener('change', (e) => uploadFiles(e.target.files));
+fileInput.addEventListener('change', (e) => uploadFiles(e.target.files));
+
+
+
+
+
+
 // Utility Functions
 const formatTime = (date) => {
     return new Intl.DateTimeFormat('vi-VN', {
@@ -74,36 +185,6 @@ const formatTime = (date) => {
 
 const scrollToBottom = () => {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
-};
-
-// Message Handling
-const addMessage = (text, type = 'sent', replyTo = null) => {
-    const message = {
-        id: Date.now().toString(),
-        text,
-        type,
-        replyTo,
-        timestamp: new Date()
-    };
-
-    messages.push(message);
-    const messageElement = createMessageElement(message);
-    messagesContainer.appendChild(messageElement);
-    scrollToBottom();
-
-    // Clear reply state after sending
-    if (replyTo) {
-        clearReplyState();
-    }
-};
-
-const sendMessage = () => {
-    const text = messageInput.value.trim();
-    if (text) {
-        addMessage(text, 'sent', replyingTo);
-        messageInput.value = '';
-        messageInput.focus();
-    }
 };
 
 // Dropdown Menu Functionality
@@ -292,6 +373,8 @@ const handleShare = () => {
     }
 };
 
+// !Tạm thời bỏ phần này đi (Thông)
+/*
 // Event Listeners
 sendButton.addEventListener('click', sendMessage);
 
@@ -343,9 +426,11 @@ document.querySelectorAll('.input-actions button').forEach(button => {
 
 // Event Listeners
 collapsePinnedBtn.addEventListener('click', togglePinnedSection);
+*/
+
 
 // Initial Messages
-const initialMessages = [
+/*const initialMessages = [
     {
         text: 'Chào mừng bạn đến với nhóm chat!',
         type: 'received',
@@ -362,6 +447,7 @@ const initialMessages = [
 initialMessages.forEach(msg => {
     addMessage(msg.text, msg.type);
 });
+*/
 
 // Initialize pinned section
 updatePinnedMessagesList(); 

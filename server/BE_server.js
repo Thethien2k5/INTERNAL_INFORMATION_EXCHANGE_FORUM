@@ -10,8 +10,7 @@ const fs = require("fs");
 const otpRoutes = require("./router/otp_server.js");
 const loginRoutes = require("./router/Repair_Login.js");
 const {initializeSocket} = require("./socket.js"); // Import hàm khởi tạo Socket.IO
-const createFileRouter = require("./router/file.js"); // Import router để xử lý upload file
-
+const createFileRouter = require("./router/fileRouter.js"); // Import router để xử lý upload file
 
 // --------------------Khởi tạo--------------------
 const app = express();
@@ -49,6 +48,15 @@ else {
 }
 
 
+
+// --------------------Khởi tạo Server---------------------
+//const PORT = process.env.PORT || 5000; //// Nào up lên môi trường thì dùng
+const BE_PORT = 5000;
+httpsServer.listen(BE_PORT, () => {
+  console.log(`BE_Server đang chạy trên cổng ${BE_PORT}`);
+});
+
+
 // --------------------Khởi tạo Socket.IO--------------------
 const io = new Server(httpsServer, {
   cors: {
@@ -58,17 +66,12 @@ const io = new Server(httpsServer, {
 });
 initializeSocket(io); // Gọi hàm khởi tạo Socket.IO để thiết lập các sự kiện
 
+
 // --------------------Thiết lập sử dụng router-------------------
 const fileRouter = createFileRouter(io); // Truyền io vào router file để có thể gửi các sự kiện realtime
 app.use("/api", otpRoutes);
-app.use("/api", loginRoutes);
-
-// --------------------Khởi tạo Server---------------------
-//const PORT = process.env.PORT || 5000; //// Nào up lên môi trường thì dùng
-const BE_PORT = 5000;
-httpsServer.listen(BE_PORT, () => {
-  console.log(`BE_Server đang chạy trên cổng ${BE_PORT}`);
-});
+app.use("/api", loginRoutes);// Sử dụng router để xử lý upload file
+app.use("/api", fileRouter); // Sử dụng router để xử lý upload file
 
 // --------------------Xử lý lỗi--------------------
 httpsServer.on("error", (err) => {

@@ -21,15 +21,15 @@ if (fs.existsSync(keyFile) && fs.existsSync(certFile)) {
         execSync('mkcert -version', { stdio: 'pipe' }); // stdio: 'pipe' để không in ra output của lệnh này
 
         // Tạo certificate
-        console.log('⏳ Đang tạo certificate bằng mkcert...');
+        console.log('Đang tạo certificate bằng mkcert...');
         execSync(`mkcert -key-file "${keyFile}" -cert-file "${certFile}" localhost 127.0.0.1`, {
             cwd: certsDir, // Chạy lệnh từ bên trong thư mục certs
             stdio: 'inherit' // Hiển thị output của lệnh này ra terminal
         });
-        console.log('✅ Đã tạo SSL Certificate thành công!');
+        console.log(' Đã tạo SSL Certificate thành công!');
 
     } catch (error) {
-        console.error('\n❌ LỖI: Không thể thực thi lệnh mkcert.');
+        console.error('\n LỖI: Không thể thực thi lệnh mkcert.');
         console.error('Vui lòng đảm bảo bạn đã cài đặt mkcert và thêm nó vào PATH hệ thống.');
         process.exit(1); // Thoát với mã lỗi
     }

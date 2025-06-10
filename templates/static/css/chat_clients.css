@@ -509,3 +509,56 @@ body {
 .pinned-message-options button:hover {
     background-color: #e4e6eb;
 }
+
+
+
+
+/* ---------------------------------!Code này là của Thông-------------------------------------------- */
+
+/* --- File Message Styles --- */
+.message-bubble.file-message {
+    background-color: #f0f2f5;
+    border: 1px solid #e4e6eb;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    max-width: 300px;
+}
+
+.message.sent .message-bubble.file-message {
+    background-color: #e7f3ff;
+    border-color: #cce0ff;
+}
+
+.message-bubble.file-message:hover {
+    background-color: #e4e6eb;
+}
+
+.message.sent .message-bubble.file-message:hover {
+    background-color: #dbeaff;
+}
+
+.file-icon {
+    font-size: 24px;
+    color: #0084ff;
+    flex-shrink: 0;
+}
+
+.file-info {
+    overflow: hidden;
+    color: #050505;
+}
+
+.file-info .file-name {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-info .file-size {
+    font-size: 12px;
+    color: #65676b;
+}
