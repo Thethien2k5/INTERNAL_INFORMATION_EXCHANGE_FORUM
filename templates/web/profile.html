@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hồ sơ người dùng</title>
+</head>
+<body>
+  <h1>Hồ sơ người dùng</h1>
+  <div id="user-info"></div>
+
+  <script>
+    // Lấy tên người dùng từ URL
+    const params = new URLSearchParams(window.location.search);
+    const userName = params.get('user');
+
+    if (userName) {
+      document.getElementById('user-info').innerHTML = `<h2>${userName}</h2>`;
+    } else {
+      document.getElementById('user-info').textContent = "Không tìm thấy người dùng.";
+    }
+  </script>
+</body>
+</html>

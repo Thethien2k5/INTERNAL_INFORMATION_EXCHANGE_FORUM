@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const cors = require("cors");
 const fs = require("fs").promises; // Để đọc tệp không đồng bộ
-const { authenticate } = require("@google-cloud/local-auth");
+// const { authenticate } = require("@google-cloud/local-auth");
 const { google } = require("googleapis");
 const bcrypt = require("bcrypt");
 const { CheckEmail, CheckUserName, AddUser } = require("../../mysql/dbUser");
@@ -30,9 +30,9 @@ async function loadSavedCredentialsIfExist() {
   }
 }
 
-/**
- * Tuần tự hóa thông tin xác thực vào tệp tương thích với GoogleAUth.fromJSON.
- */
+// /**
+//  * Tuần tự hóa thông tin xác thực vào tệp tương thích với GoogleAUth.fromJSON.
+//  */
 async function saveCredentials(client) {
   const content = await fs.readFile(CREDENTIALS_PATH);
   const keys = JSON.parse(content);
@@ -211,6 +211,16 @@ router.post("/send-otp", async (req, res) => {
   }
 
   const { email, username } = req.body;
+  // kiểm tra thông tin đăng ký
+  const usernameRegex = /^[a-zA-Z0-9]+$/;
+  if (!usernameRegex.test(username)) {
+    console.error("Username không hợp lệ:", username);
+    return res.status(400).json({
+      success: false,
+      message:
+        "Username chỉ được chứa chữ cái và số, không có dấu hoặc ký tự đặc biệt",
+    });
+  }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
@@ -341,13 +351,14 @@ router.post("/send-otp", async (req, res) => {
 
     otpTimestamps.set(email, now);
     console.log("Gửi email thành công tới:", email);
+
     return res.json({
       success: true,
       message: "Đã gửi OTP",
       otp, // trả về mã OTP cho frontend
     });
   } catch (error) {
-    console.error("Lỗi khi gửi email qua Gmail:", error);
+    console.error("Lỗi khi gửi email:", error);
     res.status(500).json({
       success: false,
       message: "Gửi OTP qua Gmail thất bại",
@@ -361,7 +372,9 @@ router.post("/send-otp", async (req, res) => {
 router.post("/add-user", async (req, res) => {
   const { username, email, password } = req.body;
   if (!username || !email || !password) {
-    return res.status(400).json({ success: false, message: "Thiếu thông tin!" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Thiếu thông tin!" });
   }
   try {
     // Mã hóa mật khẩu

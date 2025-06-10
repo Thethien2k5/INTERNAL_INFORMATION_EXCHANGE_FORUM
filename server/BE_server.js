@@ -7,7 +7,7 @@ const fs = require("fs");
 
 
 // --------------------Import các module cần thiết--------------------
-const otpRoutes = require("./router/otp_server.js");
+const otpRoutes = require("./router/RegisterAndSendEmail.js");
 const loginRoutes = require("./router/Repair_Login.js");
 const {initializeSocket} = require("./socket.js"); // Import hàm khởi tạo Socket.IO
 const createFileRouter = require("./router/fileRouter.js"); // Import router để xử lý upload file

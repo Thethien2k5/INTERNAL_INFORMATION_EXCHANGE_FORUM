@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           otpBox.style.display = "block";
           alert(
-            `Mã OTP đã được gửi đến email: ${email}\nVui lòng kiểm tra cả thư mục spam nếu không thấy trong hộp thư đến.`
+            `Mã OTP đã được gửi đến email: ${email}.`
           );
         } else {
           throw new Error(data.message || "Lỗi không xác định khi gửi OTP");
