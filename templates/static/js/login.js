@@ -22,7 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = document.getElementById("password").value;
 
     try {
-      const res = await fetch("https://localhost:5000/api/login", {
+      const apiURL = API_CONFIG.getApiUrl(); // Địa chỉ API đăng nhập
+      const res = await fetch(`${apiURL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

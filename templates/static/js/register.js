@@ -3,10 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const otpBox = document.getElementById("otpBox");
   let generatedOTP = "";
   let userEmail = "";
-
+  
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-
+    
+    const apiURL = API_CONFIG.getApiUr(); // Địa chỉ API gửi OTP
     const username = document.getElementById("reg-username").value.trim();
     const email = document.getElementById("reg-email").value.trim();
     const password = document.getElementById("reg-password").value.trim();
@@ -40,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Dữ liệu gửi đi:", { email, username });
 
         // Gọi API để gửi OTP
-        const response = await fetch("https://localhost:5000/api/send-otp", {
+        const response = await fetch(`${apiURL}/api/send-otp`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -103,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("OTP validation successful");
         // Gọi API thêm user mới
         try {
-          const res = await fetch("https://localhost:5000/api/add-user", {
+          const res = await fetch(`${apiURL}/api/add-user`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

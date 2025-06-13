@@ -58,7 +58,7 @@ function initSidebar() {
   if (defaultIcon) {
     defaultIcon.addEventListener("click", () => {
       if (!isLoggedIn()) {
-        window.location.href = "/templates/web/login.html";
+        window.location.href = "/login.html";
       }
     });
   }
@@ -78,5 +78,5 @@ function isLoggedIn() {
 function logout() {
   localStorage.removeItem("token");
   localStorage.removeItem("user"); 
-  window.location.href = "/templates/web/forums.html";
+  window.location.href = "/`templates`/web/forums.html";
 }
