@@ -2,6 +2,8 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
+const { FE_PORT, getLocalIP } = require("./config.js"); // Import cổng của BE_Server từ config.js
+
 
 const app = express();
 
@@ -39,9 +41,12 @@ else {
 }
 
 // --------------------Khởi tạo Server---------------------
-const FE_PORT = 5500;
-httpsServer.listen(FE_PORT, () => {
-  console.log(`FE_Server đang chạy trên cổng ${FE_PORT}`);
+httpsServer.listen(FE_PORT, '0.0.0.0',() => {
+  console.log('FE_Server đã khởi động thành công!');
+  const localIP = getLocalIP();
+  localIP.forEach(ip => {
+    console.log(`     - https://${ip}:${FE_PORT}`);
+  });
 });
 
 // --------------------Xử lý lỗi--------------------

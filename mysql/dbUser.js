@@ -49,10 +49,10 @@ async function GetPassword_hash(username) {
 async function GetAvatar(username) {
   // ví dụ dùng MySQL:
   const [rows] = await pool.query(
-    "SELECT AvatarsUser FROM if_users WHERE username = ?",
+    "SELECT avatar FROM if_users WHERE username = ?",
     [username]
   );
-  return rows[0]?.avatar || null;
+  return rows.length > 0 ? rows[0].avatar : null;
 }
 
 //xuất (export) các biến/hàm ra ngoài file

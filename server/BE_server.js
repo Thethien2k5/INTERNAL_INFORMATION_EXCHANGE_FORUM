@@ -4,7 +4,7 @@ const { Server } = require("socket.io");
 const cors = require("cors"); // Thư viện cho phép truy cập từ các nguồn khác nhau
 const path = require("path");
 const fs = require("fs");
-
+const { BE_PORT, getLocalIP, allowedOrigins } = require("./config.js"); // Import cổng của BE_Server từ config.js
 
 // --------------------Import các module cần thiết--------------------
 const otpRoutes = require("./router/RegisterAndSendEmail.js");
@@ -15,13 +15,10 @@ const createFileRouter = require("./router/fileRouter.js"); // Import router đ�
 // --------------------Khởi tạo--------------------
 const app = express();
 // --------------------Cấu hình CORS--------------------
-const corsOptions = {
-  origin: "https://localhost:5500", // Cho phép truy cập từ địa chỉ này
-  credentials: true // Cho phép gửi cookie và thông tin xác thực
-};
+app.use(cors({origin: allowedOrigins,}));
 
-app.use(cors());
-app.use(express.json());
+
+app.use(express.json()); // Cấu hình để nhận dữ liệu JSON từ client
 
 
 // --------------------Cấu hình HTTPS & chứng chỉ SSL/TLS---------------------
@@ -50,17 +47,19 @@ else {
 
 
 // --------------------Khởi tạo Server---------------------
-//const PORT = process.env.PORT || 5000; //// Nào up lên môi trường thì dùng
-const BE_PORT = 5000;
-httpsServer.listen(BE_PORT, () => {
-  console.log(`BE_Server đang chạy trên cổng ${BE_PORT}`);
+//const PORT = process.env.PORT || 5000; 
+httpsServer.listen(BE_PORT,'0.0.0.0',() => {
+  console.log('BE_Server đã khởi động thành công!');
+  const localIP = getLocalIP();
+  localIP.forEach(ip => {
+    console.log(`     - https://${ip}:${BE_PORT}`);
+  });
 });
-
 
 // --------------------Khởi tạo Socket.IO--------------------
 const io = new Server(httpsServer, {
   cors: {
-    origin: "https://localhost:5500", // Cho phép truy cập từ địa chỉ này
+    origin: allowedOrigins, // Cho phép truy cập từ địa chỉ này
     methods: ["GET", "POST"],
   }
 });
