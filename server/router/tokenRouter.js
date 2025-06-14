@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../config');
-const { findRefreshToken } = require('../../mysql/dbTokens');
+const { findRefreshToken } = require('../../mysql/db.Token');
 const { getUserById } = require('../../mysql/dbUser');
 
 router.post('/refresh-token', async (req, res) => {

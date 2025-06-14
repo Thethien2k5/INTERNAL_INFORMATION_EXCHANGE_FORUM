@@ -6,7 +6,7 @@ const crypto = require("crypto");
 
 // Import các hàm từ cơ sở dữ liệu
 const { GetPassword_hash, GetAvatar, getUserByUsername } = require("../../mysql/dbUser");
-const { storeRefreshToken } = require('../../mysql/dbTokens');
+const { storeRefreshToken } = require('../../mysql/db.Token');
 const { jwtSecret } = require('../config');
 
 // Xử lý POST /api/login

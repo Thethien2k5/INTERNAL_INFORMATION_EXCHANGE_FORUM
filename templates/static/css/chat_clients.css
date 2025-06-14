@@ -1002,3 +1002,61 @@
             height: 100%;
             object-fit: cover;
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+/* Lớp phủ cho màn hình khi chưa xác thực */
+#auth-overlay {
+    position: fixed; /* Phủ lên toàn bộ màn hình */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7); /* Nền đen mờ */
+    backdrop-filter: blur(8px); /* Hiệu ứng làm mờ nội dung phía sau */
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999; /* Luôn nằm trên cùng */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 1.2em;
+    text-align: center;
+    flex-direction: column;
+    gap: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+#auth-overlay.show {
+    opacity: 1;
+}
+
+/* Biểu tượng loading xoay tròn */
+.loader {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #008fe5; /* Màu xanh zalo */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}     

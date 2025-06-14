@@ -1,5 +1,4 @@
 node_modules/
-server/credentials.json
-server/token.json
-server/certs/
+server/certs
+
 

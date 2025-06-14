@@ -1,6 +1,6 @@
 // a/internal_information_exchange_forum/INTERNAL_INFORMATION_EXCHANGE_FORUM-2182a44dd49a4e4e5f03831f79663ed01dfd8885/mysql/db.Forums.js
 
-const pool = require('../config/db'); // Import kết nối CSDL
+const pool = require('./dbUser'); // Import kết nối CSDL
 
 
 // Hàm tạo nhóm chat mới
