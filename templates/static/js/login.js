@@ -18,16 +18,15 @@ document.addEventListener("DOMContentLoaded", () => {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value;
+    const username = loginForm.username.value.trim();
+    const password = loginForm.password.value;
+    const apiURL = API_CONFIG.getApiUrl();
 
     try {
-      const apiURL = API_CONFIG.getApiUrl(); // Địa chỉ API đăng nhập
-      const res = await fetch(`${apiURL}/api/login`, {
+      const res = await fetch(apiURL+"/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
         },
         body: JSON.stringify({ username, password }),
       });
@@ -35,19 +34,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
 
       if (data.success) {
-        // Lưu username
-        localStorage.setItem("username", username);
+        // Lưu Access Token vào localStorage
+        localStorage.setItem('accessToken', data.accessToken);
 
-        // Lưu avatar (nếu có), nếu không thì dùng ảnh mặc định
-        const avatar = data.user?.avatar?.trim() || "templates/static/images/logoT3V.png";
-        localStorage.setItem("avatar", avatar);
+        // Dùng JSON.stringify để chuyển object thành chuỗi trước khi lưu
+        localStorage.setItem('user', JSON.stringify(data.user));
 
-        // Nếu muốn lưu thêm token thì cần server trả về token (chưa thấy có)
-        // localStorage.setItem("token", data.token); // Nếu server có trả về
 
-        window.location.href = "index.html"; // Chuyển sang trang chính
+        alert("Đăng nhập thành công!");
+        window.location.href = '/web/chat_clients.html'; // Hoặc trang chính của bạn
+
       } else {
-        alert(data.message || "Sai tên đăng nhập hoặc mật khẩu!");
+        alert("Lỗi ở login: "+ data.message);
       }
     } catch (err) {
       alert("Lỗi đăng nhập: " + err.message);
