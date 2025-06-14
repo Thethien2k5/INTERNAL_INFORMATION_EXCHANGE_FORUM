@@ -32,10 +32,11 @@ const allowedOrigins = [
 //*Lưu ý: (...) là toán tử spread, nó sẽ "phá vỡ" mảng localIP thành các phần tử riêng lẻ và thêm chúng vào mảng allowedOrigins
 // ví dụ: không có (...) thì mảng sẽ là ["https://localhost:5500", ["https://192.168.1.6]]
 // Nếu có (...) thì mảng sẽ là ["https://localhost:5500", "https://192.168.1.6"]
-
+const jwtSecret = 'c89b76c82f76f7a6a4e3a9c1b3f7e6e3d2a1b0c9f8d7e6d5c4b3a2a1b0c9f8d7e6d5c4b3a2a1b0c9f8d7e6d5c4b3a2a1b0c9f8d7e6d5c4b3a2a1b0c9f8d7e6d5';
 module.exports = {
     allowedOrigins, // Danh sách các địa chỉ được phép truy cập
     BE_PORT, // Cổng của BE_Server
     FE_PORT, // Cổng của FE_Server
+    jwtSecret, // Mã bí mật dùng để mã hóa JWT
     getLocalIP // Hàm lấy địa chỉ IP cục bộ 
 };

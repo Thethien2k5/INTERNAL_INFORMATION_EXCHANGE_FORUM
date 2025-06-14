@@ -75,7 +75,7 @@ CREATE TABLE `if_messages` (
 --
 -- Cấu trúc bảng cho bảng `if_users`
 --
-
+ 
 CREATE TABLE `if_users` (
   `id` int(10) UNSIGNED NOT NULL,
   `username` varchar(50) NOT NULL,
@@ -84,6 +84,19 @@ CREATE TABLE `if_users` (
   `avatar` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+-- Bảng lưu trữ Refresh Tokens cho việc xác thực lâu dài
+CREATE TABLE `if_refresh_tokens` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` INT UNSIGNED NOT NULL,
+  `token` VARCHAR(255) NOT NULL,
+  `expires_at` DATETIME NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `token` (`token`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `if_refresh_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `if_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 --
 -- Đang đổ dữ liệu cho bảng `if_users`
 --

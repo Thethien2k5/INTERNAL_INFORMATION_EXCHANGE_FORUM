@@ -1,3 +1,5 @@
+const { APIS } = require("googleapis/build/src/apis");
+
 document.addEventListener("DOMContentLoaded", () => {
   const registerForm = document.getElementById("registerForm");
   const otpBox = document.getElementById("otpBox");
@@ -7,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     
-    const apiURL = API_CONFIG.getApiUr(); // Địa chỉ API gửi OTP
+    const apiURL = API_CONFIG.getApiUrl();
     const username = document.getElementById("reg-username").value.trim();
     const email = document.getElementById("reg-email").value.trim();
     const password = document.getElementById("reg-password").value.trim();

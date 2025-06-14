@@ -54,6 +54,23 @@ async function GetAvatar(username) {
   );
   return rows.length > 0 ? rows[0].avatar : null;
 }
+// Lấy thông tin người dùng theo tên đăng nhập
+async function getUserByUsername(username) {
+  const [rows] = await pool.execute(
+    "SELECT id, username, email, avatar FROM if_users WHERE username = ? LIMIT 1",
+    [username]
+  );
+  return rows.length > 0 ? rows[0] : null;
+}
+
+// Lấy thông tin người dùng theo ID
+async function getUserById(userId) {
+  const [rows] = await pool.execute(
+    "SELECT id, username, email, avatar FROM if_users WHERE id = ? LIMIT 1",
+    [userId]
+  );
+  return rows.length > 0 ? rows[0] : null;
+}
 
 //xuất (export) các biến/hàm ra ngoài file
 module.exports = {
@@ -63,4 +80,5 @@ module.exports = {
   AddUser,
   GetPassword_hash,
   GetAvatar,
+  getUserByUsername
 };

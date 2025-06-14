@@ -34,4 +34,37 @@ async function saveMessage(messageData) {
     }
 }
 
-module.exports = { saveMessage };
+
+async function getMessagesForForum(forumId) {
+    try {
+        const sql = `
+            SELECT
+                m.id,
+                m.forum_id,
+                m.user_id,
+                u.username,
+                u.avatar,
+                m.content_type,
+                m.content_text,
+                m.file_name,
+                m.file_path,
+                m.file_size,
+                m.file_mime_type,
+                m.created_at
+            FROM if_messages m
+            JOIN if_users u ON m.user_id = u.id
+            WHERE m.forum_id = ?
+            ORDER BY m.created_at ASC; 
+        `;
+        const [messages] = await pool.execute(sql, [forumId]);
+        return messages;
+    } catch (error) {
+        console.error('Lỗi khi lấy tin nhắn cho forum:', error);
+        throw error; // Ném lỗi để tầng trên xử lý
+    }
+}
+
+module.exports = { 
+    saveMessage,
+    getMessagesForForum 
+};

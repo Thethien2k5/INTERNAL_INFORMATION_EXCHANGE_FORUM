@@ -4,19 +4,21 @@ const { Server } = require("socket.io");
 const cors = require("cors"); // Thư viện cho phép truy cập từ các nguồn khác nhau
 const path = require("path");
 const fs = require("fs");
-const { BE_PORT, getLocalIP, allowedOrigins } = require("./config.js"); // Import cổng của BE_Server từ config.js
-
+const cookieParser = require("cookie-parser"); // Thư viện để phân tích cookie
 // --------------------Import các module cần thiết--------------------
+const { BE_PORT, getLocalIP, allowedOrigins } = require("./config.js"); // Import cổng của BE_Server từ config.js
 const otpRoutes = require("./router/RegisterAndSendEmail.js");
 const loginRoutes = require("./router/Repair_Login.js");
 const {initializeSocket} = require("./socket.js"); // Import hàm khởi tạo Socket.IO
 const createFileRouter = require("./router/fileRouter.js"); // Import router để xử lý upload file
+const tokenRouter = require('./router/tokenRouter'); // Import router để xử lý token
+const forumRouters = require("./router/forumRouter.js"); // Import router để xử lý forum
 
 // --------------------Khởi tạo--------------------
 const app = express();
 // --------------------Cấu hình CORS--------------------
 app.use(cors({origin: allowedOrigins,}));
-
+app.use(cookieParser()); // Sử dụng cookie-parser để phân tích cookie
 
 app.use(express.json()); // Cấu hình để nhận dữ liệu JSON từ client
 
@@ -71,6 +73,8 @@ const fileRouter = createFileRouter(io); // Truyền io vào router file để c
 app.use("/api", otpRoutes);
 app.use("/api", loginRoutes);// Sử dụng router để xử lý upload file
 app.use("/api", fileRouter); // Sử dụng router để xử lý upload file
+app.use("/api/forums", forumRouters); // Sử dụng router để xử lý các diễn đàn
+app.use("/api", tokenRouter); // Sử dụng router để xử lý token
 
 // --------------------Xử lý lỗi--------------------
 httpsServer.on("error", (err) => {
