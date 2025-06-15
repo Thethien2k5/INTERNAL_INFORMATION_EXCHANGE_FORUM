@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const apiURL = API_CONFIG.getApiUrl();
 
     try {
-      const res = await fetch(apiURL+"/login", {
+      const res = await fetch(apiURL+"/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         alert("Đăng nhập thành công!");
-        window.location.href = '/web/chat_clients.html'; // Hoặc trang chính của bạn
+        window.location.href = '../web/chat_clients.html'; // Hoặc trang chính của bạn
 
       } else {
         alert("Lỗi ở login: "+ data.message);

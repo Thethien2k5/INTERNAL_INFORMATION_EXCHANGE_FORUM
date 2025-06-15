@@ -22,6 +22,7 @@ app.use(cookieParser()); // Sử dụng cookie-parser để phân tích cookie
 
 app.use(express.json()); // Cấu hình để nhận dữ liệu JSON từ client
 
+app.use('/uploads',express.static(path.join(__dirname,'..','uploads'))); //Cấu hình nơi lưu trữ
 
 // --------------------Cấu hình HTTPS & chứng chỉ SSL/TLS---------------------
 let httpsServer; // Biến để lưu trữ server HTTPS

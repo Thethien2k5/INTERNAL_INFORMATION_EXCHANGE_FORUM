@@ -1,4 +1,3 @@
-const { APIS } = require("googleapis/build/src/apis");
 
 document.addEventListener("DOMContentLoaded", () => {
   const registerForm = document.getElementById("registerForm");
@@ -43,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Dữ liệu gửi đi:", { email, username });
 
         // Gọi API để gửi OTP
-        const response = await fetch(`${apiURL}/api/send-otp`, {
+        const response = await fetch(apiURL+'/api/send-otp', {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -106,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("OTP validation successful");
         // Gọi API thêm user mới
         try {
-          const res = await fetch(`${apiURL}/api/add-user`, {
+          const res = await fetch(apiURL+'/api/add-user', {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

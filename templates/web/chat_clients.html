@@ -15,10 +15,23 @@
                 <input type="text" class="search-input" placeholder="Tìm kiếm">
             </div>
             
+            <div style="padding: 10px 16px;">
+                <button id="create-group-btn" style="width: 100%; padding: 10px; border-radius: 8px; border: none; background-color: var(--zalo-primary); color: white; cursor: pointer; font-weight: bold;">
+                <i class="fas fa-plus"></i> Tạo nhóm mới
+                </button>
+            </div>
+
             <div class="group-categories">
                 <div class="category">
                     <div class="category-title">Nhóm của tôi</div>
                     <div class="group-list">
+
+                        <!-- Load -->
+                        <div class="loader-container" style="display: flex; justify-content: center; padding: 20px;">
+                        <div class="loader"></div>
+                        <!-- Load -->
+
+
                         <div class="group-item active">
                             <div class="group-item-avatar">
                                 <i class="fas fa-users"></i>
@@ -101,143 +114,7 @@
                 </div>
             </header>
 
-            <div class="messages-area" id="messagesArea">
-                <div class="date-divider">
-                    <span>Hôm nay</span>
-                </div>
-
-                <!-- Sample messages -->
-                <div class="message received" style="animation-delay: 0.1s;">
-                    <div class="message-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="message-sender">Cử Đầu Thiên</span>
-                            <span class="message-time">18:32</span>
-                        </div>
-                        <div class="message-bubble">
-                            @All báo cáo: https://docs.google.com/document/d/1Tp...
-                        </div>
-                        <div class="message-actions">
-                            <button class="message-action" title="Trả lời">
-                                <i class="fas fa-reply"></i>
-                            </button>
-                            <button class="message-action" title="Chia sẻ">
-                                <i class="fas fa-share"></i>
-                            </button>
-                            <button class="message-action" title="Tùy chọn" onclick="showMessageContextMenu(event)">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="message received" style="animation-delay: 0.2s;">
-                    <div class="message-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="message-sender">Cử Đầu Thiên</span>
-                            <span class="message-time">18:32</span>
-                        </div>
-                        <div class="message-bubble">
-                            <strong>Thongu</strong><br>
-                            3 con hegi phong(jj)
-                        </div>
-                        <div class="message-actions">
-                            <button class="message-action" title="Trả lời">
-                                <i class="fas fa-reply"></i>
-                            </button>
-                            <button class="message-action" title="Chia sẻ">
-                                <i class="fas fa-share"></i>
-                            </button>
-                            <button class="message-action" title="Tùy chọn" onclick="showMessageContextMenu(event)">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="message received" style="animation-delay: 0.3s;">
-                    <div class="message-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="message-sender">Cử Đầu Thiên</span>
-                            <span class="message-time">18:32</span>
-                        </div>
-                        <div class="message-bubble">
-                            @Thongu đổi hình mạnh nhất của nó đây
-                        </div>
-                        <div class="message-actions">
-                            <button class="message-action" title="Trả lời">
-                                <i class="fas fa-reply"></i>
-                            </button>
-                            <button class="message-action" title="Chia sẻ">
-                                <i class="fas fa-share"></i>
-                            </button>
-                            <button class="message-action" title="Tùy chọn" onclick="showMessageContextMenu(event)">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="message received" style="animation-delay: 0.4s;">
-                    <div class="message-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="message-sender">Nhóm lập trình Mạng</span>
-                            <span class="message-time">18:32</span>
-                        </div>
-                        <div class="message-bubble">
-                            Tất phòng báo
-                        </div>
-                        <div class="message-actions">
-                            <button class="message-action" title="Trả lời">
-                                <i class="fas fa-reply"></i>
-                            </button>
-                            <button class="message-action" title="Chia sẻ">
-                                <i class="fas fa-share"></i>
-                            </button>
-                            <button class="message-action" title="Tùy chọn" onclick="showMessageContextMenu(event)">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="message received" style="animation-delay: 0.5s;">
-                    <div class="message-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="message-content">
-                        <div class="message-header">
-                            <span class="message-sender">Cử Đầu Thiên</span>
-                            <span class="message-time">18:33</span>
-                        </div>
-                        <div class="message-bubble">
-                            mua máy cắt năng lv echo ở đầu v @Thongu
-                        </div>
-                        <div class="message-actions">
-                            <button class="message-action" title="Trả lời">
-                                <i class="fas fa-reply"></i>
-                            </button>
-                            <button class="message-action" title="Chia sẻ">
-                                <i class="fas fa-share"></i>
-                            </button>
-                            <button class="message-action" title="Tùy chọn" onclick="showMessageContextMenu(event)">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="messages-area" id="messagesArea"> </div>
 
             <div class="input-area">
                 <div class="input-tools">
@@ -336,52 +213,6 @@
                 <div class="info-section-title">
                     <span>Thành viên đang hoạt động</span>
                 </div>
-                <div class="member-list">
-                    <div class="member-item">
-                        <div class="member-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="member-info">
-                            <div class="member-name">Cử Đầu Thiên</div>
-                            <div class="member-status status-online">Đang hoạt động</div>
-                        </div>
-                    </div>
-                    <div class="member-item">
-                        <div class="member-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="member-info">
-                            <div class="member-name">Thongu</div>
-                            <div class="member-status status-online">Đang hoạt động</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="info-section">
-                <div class="info-section-title">
-                    <span>Thành viên khác</span>
-                </div>
-                <div class="member-list">
-                    <div class="member-item">
-                        <div class="member-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="member-info">
-                            <div class="member-name">Nguyễn Khánh</div>
-                            <div class="member-status status-offline">2 ngày trước</div>
-                        </div>
-                    </div>
-                    <div class="member-item">
-                        <div class="member-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="member-info">
-                            <div class="member-name">Hoàng Quận</div>
-                            <div class="member-status status-offline">2 ngày trước</div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </aside>
 
@@ -467,7 +298,21 @@
 
     <div class="app-container"> </div>
 
-
+    <div class="modal" id="createGroupModal" style="display: none;">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Tạo Nhóm Mới</h2>
+                <button class="modal-close" id="closeCreateGroupModal">&times;</button>
+            </div>
+        <form id="createGroupForm" style="padding: 16px;">
+                <label for="groupName">Tên nhóm:</label>
+                <input type="text" id="groupName" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                <label for="groupTopic">Chủ đề (Topic):</label>
+                <textarea id="groupTopic" style="width: 100%; padding: 8px; min-height: 80px;"></textarea>
+                <button type="submit" style="width: 100%; padding: 10px; margin-top: 10px; border: none; background-color: var(--zalo-primary); color: white; cursor: pointer; border-radius: 8px;">Tạo Nhóm</button>
+        </form>
+        </div>
+    </div>
 
 </body>
 

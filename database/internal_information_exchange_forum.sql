@@ -11,7 +11,6 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -24,9 +23,28 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `if_users`
+--
+CREATE TABLE `if_users` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `avatar` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `if_users`
+--
+INSERT INTO `if_users` (`id`, `username`, `email`, `password_hash`, `avatar`) VALUES
+(1, 'thien', 'thienobita0203@gmail.com', 'fqjkfbnkjbfddlknf', NULL);
+
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `if_forums`
 --
-
 CREATE TABLE `if_forums` (
   `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(100) NOT NULL,
@@ -43,7 +61,6 @@ CREATE TABLE `if_forums` (
 --
 -- Cấu trúc bảng cho bảng `if_forum_members`
 --
-
 CREATE TABLE `if_forum_members` (
   `id` int(10) UNSIGNED NOT NULL,
   `forum_id` int(10) UNSIGNED NOT NULL,
@@ -56,7 +73,6 @@ CREATE TABLE `if_forum_members` (
 --
 -- Cấu trúc bảng cho bảng `if_messages`
 --
-
 CREATE TABLE `if_messages` (
   `id` int(10) UNSIGNED NOT NULL,
   `forum_id` int(10) UNSIGNED NOT NULL,
@@ -73,123 +89,97 @@ CREATE TABLE `if_messages` (
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `if_users`
---
- 
-CREATE TABLE `if_users` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password_hash` varchar(255) NOT NULL,
-  `avatar` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
+-- Cấu trúc bảng cho bảng `if_refresh_tokens`
 -- Bảng lưu trữ Refresh Tokens cho việc xác thực lâu dài
+--
 CREATE TABLE `if_refresh_tokens` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_id` INT UNSIGNED NOT NULL,
-  `token` VARCHAR(255) NOT NULL,
-  `expires_at` DATETIME NOT NULL,
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `token` (`token`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `if_refresh_tokens_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `if_users` (`id`) ON DELETE CASCADE
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
---
--- Đang đổ dữ liệu cho bảng `if_users`
---
 
-INSERT INTO `if_users` (`id`, `username`, `email`, `password_hash`) VALUES
-(1, 'thien', 'thienobita0203@gmail.com', 'fqjkfbnkjbfddlknf');
 
 --
 -- Chỉ mục cho các bảng đã đổ
 --
 
---
--- Chỉ mục cho bảng `if_forums`
---
-ALTER TABLE `if_forums`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_forums_users` (`created_by_user_id`);
-
---
--- Chỉ mục cho bảng `if_forum_members`
---
-ALTER TABLE `if_forum_members`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `forum_id` (`forum_id`,`user_id`),
-  ADD KEY `fk_forum_members_users` (`user_id`);
-
---
--- Chỉ mục cho bảng `if_messages`
---
-ALTER TABLE `if_messages`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_messages_forums` (`forum_id`),
-  ADD KEY `fk_messages_users` (`user_id`);
-
---
 -- Chỉ mục cho bảng `if_users`
---
 ALTER TABLE `if_users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `username` (`username`),
   ADD UNIQUE KEY `email` (`email`);
 
+-- Chỉ mục cho bảng `if_forums`
+ALTER TABLE `if_forums`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_forums_users` (`created_by_user_id`);
+
+-- Chỉ mục cho bảng `if_forum_members`
+ALTER TABLE `if_forum_members`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `forum_id` (`forum_id`,`user_id`),
+  ADD KEY `fk_forum_members_users` (`user_id`);
+
+-- Chỉ mục cho bảng `if_messages`
+ALTER TABLE `if_messages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_messages_forums` (`forum_id`),
+  ADD KEY `fk_messages_users` (`user_id`);
+  
+-- Chỉ mục cho bảng `if_refresh_tokens`
+ALTER TABLE `if_refresh_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `token` (`token`),
+  ADD KEY `user_id` (`user_id`);
+
 --
 -- AUTO_INCREMENT cho các bảng đã đổ
 --
 
---
+-- AUTO_INCREMENT cho bảng `if_users`
+ALTER TABLE `if_users`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 -- AUTO_INCREMENT cho bảng `if_forums`
---
 ALTER TABLE `if_forums`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
 -- AUTO_INCREMENT cho bảng `if_forum_members`
---
 ALTER TABLE `if_forum_members`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
 -- AUTO_INCREMENT cho bảng `if_messages`
---
 ALTER TABLE `if_messages`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
---
--- AUTO_INCREMENT cho bảng `if_users`
---
-ALTER TABLE `if_users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+-- AUTO_INCREMENT cho bảng `if_refresh_tokens`
+ALTER TABLE `if_refresh_tokens`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
 --
 
---
 -- Các ràng buộc cho bảng `if_forums`
---
 ALTER TABLE `if_forums`
   ADD CONSTRAINT `fk_forums_users` FOREIGN KEY (`created_by_user_id`) REFERENCES `if_users` (`id`) ON DELETE CASCADE;
 
---
 -- Các ràng buộc cho bảng `if_forum_members`
---
 ALTER TABLE `if_forum_members`
   ADD CONSTRAINT `fk_forum_members_forums` FOREIGN KEY (`forum_id`) REFERENCES `if_forums` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_forum_members_users` FOREIGN KEY (`user_id`) REFERENCES `if_users` (`id`) ON DELETE CASCADE;
 
---
 -- Các ràng buộc cho bảng `if_messages`
---
 ALTER TABLE `if_messages`
   ADD CONSTRAINT `fk_messages_forums` FOREIGN KEY (`forum_id`) REFERENCES `if_forums` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_messages_users` FOREIGN KEY (`user_id`) REFERENCES `if_users` (`id`) ON DELETE CASCADE;
+
+-- Các ràng buộc cho bảng `if_refresh_tokens`
+ALTER TABLE `if_refresh_tokens`
+  ADD CONSTRAINT `fk_refresh_tokens_users` FOREIGN KEY (`user_id`) REFERENCES `if_users` (`id`) ON DELETE CASCADE;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

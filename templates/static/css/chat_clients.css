@@ -1060,3 +1060,77 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }     
+
+
+/* Hiệu ứng chuyển động cho group-item */
+.group-item {
+    transition: background-color 0.2s ease-in-out, border-left-color 0.2s ease-in-out;
+}
+
+/* Tin nhắn của bản thân được căn phải */
+.message.sent {
+    flex-direction: row-reverse; /* Đảo ngược thứ tự avatar và content */
+}
+
+.message.sent .message-content {
+    align-items: flex-end;
+}
+
+.message.sent .message-header {
+    flex-direction: row-reverse; /* Đảo ngược tên và thời gian */
+}
+
+.message.sent .message-avatar {
+    margin-left: 12px;
+    margin-right: 0;
+}
+
+/* CSS cho avatar trong tin nhắn và danh sách thành viên */
+.message-avatar img, .member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Trạng thái loading */
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--zalo-primary);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Cải thiện input area */
+.input-area {
+    background: var(--sidebar-light); /* Đổi màu nền cho đồng bộ */
+    border-top: 1px solid var(--border-light);
+}
+
+.message-input-container {
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 24px; /* Bo tròn hơn */
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+}
+
+.message-input {
+    max-height: 100px; /* Giới hạn chiều cao */
+}
+
+/* Thêm icon cho header chat */
+.chat-title .group-avatar-header {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+}
