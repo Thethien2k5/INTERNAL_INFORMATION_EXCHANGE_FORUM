@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getForumsForUser, getForumMembers } = require('../../mysql/db.Forums');
+const {getForumsForUser, getForumMembers,createForum } = require('../../mysql/db.Forums');
 const {getMessagesForForum } = require('../../mysql/db.Messages');
 // Middleware để xác thực token (nếu cần) import
 const verifyToken = require('../middleware/verifyToken');

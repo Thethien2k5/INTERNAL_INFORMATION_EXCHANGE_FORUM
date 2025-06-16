@@ -1,6 +1,6 @@
 // a/internal_information_exchange_forum/INTERNAL_INFORMATION_EXCHANGE_FORUM-2182a44dd49a4e4e5f03831f79663ed01dfd8885/mysql/db.Forums.js
 
-const pool = require('./dbUser'); // Import kết nối CSDL
+const {pool} = require('./dbUser'); // Import kết nối CSDL
 
 
 // Hàm tạo nhóm chat mới
@@ -9,8 +9,8 @@ async function createForum(name, topic, creatorId) {
     try {
         await connection.beginTransaction(); // Bắt đầu transaction để đảm bảo toàn vẹn dữ liệu
 
-        // Tạo nhóm chat mới trong bảng `if_forums`
-        const createForumSql = `INSERT INTO if_forums (name, topic, creator_id) VALUES (?, ?, ?)`;
+        // SỬA LỖI: Đổi `creator_id` thành `created_by_user_id` cho đúng với CSDL
+        const createForumSql = `INSERT INTO if_forums (name, topic, created_by_user_id) VALUES (?, ?, ?)`;
         const [result] = await connection.execute(createForumSql, [name, topic, creatorId]);
         const newForumId = result.insertId;
 
@@ -19,9 +19,9 @@ async function createForum(name, topic, creatorId) {
         await connection.execute(addMemberSql, [newForumId, creatorId]);
 
         await connection.commit(); // Hoàn tất transaction nếu mọi thứ thành công
-        
-        // Trả về thông tin nhóm vừa tạo
-        return { id: newForumId, name, topic, creator_id: creatorId };
+
+        // Trả về thông tin nhóm vừa tạo (đã sửa lại cho nhất quán với tên cột)
+        return { id: newForumId, name, topic, created_by_user_id: creatorId };
     } catch (error) {
         await connection.rollback(); // Hoàn tác mọi thay đổi nếu có lỗi
         console.error('Lỗi khi tạo forum:', error);

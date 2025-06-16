@@ -4,9 +4,8 @@ document.head.appendChild(socketIoScript);
 
 
 function initializeApp () {
-    document.addEventListener("DOMContentLoaded", () => {
-     // ---------------------------------DOM Elements--------------------------------
 
+     // ---------------------------------DOM Elements--------------------------------
 
     // const darkModeToggle = document.getElementById('darkModeToggle');
     // const toggleGroupsSidebar = document.getElementById('toggleGroupsSidebar');
@@ -43,7 +42,8 @@ function initializeApp () {
     const chatHeaderTitle = document.querySelector('.chat-title h2');
 
     // Kiểm tra xem người dùng đã đăng nhập chưa
-    const user = localStorage.getItem('user');
+    const userString = localStorage.getItem('user');
+    const user = userString ? JSON.parse(userString) : null;
     let forumId = null;
     let socket ; // Khởi tạo Socket.IO client
     // ======================== XÁC THỰC NGƯỜI DÙNG ========================
@@ -80,7 +80,7 @@ function initializeApp () {
     }
     // ======================== TIN NHẮN VÀ FILE ===================================
     // --------------------- Render từng tin nhắn + file đã gửi --------------------------
-    function renderSingleMessage (mgs){
+    function renderSingleMessage (msg){
         const messageDiv = document.createElement('div');
         const isSentByMe = msg.user_id === user.id;
         messageDiv.className = `message ${isSentByMe ? 'sent' : 'received'}`;
@@ -214,32 +214,34 @@ function initializeApp () {
     // ============================== NHÓM CHAT ==============================
     
     // -------- Hàm chọn nhóm và cập nhật tiêu đề chat header ----------
-    async function selectForum(forumId, forumName) {
-        if (forumId === forumId) return; // Nếu đã chọn nhóm này thì không làm gì cả
+    async function selectForum(id,forumName) {
+        if (id === forumId) return; // Nếu đã chọn nhóm này thì không làm gì cả
 
         // Rời phòng chat cũ nếu có
         if (socket && forumId) {
-            socket.emit('leaveForum', forumId);
+            socket.emit('leaveForum',  `forum_${forumId}`);
         }
 
         // Cập nhật forumId mới
         forumId = id;
         chatHeaderTitle.textContent = forumName;
+
+        // Tạo cái load tin nhắn xoay khi đợi lấy tin nhắn từ server
         messagesArea.innerHTML = '<div class="loader"></div>';
         memberListContainer.innerHTML = '<div class="loader"></div>';
 
         // Tham gia phòng chat mới
         if (socket) {
-            socket.emit('joinRoom', currentForumId);
+            socket.emit('joinRoom',`forum_${forumId}`);
         }
 
         try {
-            // Lấy tin nhắn và thành viên của nhóm mới
+            // Lấy tin nhắn và thành viên của nhóm mới 
             const [messagesRes, membersRes] = await Promise.all([
                 apiService.fetch(`/api/forums/${forumId}/messages`),
                 apiService.fetch(`/api/forums/${forumId}/members`)
             ]);
-            
+            // render ra tin nhắn
             if (messagesRes.success) renderMessages(messagesRes.data);
             if (membersRes.success) renderMembers(membersRes.data);
             
@@ -315,7 +317,7 @@ function initializeApp () {
     sendBtn.addEventListener('click', handSendMessage); // Bắt sự kiện khi nhắn nút gửi 
     messageInput.addEventListener('keydown', (e) => { // Này là bắt sự kiện khi nhắn Enter để gửi tin
     fileBtn.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', handleFileUpload);
+    fileInput.addEventListener('change', handSendFile);
     if (e.key === 'Enter' && !e.key==='shiftKey'){
         e.preventDefault(); // Ngăn không cho enter xuống dòng
         handSendMessage();
@@ -796,7 +798,6 @@ if (createGroupForm) {
         loadUserForums();
     }
     main();
-});
 }
 
 
