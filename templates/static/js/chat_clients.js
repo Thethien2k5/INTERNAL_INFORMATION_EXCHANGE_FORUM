@@ -72,8 +72,8 @@ function initializeApp () {
 
         socket.on('newMessage', (message) => {
             // Kiểm tra xem message có forumId trùng với forumId hiện tại không
-            if (message.forumId === forumId) {
-                rendererMessage(message);
+            if (message.forum_id === forumId) {
+                renderSingleMessage(message);
                 scrollToBottom();
             }
         });
@@ -134,17 +134,34 @@ function initializeApp () {
     // ! ---------------------Hàm xữ lý tin nhắn----------------------------- 
     function handSendMessage(){
         const messageText = messageInput.value.trim();
-        if (messageText && forumId && socket){
+        // Đảm bảo user và forumId tồn tại
+        if (messageText && user && user.id && forumId && socket) {
+            
+            // 1. Tạo đối tượng tin nhắn tạm thời để hiển thị ngay
+            const localMessage = {
+                content_type: 'text',
+                content_text: messageText,
+                created_at: new Date().toISOString(),
+                user_id: user.id,
+                username: user.username, // Lấy username từ đối tượng user đã đăng nhập
+                avatar: user.avatar // Lấy avatar từ đối tượng user đã đăng nhập
+            };
+
+            // 2. Render tin nhắn này ngay lập tức trên màn hình người gửi
+            renderSingleMessage(localMessage);
+            scrollToBottom();
+
+            // 3. Dữ liệu để gửi lên server không thay đổi
             const messageData = {
                 forumId: forumId,
                 userId: user.id,
                 messageText: messageText
             };
 
-            // Gửi sự kiện 'sendMessage' lên server
+            // 4. Gửi sự kiện 'sendMessage' lên server
             socket.emit('sendMessage', messageData);
 
-            // Xóa input và chờ tin nhắn mới từ server để hiển thị
+            // 5. Xóa input và reset
             messageInput.value = '';
             messageInput.focus();
             messageInput.style.height = 'auto';
@@ -219,7 +236,7 @@ function initializeApp () {
 
         // Rời phòng chat cũ nếu có
         if (socket && forumId) {
-            socket.emit('leaveForum',  `forum_${forumId}`);
+            socket.emit('leaveForum',  { forumId: forumId });
         }
 
         // Cập nhật forumId mới
@@ -232,7 +249,7 @@ function initializeApp () {
 
         // Tham gia phòng chat mới
         if (socket) {
-            socket.emit('joinRoom',`forum_${forumId}`);
+            socket.emit('joinRoom',{ forumId: forumId });
         }
 
         try {

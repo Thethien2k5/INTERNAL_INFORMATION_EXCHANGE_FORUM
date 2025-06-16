@@ -12,11 +12,16 @@ function initializeSocket(io) {
         console.log('Client đã kết nối', socket.id);
 
        // Bắt (lắng nghe) sự kiện client 
-        socket.on('joinRoom', (forumId) => {
-            // Gán tên phòng (room) cho socket
-            const roomName = `forum_${forumId}`
-            socket.join(roomName);
-            console.log(`Client ${socket.id} tham gia ${forumId}`);
+        socket.on('joinRoom', (data) => {
+            const forumId = data ? data.forumId : null;
+            if (forumId){
+                // Gán tên phòng (room) cho socket
+                const roomName = `forum_${forumId}`
+                socket.join(roomName);
+                console.log(`Client ${socket.id} tham gia ${forumId}`);
+            }else{Ơ
+                console.log(`Client ${socket.id} gửi yêu cầu nhưng bị sai dữ liệu`)
+            }
         });
 
         // Khi client gửi tin nhắn đến nhóm forum
@@ -25,7 +30,10 @@ function initializeSocket(io) {
             try{
                 //Gán giá trị phong cách ChatGPT chỉ~
                 const { forumId, userId, messageText } = data;
-
+                if (!forumId || !userId || !messageText) {
+                    console.error('Dữ liệu tin nhắn không hợp lệ:', data);
+                    return;
+                }
                 // Tạo Object chứa thông tin tin nhắn để lưu vào CSDL
                 const messageData = {
                     forumId,
@@ -43,7 +51,8 @@ function initializeSocket(io) {
                     const roomName = `forum_${forumId}`
                     // .to (Gửi sự kiện đến ....)
                     // .emit (Phát sự kiện tới client hiện tại gửi)
-                    io.to(roomName).emit('newMessage', messageForClient);
+                    socket.broadcast.to(roomName).emit('newMessage', messageForClient);
+                    console.log(`Broadcast message to room ${roomName}`);
                 }
             }catch{
                 console.error('Lỗi khi xử lý tin nhắn:', error);

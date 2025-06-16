@@ -61,7 +61,7 @@ router.post("/login", async (req, res) => {
                 user: {
                     id: user.id,
                     username: user.username,
-                    avatar: user.avatar ? `uploads/AvatarsUser/${user.avatar}` : "templates/static/images/logoT3V.png"
+                    avatar: user.avatar ? `uploads/AvatarsUser/${user.avatar}` : "templates/static/images/khongbiet.jpg"
                 }
             });
 
