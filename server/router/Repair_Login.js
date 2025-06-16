@@ -10,84 +10,70 @@ const { storeRefreshToken } = require('../../mysql/db.Token');
 const { jwtSecret } = require('../config');
 
 // Xử lý POST /api/login
+// Gợi ý sửa file: server/router/Repair_Login.js
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Thiếu thông tin!" });
-  }
-  try {
-    //mã hóa mật khẩu
-    const hash = await GetPassword_hash(username);
-    if (!hash) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Sai tên đăng nhập hoặc mật khẩu!" });
-    }
-    const match = await bcrypt.compare(password, hash);
-    if (match) {
-      // Lấy hình ảnh 
-      let avatar = await GetAvatar(username);
-      if (!avatar || avatar.trim() === "") {
-        // Nếu không có thì dùng ảnh mặc định
-        avatar = "templates/static/images/logoT3V.png";
-      }
-      res.json({
-        success: true,
-        message: "Đăng nhập thành công!",
-        user: {
-          username,
-          avatar: `uploads/AvatarsUser/${avatar}`,
-        },
-      });
-    } else {
-      res
-        .status(401)``
-        .json({ success: false, message: "Sai tên đăng nhập hoặc mật khẩu!" });
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ success: false, message: "Thiếu thông tin!" });
     }
 
-    // Tạo token JWT ngắn hạn
-  const use = await getUserByUsername(username);
-  if (!use) {
-    return res.status(404).json({ success: false, message: "Người dùng không hợp lệ.!" });
-  }
-  // 2. Tạo Access Token (ngắn hạn, dùng để truy cập API)
-  const accessTokenPayload = { userId: user.id, username: user.username };
-  const accessToken = jwt.sign(accessTokenPayload, jwtSecret, { expiresIn: '15m' }); // Hạn 15 phút
+    try {
+        const user = await getUserByUsername(username);
+        if (!user) {
+            return res.status(401).json({ success: false, message: "Sai tên đăng nhập hoặc mật khẩu!" });
+        }
 
-  // 3. Tạo Refresh Token (dài hạn, dùng để lấy Access Token mới)
-  const refreshToken = crypto.randomBytes(64).toString('hex');
-  const refreshTokenExpiry = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000); // Hạn 1 ngày
+        const hash = await GetPassword_hash(username);
+        if (!hash) {
+            // Trường hợp này hiếm khi xảy ra nếu user tồn tại, nhưng vẫn nên kiểm tra
+            return res.status(500).json({ success: false, message: "Không tìm thấy thông tin xác thực." });
+        }
+        
+        const match = await bcrypt.compare(password, hash);
 
-  // 4. Lưu Refresh Token vào CSDL
-  await storeRefreshToken(user.id, refreshToken, refreshTokenExpiry);
+        if (match) {
+            // Mật khẩu chính xác, bắt đầu tạo và gửi tokens
 
-  // 5. Gửi Refresh Token về client qua HttpOnly Cookie để bảo mật
-  res.cookie('refreshToken', refreshToken, {
-      httpOnly: true, // Ngăn JavaScript phía client truy cập
-      secure: true,   // Chỉ gửi cookie qua kết nối HTTPS
-      sameSite: 'strict', // Chống tấn công CSRF
-      expires: refreshTokenExpiry, // Thời gian hết hạn của cookie
-  });
+            // 1. Tạo Access Token (ngắn hạn)
+            const accessTokenPayload = { userId: user.id, username: user.username };
+            const accessToken = jwt.sign(accessTokenPayload, jwtSecret, { expiresIn: '15m' });
 
-  // 6. Gửi Access Token và thông tin user cơ bản về client qua JSON
-  res.json({
-      success: true,
-      message: "Đăng nhập thành công!",
-      accessToken: accessToken,
-      user: {
-          id: user.id,
-          username: user.username,
-          avatar: user.avatar
-      }
-  });
+            // 2. Tạo Refresh Token (dài hạn)
+            const refreshToken = crypto.randomBytes(64).toString('hex');
+            const refreshTokenExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // Hạn 7 ngày
 
+            // 3. Lưu Refresh Token vào CSDL
+            await storeRefreshToken(user.id, refreshToken, refreshTokenExpiry);
 
-  } catch (err) {
-    console.error("Lỗi đăng nhập:", err);
-    res.status(500).json({ success: false, message: "Lỗi server!" });
-  }
+            // 4. Gửi Refresh Token về client qua HttpOnly Cookie để bảo mật
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                secure: true,   // Chỉ gửi cookie qua HTTPS
+                sameSite: 'strict',
+                expires: refreshTokenExpiry,
+            });
+
+            // 5. Gửi Access Token và thông tin user cơ bản về client qua JSON (đây là phản hồi cuối cùng)
+            res.json({
+                success: true,
+                message: "Đăng nhập thành công!",
+                accessToken: accessToken,
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    avatar: user.avatar ? `uploads/AvatarsUser/${user.avatar}` : "templates/static/images/logoT3V.png"
+                }
+            });
+
+        } else {
+            // Mật khẩu không khớp
+            res.status(401).json({ success: false, message: "Sai tên đăng nhập hoặc mật khẩu!" });
+        }
+    } catch (err) {
+        // Xử lý các lỗi khác, ví dụ như lỗi kết nối CSDL (nếu lại xảy ra)
+        console.error("Lỗi đăng nhập:", err);
+        res.status(500).json({ success: false, message: "Lỗi server!" });
+    }
 });
 
 module.exports = router;

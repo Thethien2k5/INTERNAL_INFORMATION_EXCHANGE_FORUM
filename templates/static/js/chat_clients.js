@@ -1,5 +1,13 @@
-document.addEventListener("DOMContentLoaded", () => {
+const socketIoScript = document.createElement('script');
+socketIoScript.src = `${API_CONFIG.getApiUrl()}/socket.io/socket.io.js`;
+document.head.appendChild(socketIoScript);
+
+
+function initializeApp () {
+    document.addEventListener("DOMContentLoaded", () => {
      // ---------------------------------DOM Elements--------------------------------
+
+
     // const darkModeToggle = document.getElementById('darkModeToggle');
     // const toggleGroupsSidebar = document.getElementById('toggleGroupsSidebar');
     // const groupsSidebar = document.getElementById('groupsSidebar');
@@ -32,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const groupList = document.getElementById('groupList');
 
     // Tiêu đề của chat header
-    const chatHeaderTitle = document.getElementById('.chat-title h2');
+    const chatHeaderTitle = document.querySelector('.chat-title h2');
 
     // Kiểm tra xem người dùng đã đăng nhập chưa
     const user = localStorage.getItem('user');
@@ -46,14 +54,14 @@ document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => overlay.classList.add('show'), 10); // Thêm hiệu ứng fade-in
         }
         setTimeout(() => {
-            window.location.href = '/web/login.html';
+            window.location.href = '/login.html';
         }, 3500); // Trả về trang đăng nhập của bạn
         return;
     }
 
     // ======================== KHỞI TẠO SOCKET.IO ========================
     function initializeSocket() {
-        socket = io(API_CONFIG.getSocketUrl(), {
+        socket = io(API_CONFIG.getApiUrl(), {
             auth: {
                 token: localStorage.getItem('accessToken') // Gửi token khi kết nối
             }
@@ -275,8 +283,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await apiService.fetch('/api/forums');
             if (response.success){
                 rendererFormList(response.data);
-                if (res.data.length > 0) {
-                    const firstForum = res.data[0];
+                if (response.data.length > 0) {
+                    const firstForum = response.data[0];
                     document.querySelector('.group-item').classList.add('active');
                     selectForum(firstForum.id, firstForum.name);
                 } else {
@@ -337,46 +345,76 @@ function showNotification(message) {
 
 
 
-const createGroupBtn = document.getElementById('create-group-btn');
+// Lấy các phần tử DOM cho chức năng tạo nhóm
+const showCreateGroupModalBtn = document.getElementById('showCreateGroupModalBtn');
 const createGroupModal = document.getElementById('createGroupModal');
-const closeCreateGroupModal = document.getElementById('closeCreateGroupModal');
+const closeCreateGroupModalBtn = document.getElementById('closeCreateGroupModal');
 const createGroupForm = document.getElementById('createGroupForm');
 
-
-createGroupBtn.addEventListener('click', () => {
-    createGroupModal.style.display = 'flex';
-});
-
-closeCreateGroupModal.addEventListener('click', () => {
-    createGroupModal.style.display = 'none';
-});
-
-createGroupForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const name = document.getElementById('groupName').value.trim();
-    const topic = document.getElementById('groupTopic').value.trim();
-
-    if (!name) {
-        alert('Vui lòng nhập tên nhóm.');
-        return;
-    }
-
-    try {
-        const res = await apiService.fetch('/api/forums', {
-            method: 'POST',
-            body: JSON.stringify({ name, topic })
-        });
-
-        if (res.success) {
-            alert('Tạo nhóm thành công!');
-            createGroupModal.style.display = 'none';
-            createGroupForm.reset();
-            loadUserForums(); // Tải lại danh sách nhóm
+// 1. Mở modal khi nhấn nút "Tạo nhóm mới"
+if (showCreateGroupModalBtn) {
+    showCreateGroupModalBtn.addEventListener('click', () => {
+        if (createGroupModal) {
+            createGroupModal.classList.add('show'); // Dùng classList để thêm class 'show'
         }
-    } catch (error) {
-        alert('Lỗi tạo nhóm: ' + error.message);
+    });
+}
+
+// 2. Đóng modal khi nhấn nút (x)
+if (closeCreateGroupModalBtn) {
+    closeCreateGroupModalBtn.addEventListener('click', () => {
+        if (createGroupModal) {
+            createGroupModal.classList.remove('show'); // Dùng classList để xóa class 'show'
+        }
+    });
+}
+
+// Đóng modal khi người dùng nhấp ra ngoài khu vực modal
+window.addEventListener('click', (event) => {
+    if (event.target === createGroupModal) {
+        createGroupModal.classList.remove('show');
     }
 });
+
+// 3. Xử lý việc tạo nhóm khi submit form
+if (createGroupForm) {
+    createGroupForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Ngăn form tự động reload lại trang
+
+        const groupNameInput = document.getElementById('groupName');
+        const groupTopicInput = document.getElementById('groupTopic');
+
+        // Lấy dữ liệu từ form
+        const groupData = {
+            name: groupNameInput.value.trim(),
+            topic: groupTopicInput.value.trim(),
+        };
+
+        // Kiểm tra dữ liệu đầu vào
+        if (!groupData.name) {
+            alert('Vui lòng nhập tên nhóm.');
+            return;
+        }
+
+        try {
+            // Giả định bạn có một hàm `createForum` trong apiService để gọi API
+            const newGroup = await apiService.createForum(groupData);
+
+            alert(`Tạo nhóm "${newGroup.name}" thành công!`);
+            createGroupModal.classList.remove('show');
+            groupNameInput.value = ''; // Xóa trắng form
+            groupTopicInput.value = '';  // Xóa trắng form
+            // Cân nhắc tải lại danh sách nhóm thay vì cả trang
+            // Ví dụ: await loadForums(); 
+            window.location.reload(); // Tải lại cả trang để cập nhật danh sách nhóm mới
+        } catch (error) {
+            console.error('Lỗi khi tạo nhóm:', error);
+            // Giả định lỗi trả về có dạng { message: "..." }
+            const errorMessage = error.responseJSON ? error.responseJSON.message : 'Đã có lỗi xảy ra khi tạo nhóm.';
+            alert(errorMessage);
+        }
+    });
+}
 
 
 
@@ -759,3 +797,9 @@ createGroupForm.addEventListener('submit', async (e) => {
     }
     main();
 });
+}
+
+
+socketIoScript.onload = () => {
+    initializeApp();
+};

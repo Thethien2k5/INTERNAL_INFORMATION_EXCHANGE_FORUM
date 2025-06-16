@@ -70,10 +70,23 @@ const apiService = {
         }
     },
     
+    createForum: function(forumData) {
+        // Hàm này sẽ gọi API để tạo forum mới
+        // 'this.fetch' sẽ tự động thêm token xác thực
+        return this.fetch('/api/forums', {
+            method: 'POST',
+            body: JSON.stringify(forumData)
+        });
+    },
+
+
+
     // Hàm đăng xuất
     logout() {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('user');
         window.location.href = '/web/login.html';
     }
+
+    
 };

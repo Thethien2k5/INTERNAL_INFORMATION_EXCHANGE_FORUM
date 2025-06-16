@@ -1,8 +1,11 @@
 const API_CONFIG = {
-    SERVER_HOSTNAME: window.location.hostname,
-    BE_PORT: 5000,
+    getBaseUrl: function() {
+        const hostname = window.location.hostname;
+        return `https://${hostname}:${this.BE_PORT}`;
+    },
 
     getApiUrl: function() {
-        return `https://${this.SERVER_HOSTNAME}:${this.BE_PORT}`;
-    }
+        return this.getBaseUrl();
+    },
+
 };

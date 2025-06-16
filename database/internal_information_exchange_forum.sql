@@ -36,8 +36,6 @@ CREATE TABLE `if_users` (
 --
 -- Đang đổ dữ liệu cho bảng `if_users`
 --
-INSERT INTO `if_users` (`id`, `username`, `email`, `password_hash`, `avatar`) VALUES
-(1, 'thien', 'thienobita0203@gmail.com', 'fqjkfbnkjbfddlknf', NULL);
 
 
 -- --------------------------------------------------------

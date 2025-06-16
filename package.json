@@ -11,8 +11,8 @@
     "start:certs": "npm install && node server/creat-cer.js",
     "start:be": "node server/BE_server.js",
     "start:fe": "node server/FE_server.js",
-    "dev:be": "node server/BE_server.js",
-    "dev:fe": "node server/FE_server.js"
+    "dev:be": "nodemon server/BE_server.js",
+    "dev:fe": "nodemon server/FE_server.js"
   },
   "keywords": [],
   "author": "",

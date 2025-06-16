@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         alert("Đăng nhập thành công!");
-        window.location.href = '../web/chat_clients.html'; // Hoặc trang chính của bạn
+        window.location.href = '/chat_clients.html'; // Hoặc trang chính của bạn
 
       } else {
         alert("Lỗi ở login: "+ data.message);
