@@ -3,10 +3,11 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const cors = require("cors");
 const fs = require("fs").promises; // Để đọc tệp không đồng bộ
-// const { authenticate } = require("@google-cloud/local-auth");
+const { authenticate } = require("@google-cloud/local-auth");
 const { google } = require("googleapis");
 const bcrypt = require("bcrypt");
 const { CheckEmail, CheckUserName, AddUser } = require("../../mysql/dbUser");
+
 
 require("dotenv").config(); // Vẫn hữu ích cho các biến env tiềm năng khác
 
@@ -14,8 +15,13 @@ const router = express.Router();
 
 // --- Gmail API Configuration ---
 const SCOPES = ["https://www.googleapis.com/auth/gmail.send"];
-const TOKEN_PATH = path.join(__dirname,'..',"certs","token.json");
-const CREDENTIALS_PATH = path.join(__dirname,'..',"certs","credentials.json"); // Hãy chắc chắn rằng tập tin này tồn tại
+const TOKEN_PATH = path.join(__dirname, "..", "certs", "token.json");
+const CREDENTIALS_PATH = path.join(
+  __dirname,
+  "..",
+  "certs",
+  "credentials.json"
+);
 
 /**
  * Tải hoặc yêu cầu hoặc ủy quyền để gọi API.
