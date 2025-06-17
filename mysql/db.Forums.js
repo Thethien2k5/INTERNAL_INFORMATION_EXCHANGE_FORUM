@@ -32,7 +32,6 @@ async function createForum(name, topic, creatorId) {
 }
 
 // Thêm một người dùng vào một nhóm chat đã tồn tại.
-
 async function joinForum(forumId, userId) {
     const sql = `INSERT INTO if_forum_members (forum_id, user_id) VALUES (?, ?)`;
     const [result] = await pool.execute(sql, [forumId, userId]);
