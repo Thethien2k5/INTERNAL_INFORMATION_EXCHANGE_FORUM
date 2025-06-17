@@ -8,7 +8,6 @@ const { google } = require("googleapis");
 const bcrypt = require("bcrypt");
 const { CheckEmail, CheckUserName, AddUser } = require("../../mysql/dbUser");
 
-
 require("dotenv").config(); // Vẫn hữu ích cho các biến env tiềm năng khác
 
 const router = express.Router();
@@ -116,6 +115,7 @@ router.use(bodyParser.urlencoded({ extended: true }));
 // Đối với email, sẽ đọc ảnh từ đường dẫn tương đối với script.
 const LOGO_FILE_PATH = path.join(
   __dirname,
+  "..",
   "..",
   "templates",
   "static",
