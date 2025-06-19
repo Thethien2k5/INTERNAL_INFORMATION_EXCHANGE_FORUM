@@ -5,8 +5,8 @@ const cors = require("cors");
 const fs = require("fs").promises; // Để đọc tệp không đồng bộ
 const { authenticate } = require("@google-cloud/local-auth");
 const { google } = require("googleapis");
-const bcrypt = require("bcrypt");
-const { CheckEmail, CheckUserName, AddUser } = require("../../mysql/dbUser");
+const { CheckEmail, CheckUserName } = require("../../mysql/dbUser");
+const { ProcessingInformationWhenAddingUsers } = require("../UserProcessing");
 
 require("dotenv").config(); // Vẫn hữu ích cho các biến env tiềm năng khác
 
@@ -139,7 +139,7 @@ router.get("/", (req, res) => {
  * @param {string} toEmail Địa chỉ email người nhận.
  * @param {string} subject Tiêu đề email.
  * @param {string} htmlContent Nội dung HTML của email.
- * @param {string} attachmentFilePath Đường dẫn tới file ảnh để đính kèm inline.
+ * @param {string} attachmentFilePath Đườn g dẫn tới file ảnh để đính kèm inline.
  * @param {string} contentId Content-ID cho ảnh inline (ví dụ: 'logoT3V').
  * @returns {Promise<string>} Email đã được mã hóa base64url.
  */
@@ -382,11 +382,13 @@ router.post("/add-user", async (req, res) => {
       .status(400)
       .json({ success: false, message: "Thiếu thông tin!" });
   }
+  const ok = await ProcessingInformationWhenAddingUsers(
+    username,
+    email,
+    password
+  );
   try {
-    // Mã hóa mật khẩu
-    const hashedPassword = await bcrypt.hash(password, 10);
-    // Thêm vào DB
-    const ok = await AddUser(username, email, hashedPassword);
+    // Gọi hàm xử lý thông tin người dùng
     if (ok) {
       res.json({ success: true, message: "Đăng ký thành công!" });
     } else {
