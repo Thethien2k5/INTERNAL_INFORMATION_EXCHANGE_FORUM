@@ -9,7 +9,7 @@ async function createForum(name, topic, creatorId) {
     await connection.beginTransaction(); // Bắt đầu transaction để đảm bảo toàn vẹn dữ liệu
 
     // SỬA LỖI: Đổi `creator_id` thành `created_by_user_id` cho đúng với CSDL
-    const createForumSql = `INSERT INTO if_forums (name, topic, created_by_user_id) VALUES (?, ?, ?)`;
+    const createForumSql = `INSERT INTO if_forums (ForumName, topic, created_by_user_id) VALUES (?, ?, ?)`;
     const [result] = await connection.execute(createForumSql, [
       name,
       topic,
@@ -34,7 +34,7 @@ async function createForum(name, topic, creatorId) {
   }
 }
 
-// Thêm một người dùng vào một nhóm chat đã tồn tại.
+// Thêm một người dùng vào một nhóm chat đã tồn tại theo mã học phần.////
 async function joinForum(forumId, userId) {
   const sql = `INSERT INTO if_forum_members (forum_id, user_id) VALUES (?, ?)`;
   const [result] = await pool.execute(sql, [forumId, userId]);
@@ -42,14 +42,13 @@ async function joinForum(forumId, userId) {
 }
 
 // Lấy tất cả các nhóm chat mà một người dùng đang tham gia.
-
 async function getForumsForUser(userId) {
   const sql = `
-        SELECT f.id, f.name, f.topic, f.created_at
-  FROM if_forums f
-  JOIN if_forum_members fm ON f.id = fm.forum_id
-  WHERE fm.user_id = ?;
-    `;
+    SELECT f.id, f.CourseID, f.CourseName, f.topic, f.created_at
+    FROM if_forums f
+    JOIN if_forum_members fm ON f.id = fm.forum_id
+    WHERE fm.user_id = ?
+  `;
   const [forums] = await pool.execute(sql, [userId]);
   return forums;
 }
@@ -57,7 +56,7 @@ async function getForumsForUser(userId) {
 // Lấy danh sách tất cả thành viên trong một nhóm chat cụ thể
 async function getForumMembers(forumId) {
   const sql = `
-        SELECT u.id, u.username, u.avatar
+        SELECT u.id, u.Name, u.avatar
         FROM if_users u
         JOIN if_forum_members fm ON u.id = fm.user_id
         WHERE fm.forum_id = ?;
@@ -68,7 +67,7 @@ async function getForumMembers(forumId) {
 
 // Lấy thông tin chi tiết của một nhóm chat bằng ID của nó
 async function getForumById(forumId) {
-  const sql = `SELECT * FROM if_forums WHERE id = ? AND deleted_at IS NULL`;
+  const sql = `SELECT * FROM if_forums WHERE id = ?`;
   const [rows] = await pool.execute(sql, [forumId]);
   return rows.length > 0 ? rows[0] : null;
 }

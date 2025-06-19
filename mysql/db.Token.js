@@ -1,4 +1,4 @@
-const { model } = require('mongoose');
+// const { model } = require('mongoose');
 const { pool } = require('./dbUser');
 
 // Hàm lưu refresh token vào cơ sở dữ liệu
