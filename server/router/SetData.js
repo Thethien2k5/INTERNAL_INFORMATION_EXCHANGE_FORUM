@@ -1,8 +1,16 @@
 const { AddUser } = require("../../mysql/dbUser");
+const { joinForum } = require("../../mysql/db.Forums");
+
 //===== Các hàm có nhiệm vụ GỌI chỉnh sửa thông tin trên db =====
 
 ///Thêm user mới
-async function AddNewUsersByCallingDatabase(id, Name, username, email, password_hash) {
+async function AddNewUsersByCallingDatabase(
+  id,
+  Name,
+  username,
+  email,
+  password_hash
+) {
   // Thêm người dùng mới vào cơ sở dữ liệu
   try {
     const result = await AddUser(id, Name, username, email, password_hash);
@@ -13,7 +21,18 @@ async function AddNewUsersByCallingDatabase(id, Name, username, email, password_
   }
 }
 
+///Thêm người dùng vào nhóm
+async function AddUsersToTheGroupInTheDatabase(ForumId, UserId) {
+  try {
+    const result = await joinForum(ForumId, UserId);
+    return result;
+  } catch (error) {
+    console.error("Lỗi khi thêm user vào nhóm:", error);
+    throw error;
+  }
+}
 
-
-
-module.exports = { AddNewUsersByCallingDatabase };
+module.exports = {
+  AddNewUsersByCallingDatabase,
+  AddUsersToTheGroupInTheDatabase,
+};

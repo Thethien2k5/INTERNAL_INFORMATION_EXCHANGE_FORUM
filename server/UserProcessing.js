@@ -1,5 +1,8 @@
 const { CheckUserIDFromDatabase } = require("./router/CheckData");
-const { AddNewUsersByCallingDatabase } = require("./router/SetData");
+const {
+  AddNewUsersByCallingDatabase,
+  AddUsersToTheGroupInTheDatabase,
+} = require("./router/SetData");
 const bcrypt = require("bcrypt");
 
 // Xử lý thông tin người mới đăng ký
@@ -30,16 +33,15 @@ async function ProcessingInformationWhenAddingUsers(username, email, password) {
     );
     if (result) {
       //Thêm người dùng vào nhóm chung
-      
+      let groupId = "11"; /// ID nhóm chung
+      AddUsersToTheGroupInTheDatabase(groupId, userId);
       return true;
-    } 
-    return false; 
+    }
+    return false;
   } catch (error) {
     console.error("Lỗi khi thêm người dùng:", error);
     throw error; // Ném lỗi để xử lý ở nơi gọi hàm này
   }
 }
-//Thêm người dùng vào nhóm
-
 
 module.exports = { ProcessingInformationWhenAddingUsers };
