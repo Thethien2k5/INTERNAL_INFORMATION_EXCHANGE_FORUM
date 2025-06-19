@@ -2,13 +2,14 @@ const { CheckUserIDFromDatabase } = require("./router/CheckData");
 const { AddNewUsersByCallingDatabase } = require("./router/SetData");
 const bcrypt = require("bcrypt");
 
+// Xử lý thông tin người mới đăng ký
 async function ProcessingInformationWhenAddingUsers(username, email, password) {
   //Tao ID chỉ có số tự nhiên N độ dài 12
   let attempts = 0;
   var userId = "";
   do {
     for (let i = 0; i < 12; i++) {
-      userId += Math.oor(flMath.random() * 10); // từng chữ số từ 0-9
+      userId += Math.floor(Math.random() * 10); // từng chữ số từ 0-9
     }
     attempts++;
     if (attempts > 100) {
@@ -38,5 +39,7 @@ async function ProcessingInformationWhenAddingUsers(username, email, password) {
     throw error; // Ném lỗi để xử lý ở nơi gọi hàm này
   }
 }
+//Thêm người dùng vào nhóm
+
 
 module.exports = { ProcessingInformationWhenAddingUsers };
