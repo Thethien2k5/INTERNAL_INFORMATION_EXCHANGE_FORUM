@@ -66,7 +66,7 @@ async function GetAvatar(username) {
 // Lấy thông tin người dùng theo tên đăng nhập
 async function getUserByUsername(username) {
   const [rows] = await pool.execute(
-    "SELECT id, username, email, avatar FROM if_users WHERE username = ? LIMIT 1",
+    "SELECT id, Name, email, avatar FROM if_users WHERE username = ? LIMIT 1",
     [username]
   );
   return rows.length > 0 ? rows[0] : null;

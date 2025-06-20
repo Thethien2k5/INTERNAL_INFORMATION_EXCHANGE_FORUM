@@ -1,7 +1,26 @@
 const { AddUser } = require("../../mysql/dbUser");
 const { joinForum } = require("../../mysql/db.Forums");
+const {getID} = require("../../mysql/db.Courses");
+
+const express = require("express");
+const router = express.Router();
+// const { route } = require("./RegisterAndSendEmail");
 
 //===== Các hàm có nhiệm vụ GỌI chỉnh sửa thông tin trên db =====
+//api thêm user vào nhóm chat khi đăng ký học phần
+router.post("/AddAccordingToCode", async (req, res) => {
+  const { userID, courseID } = req.body;
+  try {
+    const ForumId = await getID(courseID); // gọi từ db.Courses
+    const result = await joinForum(ForumId, userID);
+    res.json({ success: result });
+  } catch (err) {
+    // res.status(500).json({ success: false, message: "Đăng ký thất bại" });
+    res.status(500).json({ success: false, message: "Đăng ký thất bại" });
+
+  }
+});
+
 
 ///Thêm user mới
 async function AddNewUsersByCallingDatabase(
@@ -21,7 +40,7 @@ async function AddNewUsersByCallingDatabase(
   }
 }
 
-///Thêm người dùng vào nhóm
+///Thêm người dùng vào nhóm cụ thể
 async function AddUsersToTheGroupInTheDatabase(ForumId, UserId) {
   try {
     const result = await joinForum(ForumId, UserId);
@@ -33,6 +52,7 @@ async function AddUsersToTheGroupInTheDatabase(ForumId, UserId) {
 }
 
 module.exports = {
+  router,
   AddNewUsersByCallingDatabase,
   AddUsersToTheGroupInTheDatabase,
 };

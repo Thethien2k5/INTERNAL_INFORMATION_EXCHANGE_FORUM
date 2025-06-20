@@ -239,7 +239,7 @@ function initializeApp() {
                     }" alt="avatar" style="width:100%; height:100%; object-fit:cover;">
                 </div>
                 <div class="member-info">
-                    <div class="member-name">${member.username}</div>
+                    <div class="member-name">${member.Name}</div>
                     
                 </div>
             `;
@@ -298,7 +298,7 @@ function initializeApp() {
       forumItem.innerHTML = `
                 <div class="group-item-avatar"><i class="fas fa-users"></i></div>
                 <div class="group-item-info">
-                    <div class="group-item-name">${forum.name}</div>
+                    <div class="group-item-name">${forum.CourseName}</div>
                     <div class="group-item-lastmsg">${forum.topic}</div>
                 </div> `;
 

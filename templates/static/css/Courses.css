@@ -1,0 +1,180 @@
+/* Các biến màu sắc cơ bản ) */
+:root {
+  --primary-color: #008fe5; /* Màu xanh Zalo hoặc tương tự */
+  --text-color: #333;
+  --border-color: #e0e0e0;
+  --header-bg: #008fe5; /* Màu nền cho tiêu đề bảng */
+  --header-text-color: white;
+  --button-bg: #008fe5;
+  --button-text-color: white;
+  --error-color: #f44336;
+}
+
+.course-registration-section {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 20px; /* Khoảng cách với phần tử trên */
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header .header-line {
+  width: 4px;
+  height: 24px;
+  background-color: var(--primary-color);
+  margin-right: 10px;
+  border-radius: 2px;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: var(--text-color);
+  font-weight: bold;
+}
+
+.course-table-container {
+  overflow-x: auto; /* Cho phép cuộn ngang nếu bảng quá rộng */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  font-size: 0.9em;
+}
+
+table thead th {
+  background-color: var(--header-bg);
+  color: var(--header-text-color);
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap; /* Ngăn tiêu đề bị xuống dòng */
+}
+
+table tbody td {
+  padding: 10px 15px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+  vertical-align: middle; /* Căn giữa theo chiều dọc */
+}
+
+table tbody tr:last-child td {
+  border-bottom: none; /* Không có đường viền dưới cho hàng cuối cùng */
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #f9f9f9; /* Màu nền xen kẽ cho các hàng */
+}
+
+.info-icon {
+  font-size: 0.9em;
+  color: var(--header-text-color);
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+/* Nút Đăng ký trong bảng */
+.register-button {
+  background-color: #4caf50; /* Màu xanh lá cây */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85em;
+  transition: background-color 0.2s ease;
+  white-space: nowrap; /* Ngăn nút bị xuống dòng */
+}
+
+.register-button:hover {
+  background-color: #45a049;
+}
+
+/* Dòng "Không có dữ liệu" */
+.no-data-row td {
+  text-align: center;
+  font-style: italic;
+  color: #888;
+  padding: 20px;
+}
+
+/*quay về */
+/* Container cho liên kết */
+.back-to-chat-container {
+  padding: 15px 20px; /* Khoảng đệm xung quanh */
+  background-color: #f0f2f5; /* Nền nhẹ nhàng, có thể điều chỉnh */
+  border-bottom: 1px solid #e0e0e0; /* Đường phân cách dưới */
+  display: flex; /* Dùng flexbox để căn chỉnh nội dung */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  justify-content: flex-start; /* Căn trái nội dung */
+  border-top-left-radius: 8px; /* Bo góc trên bên trái */
+  border-top-right-radius: 8px; /* Bo góc trên bên phải */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ */
+}
+
+/* Kiểu cho liên kết "Quay lại nhóm chat" */
+.back-to-chat-link {
+  color: #008fe5; /* Màu xanh đặc trưng, giống Zalo */
+  text-decoration: none; /* Xóa gạch chân mặc định */
+  font-size: 1.1em; /* Kích thước chữ lớn hơn một chút */
+  font-weight: 600; /* Làm chữ đậm hơn */
+  display: flex; /* Dùng flexbox để căn chỉnh icon và text */
+  align-items: center; /* Căn giữa icon và text theo chiều dọc */
+  transition: color 0.2s ease-in-out; /* Hiệu ứng chuyển đổi màu khi hover */
+}
+
+/* Icon mũi tên */
+.back-to-chat-link .back-arrow {
+  margin-right: 8px; /* Khoảng cách giữa mũi tên và chữ */
+  font-size: 0.9em; /* Kích thước icon */
+  transform: translateX(0); /* Đặt vị trí ban đầu cho hiệu ứng */
+  transition: transform 0.2s ease-in-out; /* Hiệu ứng chuyển đổi cho mũi tên */
+}
+
+/* Hiệu ứng khi di chuột qua liên kết */
+.back-to-chat-link:hover {
+  color: #006bbd; /* Đổi màu xanh đậm hơn khi hover */
+}
+
+/* Hiệu ứng di chuyển nhẹ cho mũi tên khi hover */
+.back-to-chat-link:hover .back-arrow {
+  transform: translateX(-3px); /* Mũi tên di chuyển nhẹ sang trái */
+}
+
+/* Dòng gạch đỏ cho "Danh sách học phần" */
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-left: 20px; /* Đảm bảo căn chỉnh với phần "Quay lại nhóm chat" */
+}
+
+.section-header .header-line {
+  width: 4px;
+  height: 24px;
+  background-color: #006bbd; /* Màu đỏ */
+  margin-right: 10px;
+  border-radius: 2px;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Điều chỉnh lại padding cho bảng nếu cần */
+.course-registration-section {
+  padding-top: 0; /* Loại bỏ padding-top nếu .back-to-chat-container đã có padding */
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
