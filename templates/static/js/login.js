@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("user", JSON.stringify(data.user));
         hideLoader(); ////
         alert("Đăng nhập thành công!");
-        window.location.href = "/chat_clients.html"; // Hoặc trang chính của bạn
+        window.location.href = "/index.html"; // Hoặc trang chính của bạn
       } else {
         hideLoader(); ////
         alert("Lỗi ở login: " + data.message);

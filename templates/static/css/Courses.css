@@ -177,4 +177,5 @@ table tbody tr:nth-child(even) {
   padding-top: 0; /* Loại bỏ padding-top nếu .back-to-chat-container đã có padding */
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-}
+} 
+

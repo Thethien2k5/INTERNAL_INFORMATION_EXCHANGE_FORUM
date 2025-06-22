@@ -1,0 +1,232 @@
+/*==giới thiệu*/
+#main-content {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.t3v-intro-container {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px; /* Điều chỉnh độ rộng tối đa cho phù hợp */
+  margin: 30px auto; /* Căn giữa container */
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* Font chữ hiện đại */
+  color: #333; /* Màu chữ mặc định */
+}
+
+.t3v-intro-header h1 {
+  color: #461264; /* Màu xanh dương nổi bật */
+  font-size: 2.5em;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center; /* Căn giữa tiêu đề */
+}
+
+.t3v-intro-header p {
+  font-size: 1.1em;
+  line-height: 1.7;
+  color: #555;
+  margin-bottom: 30px;
+  text-align: center; /* Căn giữa đoạn mở đầu */
+}
+
+.t3v-intro-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  border-left: 3px solid #61176b; /* Thêm một đường kẻ bên trái để nhấn mạnh */
+  background-color: #f9f9f9; /* Nền nhạt cho các section */
+  border-radius: 4px;
+}
+
+.t3v-intro-section h2 {
+  color: #6d1f7c;
+  font-size: 1.8em;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.t3v-intro-section p {
+  font-size: 1.1em;
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.t3v-intro-call-to-action {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.t3v-intro-call-to-action h2 {
+  color: #501572;
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.t3v-intro-call-to-action p {
+  font-size: 1.1em;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* Nút Đăng nhập */
+.login-button {
+  background-color: #7494ec; /* Màu xanh lá cây tươi */
+  color: white;
+  border: none; /* Thẻ <a> không có border mặc định */
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 20px;
+  text-decoration: none; /* Thêm dòng này để loại bỏ gạch chân mặc định của link */
+  display: inline-block; /* Quan trọng để padding và margin hoạt động như một khối */
+}
+
+.login-button:hover {
+  background-color: #4d629e;
+}
+
+/*==== Responsive adjustments (tùy chọn) */
+@media (max-width: 768px) {
+  .t3v-intro-container {
+    padding: 30px;
+    margin: 20px;
+  }
+
+  .t3v-intro-header h1 {
+    font-size: 2em;
+  }
+
+  .t3v-intro-section h2 {
+    font-size: 1.6em;
+  }
+
+  .login-button {
+    font-size: 1em;
+    padding: 10px 25px;
+  }
+}
+
+/* Styling cho các đối tượng bay lượn */
+
+.floating-object {
+  position: fixed;
+  background-size: contain; /* Đảm bảo hình ảnh vừa với kích thước div */
+  background-repeat: no-repeat;
+  pointer-events: none; /* Quan trọng: Cho phép click xuyên qua đối tượng */
+  z-index: -1; /* Đặt chúng ra phía sau nội dung chính */
+  opacity: 0.7; /* Làm mờ một chút để không quá nổi bật */
+}
+
+/* Kích thước và hình ảnh cụ thể cho từng đối tượng */
+.iconLeft1 {
+  width: 80px;
+  height: 80px;
+  background-image: url("/templates/static/images/book.png"); /* Thay bằng đường dẫn ảnh của bạn */
+  top: 15%;
+  left: 4%;
+  animation: floatAnimation 15s ease-in-out infinite alternate; /* Thời gian, kiểu, lặp vô hạn, đảo chiều */
+  animation-delay: 0s;
+}
+
+.iconLeft2 {
+  width: 50px;
+  height: 50px;
+  background-image: url("/templates/static/images/e-learning.png"); /* Thay bằng đường dẫn ảnh của bạn */
+  top: 50%;
+  left: 12rem;
+  animation: floatAnimation 12s ease-in-out infinite alternate;
+  animation-delay: 2s;
+}
+
+.iconLeft3 {
+  width: 100px;
+  height: 100px;
+  background-image: url("/templates/static/images/online-course.png"); /* Thay bằng đường dẫn ảnh của bạn */
+  top: 65%;
+  left: 3%;
+  animation: floatAnimation 18s ease-in-out infinite alternate;
+  animation-delay: 4s;
+}
+
+.iconRight1 {
+  width: 90px;
+  height: 90px;
+  background-image: url("/templates/static/images/manual.png"); /* Thay bằng đường dẫn ảnh của bạn */
+  top: 25%;
+  right: 2%; /* Đặt ở bên phải */
+  animation: floatAnimation 16s ease-in-out infinite alternate;
+  animation-delay: 1s;
+}
+
+.iconRight2 {
+  width: 60px;
+  height: 60px;
+  background-image: url("/templates/static/images/fountain-pen.png"); /* Thay bằng đường dẫn ảnh của bạn */
+  top: 55%;
+  right: 7%; /* Đặt ở bên phải */
+  animation: floatAnimation 13s ease-in-out infinite alternate;
+  animation-delay: 3s;
+}
+.iconRight3 {
+  width: 90px;
+  height: 60px;
+  background-image: url("/templates/static/images/logoT3V.png"); /* Thay bằng đường dẫn ảnh của bạn */
+  top: 80%;
+  right: 4%; /* Đặt ở bên phải */
+  animation: floatAnimation 13s ease-in-out infinite alternate;
+  animation-delay: 3s;
+}
+
+/* Định nghĩa keyframes cho animation bay lượn */
+@keyframes floatAnimation {
+  0% {
+    transform: translateY(0) rotate(0deg); /* Vị trí và xoay ban đầu */
+  }
+  25% {
+    transform: translateY(-20px) rotate(5deg); /* Dịch lên và xoay nhẹ */
+  }
+  50% {
+    transform: translateY(0) rotate(0deg); /* Quay về vị trí ban đầu */
+  }
+  75% {
+    transform: translateY(20px) rotate(-5deg); /* Dịch xuống và xoay ngược lại */
+  }
+  100% {
+    transform: translateY(0) rotate(0deg); /* Quay về vị trí ban đầu */
+  }
+}
+
+/* Điều chỉnh vị trí cho màn hình nhỏ hơn nếu cần */
+@media (max-width: 768px) {
+  .floating-object {
+    /* Ẩn các đối tượng hoặc giảm kích thước để tránh che nội dung trên màn hình nhỏ */
+    display: none;
+  }
+  /* Hoặc bạn có thể giữ lại một số ít đối tượng và điều chỉnh vị trí */
+  /*
+    .book, .book-2 {
+        width: 50px;
+        height: 50px;
+    }
+    .pen, .pen-2 {
+        width: 30px;
+        height: 30px;
+    }
+    .test-paper {
+        width: 70px;
+        height: 70px;
+    }
+    .book, .pen, .test-paper {
+        left: 2%;
+    }
+    .book-2, .pen-2 {
+        right: 2%;
+    }
+    */
+}

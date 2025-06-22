@@ -47,7 +47,7 @@ INSERT INTO `if_courses` (`CourseID`, `CourseName`, `Credits`, `TuitionFee`) VAL
 (104007203, 'Công nghệ phần mềm', 2, 1700000.00),
 (104007204, 'Cấu trúc dữ liệu và giải thuật', 3, 3400000.00),
 (104122042, 'Lập trình trí tuệ nhân tạo', 3, 3400000.00),
-(2147483647, 'An toàn thông tin', 3, 3400000.00);
+(104122057, 'An toàn thông tin', 3, 3400000.00);
 
 -- --------------------------------------------------------
 
