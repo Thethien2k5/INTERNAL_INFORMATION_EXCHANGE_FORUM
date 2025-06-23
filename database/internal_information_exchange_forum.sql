@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th6 20, 2025 lúc 03:07 PM
+-- Thời gian đã tạo: Th6 23, 2025 lúc 08:29 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -47,7 +47,7 @@ INSERT INTO `if_courses` (`CourseID`, `CourseName`, `Credits`, `TuitionFee`) VAL
 (104007203, 'Công nghệ phần mềm', 2, 1700000.00),
 (104007204, 'Cấu trúc dữ liệu và giải thuật', 3, 3400000.00),
 (104122042, 'Lập trình trí tuệ nhân tạo', 3, 3400000.00),
-(104122057, 'An toàn thông tin', 3, 3400000.00);
+(2147483647, 'An toàn thông tin', 3, 3400000.00);
 
 -- --------------------------------------------------------
 
@@ -60,7 +60,7 @@ CREATE TABLE `if_forums` (
   `CourseID` int(12) NOT NULL,
   `CourseName` varchar(100) NOT NULL,
   `topic` text DEFAULT NULL,
-  `created_by_user_id` int(10) UNSIGNED NOT NULL,
+  `created_by_user_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -89,7 +89,7 @@ INSERT INTO `if_forums` (`id`, `CourseID`, `CourseName`, `topic`, `created_by_us
 CREATE TABLE `if_forum_members` (
   `id` int(10) UNSIGNED NOT NULL,
   `forum_id` int(10) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
   `joined_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -119,7 +119,7 @@ INSERT INTO `if_forum_members` (`id`, `forum_id`, `user_id`, `joined_at`) VALUES
 CREATE TABLE `if_messages` (
   `id` int(10) UNSIGNED NOT NULL,
   `forum_id` int(10) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
   `content_type` enum('text','file') NOT NULL,
   `content_text` text DEFAULT NULL,
   `file_name` varchar(255) DEFAULT NULL,
@@ -144,7 +144,7 @@ INSERT INTO `if_messages` (`id`, `forum_id`, `user_id`, `content_type`, `content
 
 CREATE TABLE `if_refresh_tokens` (
   `id` int(10) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
   `token` varchar(255) NOT NULL,
   `expires_at` datetime NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -187,7 +187,23 @@ INSERT INTO `if_refresh_tokens` (`id`, `user_id`, `token`, `expires_at`, `create
 (41, 4294967295, 'f2208d707eb2baac8778c597b06998d670cf05517668c82587edbe7cef7558efc67e5f56753f74bda705a07e608c866384c8148763a0b73868c881a3d4e10aff', '2025-06-27 13:38:08', '2025-06-20 06:38:08'),
 (42, 4294967295, 'ad3083fc1abdf8eaa6476602a96c17727574ee75e6dd3fd52b00d067c6b36f08840263f96ec725d54b7052be6b11746a53c34b63192b434deec02fc54ce9b926', '2025-06-27 14:53:51', '2025-06-20 07:53:51'),
 (43, 4294967295, '7e0c7851d89ef227b1cacc2e3e60afd9f66e3bdf191b192a6c23332edd464c3278efd3254102af7af705937be55c70b425e2353e453bc527433c2c4a996b0229', '2025-06-27 19:07:34', '2025-06-20 12:07:34'),
-(44, 4294967295, '6f005a605acc3aef8972f657244d3e4c99fd5117a91b21b2eb9609a75182731ba7416017b83d9d974e4951ce42166ec2b2e57a54e7fde9736c0d8c491e058a3d', '2025-06-27 19:51:00', '2025-06-20 12:51:00');
+(44, 4294967295, '6f005a605acc3aef8972f657244d3e4c99fd5117a91b21b2eb9609a75182731ba7416017b83d9d974e4951ce42166ec2b2e57a54e7fde9736c0d8c491e058a3d', '2025-06-27 19:51:00', '2025-06-20 12:51:00'),
+(45, 4294967295, 'd59daf0680cd72354f8988008382a86c85e2397be4fbb07b99fb2ed42144fe5dfa3d0c84eea389c2cc592a509bba922958d216b142b5a506e0683c58de8179c0', '2025-06-29 12:30:05', '2025-06-22 05:30:05'),
+(46, 4294967295, '281c9ffee6e1683b5c1c1dfb79fe663bd412979b9e2990ce38d424d1018a895adb30961cb48a23657ce304b64fd257080c5fd61f3f5e572ec4c067efe91f24b9', '2025-06-29 13:42:24', '2025-06-22 06:42:24'),
+(47, 4294967295, '1694c8b43f42bd1c02cdfd6349879278ffb9026723a20f1c9ae6da4f333618f8c4b90549462d05f83d7e5a65a7f50b8a3094cfaaa723477c0fa7dc2893949a2e', '2025-06-29 14:00:01', '2025-06-22 07:00:01'),
+(48, 4294967295, '3116ad5b3cf4a7ea2a7448742397a4c81b04c2c45cd36a03fd68daae391be187090fa3b399c175da55e0f00664a0aaf48729837c6406696eda3e972af5fb8df1', '2025-06-29 15:08:39', '2025-06-22 08:08:39'),
+(49, 4294967295, '0d55d6c4703d4d82d3a5f2e2c3845b237311d6e42a92ec73fb6c787f4dbfebec176a4257418516e48367212f89c50f2cb2d034e7d5cc5d8786470dac7d886350', '2025-06-29 15:09:15', '2025-06-22 08:09:15'),
+(50, 4294967295, 'cd2831590b9762f7dd5db5c5ba6f2594177f6009c93e598e10d0e4575fb6d73681f7be463f9c76c4824122200d1c4523cca99eccd1a468edee3ca844a3822425', '2025-06-29 15:24:29', '2025-06-22 08:24:29'),
+(51, 4294967295, 'b63c7f6ad262c8517ae47b082e474bbb4014550837b7445c79f5530ddb0a37f5929b6c3e595fa3622547af8632b0b21a86b501fb5b8a62dc3032bd19c1270a53', '2025-06-29 19:15:12', '2025-06-22 12:15:12'),
+(52, 4294967295, '138876ced1392d7bc3eca1bfc8fdea1b3063fa27ae88f246b0a31c40a9cf6881b4970d71f32178006da3bd835c06f3deff54d3fd14d24e77cd26ba98e7079d2c', '2025-06-29 20:26:48', '2025-06-22 13:26:48'),
+(53, 4294967295, '2f9961bdcef9b21fb14dae729729a0a666153ea711b40453026006047bea86d349afffbcec96dc69b3e403020ee65d161caea5510fc30a420e3f6d4749df16b9', '2025-06-29 20:49:39', '2025-06-22 13:49:39'),
+(54, 4294967295, '93bec12ac052c672e0b3fd6e1f2b11b476668370840030290c8f4730620d5f2a0bcc88047a00d1597cdd119b054465ebe7d572e4af6d5f497630ad8bac638357', '2025-06-29 21:09:53', '2025-06-22 14:09:53'),
+(55, 4294967295, 'a254776cecd85c0fca481414512ef7f7e419dc56e5e19a1f124120fbb72de00bbae2296ac6f2dd4b92e04f05a1dd28f5aa1480c5e2be00788a62a4bc4cc135e0', '2025-06-29 21:25:43', '2025-06-22 14:25:43'),
+(56, 4294967295, '365605b9e40e808e8cf53f2c5b4674841cb2a5aca43543c87e902a331427874bd10ab7772a3bcfebec6f2b68b90a87e24769bb73e111e5a3d6f183141a727edb', '2025-06-29 21:35:40', '2025-06-22 14:35:40'),
+(57, 4294967295, '8c7a19a8367869c9a2633cea88bff44da3d9bd3d70ce3aab2231b2a765851da28e046aa338550c73934c8efdad93eca3d8def3c635066b68f829e12362664745', '2025-06-29 21:52:34', '2025-06-22 14:52:34'),
+(58, 4294967295, 'b6e05baee45ee0e4633291f8a9dd664034a38554cca846e2b4f2236ded1acf15077d84697eb0882b6ac35da543b81a8bd0d61e9778b5775841202d1712e4230a', '2025-06-30 10:21:17', '2025-06-23 03:21:17'),
+(59, 4294967295, '0991eab4aaa03d7e966f65bb9ea5c78eabba45da689e786864c50cdb375d13b469dfbdf8368cb431ba074d2dd2177f93a494fd990f21b7f7b4452877407f8357', '2025-06-30 10:22:30', '2025-06-23 03:22:30'),
+(60, 4294967295, '92aeb4783a1002a335882f5a4f29dd0cfd208041bf6d08738f695f821013c0679a08a17a8b8aaadf0966e74f305448bfa0ee0c4d68d503c6c22e9d1aaed46abf', '2025-06-30 10:26:57', '2025-06-23 03:26:57');
 
 -- --------------------------------------------------------
 
@@ -196,7 +212,7 @@ INSERT INTO `if_refresh_tokens` (`id`, `user_id`, `token`, `expires_at`, `create
 --
 
 CREATE TABLE `if_users` (
-  `id` int(12) UNSIGNED NOT NULL,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `Name` varchar(225) NOT NULL,
   `username` varchar(50) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -288,7 +304,7 @@ ALTER TABLE `if_messages`
 -- AUTO_INCREMENT cho bảng `if_refresh_tokens`
 --
 ALTER TABLE `if_refresh_tokens`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- Các ràng buộc cho các bảng đã đổ

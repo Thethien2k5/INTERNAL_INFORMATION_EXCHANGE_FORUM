@@ -18,7 +18,7 @@ app.use("/api", checkAndGetDataRouter);
 app.use("/api", SetDataRouter);
 // --------------------Phục vụ File Tĩnh--------------------
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'templates', 'web', 'login.html'));
+  res.sendFile(path.join(__dirname, '..', 'templates', 'web', 'index.html'));
 });
 
 app.use(express.static(path.join(__dirname,'..',"templates","web")));
