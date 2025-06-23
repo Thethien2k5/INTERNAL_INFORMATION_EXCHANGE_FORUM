@@ -37,54 +37,12 @@
                                 <i class="fas fa-users"></i>
                             </div>
                             <div class="group-item-info">
-                                <div class="group-item-name">Nhóm lập trình Mạng</div>
-                                <div class="group-item-lastmsg">Cử Đầu Thiên: @All báo cáo: https://docs.google.com...</div>
+                                <div class="group-item-name"></div>
+                                <div class="group-item-lastmsg"></div>
                             </div>
                             <div class="group-item-meta">
-                                <div class="group-item-time">18:32</div>
-                                <div class="group-item-unread">3</div>
-                            </div>
-                        </div>
-                        <div class="group-item">
-                            <div class="group-item-avatar">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="group-item-info">
-                                <div class="group-item-name">F5 IT Team</div>
-                                <div class="group-item-lastmsg">Nguyễn Khánh: cái joon in ra bị ma hó...</div>
-                            </div>
-                            <div class="group-item-meta">
-                                <div class="group-item-time">2 ngày</div>
-                            </div>
-                        </div>
-                        <div class="group-item">
-                            <div class="group-item-avatar">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="group-item-info">
-                                <div class="group-item-name">[CLC]_HKII2425 ATTT N16</div>
-                                <div class="group-item-lastmsg">Hoàng Quận: nhóm 12 xin đăng kí thu...</div>
-                            </div>
-                            <div class="group-item-meta">
-                                <div class="group-item-time">2 ngày</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="category">
-                    <div class="category-title">Nhóm khác</div>
-                    <div class="group-list">
-                        <div class="group-item">
-                            <div class="group-item-avatar">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="group-item-info">
-                                <div class="group-item-name">Papa</div>
-                                <div class="group-item-lastmsg">Cuộc gọi video đến</div>
-                            </div>
-                            <div class="group-item-meta">
-                                <div class="group-item-time">3 ngày</div>
+                                <div class="group-item-time"></div>
+                                <div class="group-item-unread"></div>
                             </div>
                         </div>
                     </div>
@@ -99,7 +57,7 @@
                     <div class="group-avatar-header">
                         <i class="fas fa-users"></i>
                     </div>
-                    <h2>Nhóm lập trình Mạng</h2>
+                    <h2></h2>
                 </div>
                 <div class="chat-actions">
                     <button class="header-btn" title="Tìm kiếm">
@@ -124,18 +82,24 @@
                     <button class="input-tool" id="imageBtn" title="Gửi hình ảnh">
                         <i class="far fa-image"></i>
                     </button>
-                    <button class="input-tool" id="fileBtn" title="Gửi file">
+                    <button class="input-tool" id="fileBtn" title="Gửi tệp đính kèm">
                         <i class="fas fa-paperclip"></i>
                     </button>
                 </div>
                 <div class="message-input-container">
+                    <div id="file-staging-area">
+                        </div>
                     <textarea class="message-input" id="messageInput" placeholder="Nhập @, tin nhắn tới Nhóm lập trình Mạng" rows="1"></textarea>
-                    <div class="file-preview" id="filePreview"></div>
                 </div>
                 <button class="send-btn" id="sendBtn" title="Gửi tin nhắn" disabled>
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
+
+            <input type="file" id="imageInput" accept="image/*" multiple style="display: none;">
+            <input type="file" id="fileInput" multiple style="display: none;">
+
+            
         </main>
 
         <!-- Right sidebar - Thông tin nhóm -->
@@ -144,8 +108,8 @@
                 <div class="group-avatar-large">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="group-name-large">Nhóm lập trình Mạng</div>
-                <div class="group-status-large">4 thành viên</div>
+                <div class="group-name-large"></div>
+                <div class="group-status-large"></div>
             </div>
             
             <div class="group-tools">

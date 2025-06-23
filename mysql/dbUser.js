@@ -25,7 +25,7 @@ async function CheckUserName(email) {
   const [rows] = await pool.execute(
     "SELECT 1 FROM if_users WHERE username = ? LIMIT 1",
     [email]
-  );
+  );`x`
   return rows.length > 0;
 }
 

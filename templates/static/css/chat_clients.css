@@ -1134,3 +1134,107 @@
     height: 40px;
     font-size: 18px;
 }
+
+
+
+/* --- CSS CHO KHU VỰC CHỜ FILE --- */
+
+#file-staging-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 0 8px 0; /* Thêm padding dưới nếu có file */
+    max-height: 150px; /* Giới hạn chiều cao, nếu nhiều file sẽ có thanh cuộn */
+    overflow-y: auto;
+}
+
+.staged-file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--hover-light);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    padding: 6px 10px;
+    font-size: 13px;
+    max-width: 200px;
+}
+
+.staged-file-icon {
+    font-size: 18px;
+    color: var(--zalo-primary);
+}
+
+.staged-file-info {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.staged-file-name {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.staged-file-size {
+    font-size: 11px;
+    color: var(--text-secondary-light);
+}
+
+.remove-staged-file {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text-secondary-light);
+    padding: 2px;
+}
+.remove-staged-file:hover {
+    color: var(--zalo-red);
+}
+
+/* --- CSS CHO THANH THÔNG BÁO DUNG LƯỢNG --- */
+#upload-progress-info {
+    font-size: 12px;
+    color: var(--text-secondary-light);
+    margin-top: 5px;
+    padding: 0 16px;
+    text-align: right;
+    height: 15px; /* Giữ chiều cao ổn định */
+}
+
+/* Sửa lại input-tool để dùng với label */
+.input-tool {
+    /* ... các thuộc tính cũ ... */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-input-container {
+    display: flex; /* SỬA */
+    flex-direction: column; /* SỬA */
+    flex: 1;
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 8px 12px; /* Giảm padding một chút */
+    transition: var(--transition);
+}
+
+.message-input {
+    width: 100%;
+    border: none;
+    background: none;
+    outline: none;
+    resize: none;
+    font-size: 14px;
+    color: var(--text-light);
+    max-height: 120px;
+    min-height: 20px;
+    line-height: 1.4;
+    font-family: inherit;
+    padding: 4px; /* Thêm padding cho textarea */
+}

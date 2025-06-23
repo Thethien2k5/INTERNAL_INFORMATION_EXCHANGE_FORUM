@@ -54,8 +54,9 @@ function initializeSocket(io) {
                     socket.broadcast.to(roomName).emit('newMessage', messageForClient);
                     console.log(`Broadcast message to room ${roomName}`);
                 }
-            }catch{
+            }catch(error){
                 console.error('Lỗi khi xử lý tin nhắn:', error);
+
             }
         });
 
