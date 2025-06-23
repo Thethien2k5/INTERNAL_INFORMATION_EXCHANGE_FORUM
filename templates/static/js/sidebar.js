@@ -29,35 +29,16 @@ function initSidebar() {
   // Avatar login
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("accessToken");
-  const userIcon = document.getElementById("user-avatar-icon");
   const defaultIcon = document.getElementById("default-user-icon");
   const userMenu = document.getElementById("userMenu");
 
-  if (token && user && user.avatar) {
-    // Có đăng nhập
-    userIcon.src = user.avatar;
-    userIcon.classList.remove("hidden");
-    defaultIcon.classList.add("hidden");
-  } else {
-    // Chưa đăng nhập
-    userIcon.classList.add("hidden");
-    defaultIcon.classList.remove("hidden");
-  }
-
-  // Click avatar → toggle menu nếu đã login
-  if (userIcon) {
-    userIcon.addEventListener("click", (e) => {
+  // Click icon → toggle menu nếu đã login
+  if (defaultIcon) {
+    defaultIcon.addEventListener("click", (e) => {
       e.stopPropagation();
       if (isLoggedIn()) {
         userMenu.classList.toggle("hidden");
-      }
-    });
-  }
-
-  // Click icon user → chuyển đến login
-  if (defaultIcon) {
-    defaultIcon.addEventListener("click", () => {
-      if (!isLoggedIn()) {
+      } else {
         window.location.href = "/login.html";
       }
     });
@@ -65,7 +46,7 @@ function initSidebar() {
 
   // Ẩn menu khi click ra ngoài
   document.addEventListener("click", (e) => {
-    if (userMenu && !userMenu.contains(e.target) && e.target !== userIcon) {
+    if (userMenu && !userMenu.contains(e.target) && e.target !== defaultIcon) {
       userMenu.classList.add("hidden");
     }
   });
@@ -77,11 +58,11 @@ function isLoggedIn() {
 
 function logout() {
   localStorage.removeItem("token");
-  localStorage.removeItem("user"); 
+  localStorage.removeItem("user");
   window.location.href = "login.html";
 }
 
-window.addEventListener('storage', function(e) {
+window.addEventListener('storage', function (e) {
   if (e.key === 'user') {
     initSidebar();
   }
