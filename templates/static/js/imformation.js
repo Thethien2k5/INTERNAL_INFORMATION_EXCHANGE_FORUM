@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     const avatarInput = document.getElementById('avatar-input');
     const avatarPreview = document.getElementById('avatar-preview');
+    const defaultAvatarPreview = document.getElementById('default-avatar-preview');
     const form = document.querySelector('form');
     const nameInput = document.getElementById('name');
-    const mssvInput = document.getElementById('mssv');
+    const emailInput = document.getElementById('email');
 
     // Biến để lưu file ảnh người dùng đã chọn (nếu có)
     let selectedAvatarFile = null;
@@ -31,9 +32,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.success) {
                 const user = data.user;
                 // Điền thông tin vào form
-                avatarPreview.src = user.avatar;
+                if (user.avatar) {
+                    avatarPreview.src = user.avatar;
+                    avatarPreview.style.display = 'block';
+                    defaultAvatarPreview.style.display = 'none';
+                } else {
+                    avatarPreview.style.display = 'none';
+                    defaultAvatarPreview.style.display = 'block';
+                }
                 nameInput.value = user.name || '';
-                mssvInput.value = user.mssv || '';
+                emailInput.value = user.email || '';
                 // Cập nhật lại localStorage với dữ liệu mới nhất
                 localStorage.setItem('user', JSON.stringify(user));
             } else {
@@ -57,6 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const reader = new FileReader();
         reader.onload = function (event) {
             avatarPreview.src = event.target.result;
+            avatarPreview.style.display = 'block';
+            defaultAvatarPreview.style.display = 'none';
         };
         reader.readAsDataURL(file);
     });
@@ -74,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Tạo đối tượng FormData để gửi cả text và file
         const formData = new FormData();
         formData.append('name', nameInput.value.trim());
-        formData.append('mssv', mssvInput.value.trim());
+        formData.append('email', emailInput.value.trim());
 
         // Nếu người dùng đã chọn một file ảnh mới, thêm nó vào formData
         if (selectedAvatarFile) {
@@ -87,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`${apiURL}/api/user/profile`, {
                 method: 'POST',
                 headers: {
-                    // Không cần 'Content-Type', trình duyệt sẽ tự đặt khi dùng FormData
                     'Authorization': `Bearer ${token}`
                 },
                 body: formData
