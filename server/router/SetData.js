@@ -1,6 +1,7 @@
 const { AddUser } = require("../../mysql/dbUser");
 const { joinForum } = require("../../mysql/db.Forums");
-const {getID} = require("../../mysql/db.Courses");
+const { getID } = require("../../mysql/db.Courses");
+const { CheckIsUserInForum } = require("./CheckAndGetData");
 
 const express = require("express");
 const router = express.Router();
@@ -11,16 +12,19 @@ const router = express.Router();
 router.post("/AddAccordingToCode", async (req, res) => {
   const { userID, courseID } = req.body;
   try {
-    const ForumId = await getID(courseID); // gọi từ db.Courses
+    const ForumId = await getID(courseID); // Lấy ID nhóm chát
+    //Kiểm tra đã đăng ký chưa
+    if (await CheckIsUserInForum(ForumId, userID)) {
+      return res.json({
+        success: false, message:"Bạn đã đăng ký trước đó\n Vui lòng không thao tác lại"
+      });
+    }
     const result = await joinForum(ForumId, userID);
     res.json({ success: result });
   } catch (err) {
-    // res.status(500).json({ success: false, message: "Đăng ký thất bại" });
     res.status(500).json({ success: false, message: "Đăng ký thất bại" });
-
   }
 });
-
 
 ///Thêm user mới
 async function AddNewUsersByCallingDatabase(

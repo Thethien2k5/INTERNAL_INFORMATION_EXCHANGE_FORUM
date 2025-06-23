@@ -75,7 +75,7 @@ initializeSocket(io); // Gọi hàm khởi tạo Socket.IO để thiết lập c
 // --------------------Thiết lập sử dụng router-------------------
 const fileRouter = createFileRouter(io); // Truyền io vào router file để có thể gửi các sự kiện realtime
 app.use("/api", otpRoutes);
-app.use("/api", loginRoutes);// Sử dụng router để xử lý upload file
+app.use("/api", loginRoutes);
 app.use("/api", fileRouter); // Sử dụng router để xử lý upload file
 app.use("/api/forums", forumRouters); // Sử dụng router để xử lý các diễn đàn
 app.use("/api", tokenRouter); // Sử dụng router để xử lý token

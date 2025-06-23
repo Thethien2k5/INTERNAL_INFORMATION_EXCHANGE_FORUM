@@ -7,7 +7,9 @@ async function initCoursesPage() {
 
   // Kiểm tra xem tableBody có tồn tại không trước khi thực hiện
   if (!tableBody) {
-    console.error("Không tìm thấy #course-table-body. Script có thể đang chạy quá sớm.");
+    console.error(
+      "Không tìm thấy #course-table-body. Script có thể đang chạy quá sớm."
+    );
     return;
   }
 
@@ -47,7 +49,7 @@ async function initCoursesPage() {
     if (noDataRow) {
       noDataRow.style.display = "table-row";
     } else {
-        tableBody.innerHTML = `<tr class="no-data-row"><td colspan="7">Lỗi khi tải dữ liệu</td></tr>`;
+      tableBody.innerHTML = `<tr class="no-data-row"><td colspan="7">Lỗi khi tải dữ liệu</td></tr>`;
     }
   }
 }
@@ -65,7 +67,7 @@ document.addEventListener("click", async (event) => {
       alert("Bạn cần đăng nhập để đăng ký.");
       return;
     }
-    
+
     let userID;
     try {
       const parsedUser = JSON.parse(user);
@@ -92,7 +94,7 @@ document.addEventListener("click", async (event) => {
       if (result.success) {
         alert("Đăng ký thành công và đã thêm vào nhóm chat.");
       } else {
-        alert("Lỗi: " + result.message);
+        alert(result.message);
       }
     } catch (err) {
       console.error("Lỗi khi gửi request đăng ký:", err);
@@ -103,6 +105,6 @@ document.addEventListener("click", async (event) => {
 
 // Nếu người dùng tải trực tiếp trang courses.html, chúng ta vẫn cần nó hoạt động
 // Kiểm tra xem trang hiện tại có phải là courses.html không
-if (window.location.pathname.endsWith('Courses.html')) {
-    document.addEventListener('DOMContentLoaded', initCoursesPage);
+if (window.location.pathname.endsWith("Courses.html")) {
+  document.addEventListener("DOMContentLoaded", initCoursesPage);
 }

@@ -3,6 +3,8 @@ const express = require("express");
 const router = express.Router();
 const dbCourses = require("../../mysql/db.Courses");
 const { CheckUserId } = require("../../mysql/dbUser");
+const { IsUserInForum } = require("../../mysql/db.Forums");
+
 
 // API lấy danh sách học phần
 router.get("/courses", async (req, res) => {
@@ -25,9 +27,19 @@ async function CheckUserIDFromDatabase(userID) {
         throw error;
     }
 }
+//Kiểm tra user đã có trong nhóm hay chưa
+async function CheckIsUserInForum(ForumId, userID) {
+    try {
+        return await IsUserInForum(ForumId, userID);
+    } catch (error) {
+        console.error("Lỗi khi kiểm tra user ID:", error);
+        throw error;
+    }
+}
 
 // 👉 Export cả router và hàm check
 module.exports = {
     router,
-    CheckUserIDFromDatabase
+    CheckUserIDFromDatabase,
+    CheckIsUserInForum
 };

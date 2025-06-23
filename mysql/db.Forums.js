@@ -34,11 +34,20 @@ async function createForum(name, topic, creatorId) {
   }
 }
 
-// Thêm một người dùng vào một nhóm chat đã tồn tại 
+// Thêm một người dùng vào một nhóm chat đã tồn tại
 async function joinForum(forumId, userId) {
   const sql = `INSERT INTO if_forum_members (forum_id, user_id) VALUES (?, ?)`;
   const [result] = await pool.execute(sql, [forumId, userId]);
   return result.affectedRows > 0;
+}
+//kiểm tra người dùng đã có ở trong nhóm này chưa
+async function IsUserInForum(ForumID, UserID) {
+  const [rows] = await pool.execute(
+    "SELECT 1 FROM if_forum_members WHERE forum_id = ? AND user_id = ? LIMIT 1",
+    [ForumID, UserID]
+  );
+
+  return rows.length > 0;
 }
 
 // Lấy tất cả các nhóm chat mà một người dùng đang tham gia.
@@ -86,4 +95,5 @@ module.exports = {
   getForumMembers,
   getForumById,
   removeMemberFromForum,
+  IsUserInForum,
 };

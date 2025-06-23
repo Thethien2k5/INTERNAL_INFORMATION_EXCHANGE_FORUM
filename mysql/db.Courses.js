@@ -26,6 +26,7 @@ async function getID(CourseID) {
     throw new Error("Không tìm thấy forum tương ứng với CourseID " + CourseID);
   }
 }
+//Kiểm tra 
 
 
 module.exports = { getAllCourses, getID };

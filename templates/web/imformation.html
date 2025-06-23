@@ -17,7 +17,7 @@
     <div id="sidebar-container"></div>
     <script src="/templates/static/js/sidebar.js"></script>
     <script>
-        fetch('/sidebar.html')
+        fetch('./sidebar.html')
             .then(res => res.text())
             .then(html => {
                 document.getElementById('sidebar-container').innerHTML = html;
@@ -42,8 +42,8 @@
                 <label for="name">Họ và Tên</label>
                 <input type="text" id="name" name="name">
 
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" readonly>
+                <label for="id">Mã Số</label>
+                <input type="text" id="id" name="id" readonly>
 
                 <div class="gender-group">
                     <label>Giới tính:</label>
@@ -56,7 +56,6 @@
         </div>
     </div>
 
-    <script src="/templates/static/js/app-config.js"></script>
     <script src="/templates/static/js/imformation.js"></script>
 </body>
 

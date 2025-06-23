@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const apiURL = API_CONFIG.getApiUrl();
 
     try {
+     
       const res = await fetch(apiURL + "/api/login", {
         method: "POST",
         headers: {
@@ -43,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
         body: JSON.stringify({ username, password }),
       });
+    
 
       const data = await res.json();
 
@@ -54,14 +56,14 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("user", JSON.stringify(data.user));
         hideLoader(); ////
         alert("Đăng nhập thành công!");
-        window.location.href = "/index.html"; // Hoặc trang chính của bạn
+        window.location.href = "./index.html"; // Hoặc trang chính của bạn
       } else {
         hideLoader(); ////
         alert("Lỗi ở login: " + data.message);
       }
     } catch (err) {
       hideLoader(); ////
-      alert("Lỗi đăng nhập: " + err.message);
+      alert("(login.js)Lỗi đăng nhập: " + err.message);
     }
   });
 });

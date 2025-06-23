@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const defaultAvatarPreview = document.getElementById('default-avatar-preview');
     const form = document.querySelector('form');
     const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
+    const idInput = document.getElementById('id');
 
     // Biến để lưu file ảnh người dùng đã chọn (nếu có)
     let selectedAvatarFile = null;
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     defaultAvatarPreview.style.display = 'block';
                 }
                 nameInput.value = user.name || '';
-                emailInput.value = user.email || '';
+                idInput.value = user.id || '';
                 // Cập nhật lại localStorage với dữ liệu mới nhất
                 localStorage.setItem('user', JSON.stringify(user));
             } else {
@@ -83,8 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Tạo đối tượng FormData để gửi cả text và file
         const formData = new FormData();
-        formData.append('name', nameInput.value.trim());
-        formData.append('email', emailInput.value.trim());
+        formData.append('Name', nameInput.value.trim());
+        formData.append('id', idInput.value.trim());
 
         // Nếu người dùng đã chọn một file ảnh mới, thêm nó vào formData
         if (selectedAvatarFile) {

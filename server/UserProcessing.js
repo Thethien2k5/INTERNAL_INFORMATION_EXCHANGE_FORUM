@@ -11,7 +11,7 @@ async function ProcessingInformationWhenAddingUsers(username, email, password) {
   let attempts = 0;
   var userId = "";
   do {
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 9; i++) {
       userId += Math.floor(Math.random() * 10); // từng chữ số từ 0-9
     }
     attempts++;

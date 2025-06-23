@@ -69,8 +69,7 @@ label {
     margin: 10px 0 5px;
 }
 
-input[type="text"],
-input[type="email"] {
+input[type="text"] {
     width: 100%;
     padding: 8px;
     border-radius: 5px;
@@ -115,20 +114,18 @@ input[type="email"] {
 }
 
 /* Input field màu theo theme */
-:root[data-theme="light"] input[type="text"],
-:root[data-theme="light"] input[type="email"] {
+:root[data-theme="light"] input[type="text"] {
     background-color: #f0f0f0;
     color: #000;
 }
 
-:root[data-theme="dark"] input[type="text"],
-:root[data-theme="dark"] input[type="email"] {
+:root[data-theme="dark"] input[type="text"] {
     background-color: #1a1a1a;
     color: #fff;
 }
 
 /* Bạn cũng có thể thêm border nếu muốn dễ nhìn */
 input[type="text"],
-input[type="email"] {
+input[type="id"] {
     border: 1px solid #ccc;
 }
