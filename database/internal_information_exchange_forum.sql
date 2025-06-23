@@ -88,7 +88,7 @@ INSERT INTO `if_forums` (`id`, `CourseID`, `CourseName`, `topic`, `created_by_us
 
 CREATE TABLE `if_forum_members` (
   `id` int(10) UNSIGNED NOT NULL,
-  `forum_id` int(10) UNSIGNED NOT NULL,
+  `forum_id` int(12) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
   `joined_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

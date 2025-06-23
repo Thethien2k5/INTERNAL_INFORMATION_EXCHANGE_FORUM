@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>T3V Helper - Diễn đàn hỏi đáp</title>
@@ -25,30 +25,31 @@
         max-height: 100%;
       }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div id="sidebar-container"></div>
-    <script src="/templates/static/js/sidebar.js"></script>
-    <script>
-      // Hàm tải sidebar và khởi tạo
-      fetch("/sidebar.html")
-        .then((res) => res.text())
-        .then((html) => {
-          document.getElementById("sidebar-container").innerHTML = html;
-          initSidebar(); // Hàm initSidebar() từ sidebar.js
-
-          // Sau khi sidebar được tải, khởi tạo logic điều hướng
-          initNavigation();
-        });
-    </script>
-
+    
     <main id="main-content">
       <p>Đang tải nội dung...</p>
     </main>
 
     <script>
-      // Hàm tải nội dung
+      // BIẾN TOÀN CỤC: Lưu hàm dọn dẹp của trang hiện tại đang được hiển thị.
+      let currentPageCleanup = null;
+
+      /**
+       * Tải nội dung từ URL, chèn vào <main> và quản lý vòng đời script.
+       * @param {string} url - Đường dẫn đến file html cần tải.
+       * @param {boolean} pushState - Có đẩy vào history của trình duyệt không.
+       */
       async function loadContent(url, pushState = true) {
+        // BƯỚC 1: DỌN DẸP TRANG CŨ
+        // Nếu có hàm dọn dẹp của trang trước, hãy chạy nó để ngắt kết nối socket, etc.
+        if (typeof currentPageCleanup === 'function') {
+          currentPageCleanup();
+          currentPageCleanup = null; // Reset lại sau khi gọi
+        }
+
         const mainContentArea = document.getElementById("main-content");
         if (!mainContentArea) return;
 
@@ -56,26 +57,68 @@
           '<p class="loading-indicator">Đang tải nội dung...</p>';
 
         try {
+          // BƯỚC 2: TẢI VÀ CHÈN NỘI DUNG MỚI
           const response = await fetch(url);
           if (!response.ok)
             throw new Error(`HTTP error! status: ${response.status}`);
 
           const html = await response.text();
-          mainContentArea.innerHTML = html;
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
 
-          // Xử lý các script trong nội dung tải về
-          const scripts = mainContentArea.querySelectorAll("script");
+          // Tìm và xử lý các thẻ <script> trong nội dung vừa tải
+          const scripts = tempDiv.querySelectorAll("script");
+          const scriptPromises = [];
+
           scripts.forEach((oldScript) => {
             const newScript = document.createElement("script");
-            if (oldScript.src) {
-              newScript.src = oldScript.src;
-              newScript.async = false;
-            } else {
-              newScript.textContent = oldScript.textContent;
+            // Sao chép tất cả các thuộc tính (src, type, etc.)
+            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+            
+            if (oldScript.innerHTML) {
+              newScript.innerHTML = oldScript.innerHTML;
             }
+
+            oldScript.parentNode.removeChild(oldScript); // Xóa script cũ khỏi HTML tạm
             document.body.appendChild(newScript);
+
+            // Nếu script có nguồn ngoài (src), tạo promise để chờ nó tải xong
+            if (newScript.src) {
+              const promise = new Promise((resolve, reject) => {
+                newScript.onload = resolve;
+                newScript.onerror = reject;
+              });
+              scriptPromises.push(promise);
+            }
           });
 
+          // Chèn HTML (đã được làm sạch script) vào <main>
+          mainContentArea.innerHTML = tempDiv.innerHTML;
+
+          // Chờ tất cả các script bên ngoài tải xong
+          await Promise.all(scriptPromises);
+
+          // BƯỚC 3: KHỞI TẠO SCRIPT CHO TRANG MỚI
+          // Dựa vào URL đã tải, gọi hàm khởi tạo tương ứng
+          if (url.includes("Courses.html")) {
+            if (typeof initCoursesPage === "function") {
+              initCoursesPage();
+            }
+            currentPageCleanup = null; // Trang này không cần dọn dẹp
+          } 
+          else if (url.includes("chat_clients.html")) {
+            if (typeof initChatPage === "function") {
+              initChatPage();
+              // Gán hàm dọn dẹp của trang chat để lần điều hướng sau sẽ gọi
+              currentPageCleanup = cleanupChatPage;
+            }
+          }
+          // Thêm các trang khác với logic tương tự ở đây
+          else {
+            currentPageCleanup = null; // Các trang khác mặc định không cần dọn dẹp
+          }
+
+          // Cập nhật URL trên thanh địa chỉ
           if (pushState && window.location.pathname !== url) {
             history.pushState({ url }, "", url);
           }
@@ -85,44 +128,53 @@
         }
       }
 
-      // Xử lý sự kiện popstate
+      // Xử lý sự kiện back/forward của trình duyệt
       window.addEventListener("popstate", function (event) {
         const path = event.state?.url || "home.html";
         loadContent(path, false);
       });
 
-      // Khởi tạo trang
+      // Khởi tạo trang khi được tải lần đầu
       document.addEventListener("DOMContentLoaded", function () {
-        // Load sidebar
+        // Tải sidebar trước
         fetch("/sidebar.html")
           .then((res) => res.text())
           .then((html) => {
             document.getElementById("sidebar-container").innerHTML = html;
-            initSidebar();
+            // initSidebar(); // Gọi hàm từ sidebar.js nếu có
             initNavigation();
 
-            // Load nội dung ban đầu dựa trên URL
+            // Tải nội dung ban đầu dựa trên URL hiện tại
             const path = window.location.pathname;
-            if (path === "/" || path === "/index.html" || path === "") {
-              loadContent("home.html", false);
-            } else if (!path.includes(".html")) {
-              loadContent(path + ".html", false);
+            let initialUrl = "home.html";
+            
+            if (path !== "/" && path !== "/index.html" && path.trim() !== "") {
+                initialUrl = path.startsWith('/') ? path.substring(1) : path;
+                if (!initialUrl.endsWith('.html')) {
+                    initialUrl += ".html";
+                }
             }
+            loadContent(initialUrl, false);
           });
       });
 
+      // Gắn sự kiện click cho các link điều hướng
       function initNavigation() {
         document.addEventListener("click", function (event) {
           const link = event.target.closest(".menu_item a");
-          if (link && link.href) {
-            event.preventDefault();
-            const url = link.getAttribute("href");
-            if (url && url !== "#") {
-              loadContent(url);
-            }
+          // Chỉ xử lý các link nội bộ, không phải link "#" hay link ngoài
+          if (link && link.href && !link.getAttribute('href').startsWith('#')) {
+             const url = new URL(link.href);
+             if (url.origin === window.location.origin) {
+                event.preventDefault();
+                const path = url.pathname.startsWith('/') ? url.pathname.substring(1) : url.pathname;
+                if (path) {
+                    loadContent(path);
+                }
+             }
           }
         });
       }
     </script>
-  </body>
+</body>
 </html>
