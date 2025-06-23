@@ -42,7 +42,7 @@ async function CheckUserId(userId) {
 async function AddUser(id, Name, username, email, password_hash) {
   const [result] = await pool.execute(
     "INSERT INTO if_users (id, Name, username, email, password_hash) VALUES (?, ?, ?, ?, ?)",
-    [ id, Name, username, email, password_hash]
+    [id, Name, username, email, password_hash]
   );
   return result.affectedRows > 0; // Trả về true nếu thêm thành công
 }
@@ -56,7 +56,6 @@ async function GetPassword_hash(username) {
   return rows.length > 0 ? rows[0].password_hash : null; // Trả về password hash nếu tìm thấy
 }
 async function GetAvatar(username) {
-  // ví dụ dùng MySQL:
   const [rows] = await pool.query(
     "SELECT avatar FROM if_users WHERE username = ?",
     [username]
@@ -73,11 +72,16 @@ async function getUserByUsername(username) {
 }
 // Lấy thông tin người dùng theo ID
 async function getUserById(userId) {
-  const [rows] = await pool.execute(
-    "SELECT id, username, email, avatar FROM if_users WHERE id = ? LIMIT 1",
-    [userId]
-  );
-  return rows.length > 0 ? rows[0] : null;
+  try {
+    const [rows] = await pool.query(
+      'SELECT id, Name as name, username, email, avatar FROM if_users WHERE id = ?',
+      [userId]
+    );
+    return rows[0];
+  } catch (error) {
+    console.error('Lỗi khi lấy thông tin user theo ID:', error);
+    throw error;
+  }
 }
 
 //xuất (export) các biến/hàm ra ngoài file
