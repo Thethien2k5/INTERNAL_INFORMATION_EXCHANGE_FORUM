@@ -3,11 +3,36 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const verifyToken = require('../middleware/verifyToken');
 
 // Import các hàm từ cơ sở dữ liệu
-const { GetPassword_hash, GetAvatar, getUserByUsername } = require("../../mysql/dbUser");
+const { GetPassword_hash, GetAvatar, getUserByUsername, getUserById } = require("../../mysql/dbUser");
 const { storeRefreshToken } = require('../../mysql/db.Token');
 const { jwtSecret } = require('../config');
+
+// Route để lấy thông tin user hiện tại
+router.get("/user/me", verifyToken, async (req, res) => {
+    try {
+        const user = await getUserById(req.user.userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "Không tìm thấy thông tin người dùng." });
+        }
+
+        res.json({
+            success: true,
+            user: {
+                id: user.id,
+                username: user.username,
+                name: user.name,
+                email: user.email,
+                avatar: user.avatar ? `uploads/AvatarsUser/${user.avatar}` : "templates/static/images/khongbiet.jpg"
+            }
+        });
+    } catch (err) {
+        console.error("Lỗi khi lấy thông tin user:", err);
+        res.status(500).json({ success: false, message: "Lỗi server khi lấy thông tin người dùng." });
+    }
+});
 
 // Xử lý POST /api/login
 // Gợi ý sửa file: server/router/Repair_Login.js
@@ -28,7 +53,7 @@ router.post("/login", async (req, res) => {
             // Trường hợp này hiếm khi xảy ra nếu user tồn tại, nhưng vẫn nên kiểm tra
             return res.status(500).json({ success: false, message: "Không tìm thấy thông tin xác thực." });
         }
-        
+
         const match = await bcrypt.compare(password, hash);
 
         if (match) {
