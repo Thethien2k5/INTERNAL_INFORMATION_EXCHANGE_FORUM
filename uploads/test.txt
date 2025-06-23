@@ -1,0 +1,31 @@
+UPDATE if_forums
+SET CourseID = '010412301302' -- Mã học phần của 'An toàn thông tin'
+WHERE CourseName = N'An toàn thông tin';
+
+UPDATE if_forums
+SET CourseID = '0104005004' -- Mã học phần của 'Hệ điều hành'
+WHERE CourseName = N'Hệ điều hành';
+
+UPDATE if_forums
+SET CourseID = '0104005105' -- Mã học phần của 'Lập trình mạng'
+WHERE CourseName = N'Lập trình mạng';
+
+UPDATE if_forums
+SET CourseID = '0104007201' -- Mã học phần của 'Mạng máy tính'
+WHERE CourseName = N'Mạng máy tính';
+
+UPDATE if_forums
+SET CourseID = '0104007202' -- Mã học phần của 'Tư duy thiết kế và đổi mới sáng tạo'
+WHERE CourseName = N'Tư duy thiết kế và đổi mới sáng tạo';
+
+UPDATE if_forums
+SET CourseID = '0104007203' -- Mã học phần của 'Công nghệ phần mềm'
+WHERE CourseName = N'Công nghệ phần mềm';
+
+UPDATE if_forums
+SET CourseID = '0104007204' -- Mã học phần của 'Cấu trúc dữ liệu và giải thuật'
+WHERE CourseName = N'Cấu trúc dữ liệu và giải thuật';
+
+UPDATE if_forums
+SET CourseID = '0104122042' -- Mã học phần của 'Lập trình trí tuệ nhân tạo'
+WHERE CourseName = N'Lập trình trí tuệ nhân tạo';

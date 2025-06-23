@@ -1,48 +1,45 @@
 :root {
   /* Light theme variables */
-  --bg-color: #ffffff;
+  --bg-color: #f8f8f8;
   --text-color: #333333;
-  --sidebar-bg: #f8f9fa;
-  --menu-hover: #e9ecef;
+  --sidebar-bg: #f5f5f5;
+  --menu-hover: #e0e0e0;
   --border-color: #dee2e6;
   --menu-bg: #ffffff;
   --icon-color: #333333;
+  --menu-text-color: #333333;
 }
 
 [data-theme="dark"] {
-  /* Dark theme variables */
-  --bg-color: #1a1a1a;
-  --text-color: #ffffff;
-  --sidebar-bg: #2d2d2d;
-  --menu-hover: #3d3d3d;
-  --border-color: #404040;
-  --menu-bg: #2d2d2d;
-  --icon-color: #ffffff;
+  /* Dark theme variables (Dracula theme inspired) */
+  --bg-color: #282a36;
+  --text-color: #dc71c3;
+  --sidebar-bg: #21222c;
+  --menu-hover: #6272a4;
+  --border-color: #6272a4;
+  --menu-bg: #dc71c3;
+  --icon-color: #dc71c3;
+  --menu-text-color: #dc71c3;
 }
 
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
 
 body {
-  width: 100vw;
-  height: 1000vh;
+  height: 100%;
   background-color: var(--bg-color);
   color: var(--text-color);
   transition: all 0.3s ease;
-  overflow-x: hidden;
-
+  overflow-x: auto;
 }
 
-/* Sidebar Styles */
+Sidebar Styles
 #slidebar {
   background-color: var(--sidebar-bg);
   border-right: 1px solid var(--border-color);
   transition: all 0.3s ease;
-  
 }
 
 .menu-toggle {
@@ -134,7 +131,7 @@ body {
 .menu_item span {
   font-weight: 500;
   margin-left: 20px;
-  color: var(--text-color);
+  color: var(--menu-text-color);
   transition: all 0.3s ease;
 }
 
@@ -155,9 +152,13 @@ body {
 }
 
 /* Cập nhật màu cho theme tối */
-[data-theme="dark"] .menu_header h2 {
-  color: var(--text-color);
-  opacity: 1;
+[data-theme="dark"] .menu {
+  background: var(--sidebar-bg);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+[data-theme="dark"] .menu_header {
+  color: var(--menu-text-color);
+  border-bottom-color: var(--border-color);
 }
 
 /* Navbar Styles */
@@ -230,11 +231,10 @@ body {
   background-color: #2e2e2e;
   color: white;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 999;
   padding: 10px 0;
   width: 200px;
-  
 }
 
 .user-menu ul {
@@ -266,7 +266,6 @@ body {
   display: none;
 }
 
-
 /* Theme Toggle */
 .theme-toggle {
   cursor: pointer;
@@ -276,47 +275,45 @@ body {
 }
 
 .background-banner {
-    position: relative;
-    width: 100%;
-    max-width: 1200px;
-    margin: 40px auto ;
-    height: 280px;
-    background-size: cover;
-    background-position: center;
-    border-radius: 20px; 
-    position: relative;
-    overflow: hidden;
-    z-index: 0;
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 40px auto;
+  height: 280px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
 }
 
 .background-banner img {
-    width: 100%;
-    transform: translateY(50px); 
-    object-fit: cover; 
-    display: block;
-    
+  width: 100%;
+  transform: translateY(50px);
+  object-fit: cover;
+  display: block;
 }
 
-.background-banner h1{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-73%, -50%);
-    color: white; 
-    font-size: 24px;
-    font-weight: bold;
-    white-space: nowrap;
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6); /* giúp chữ rõ ràng hơn */
+.background-banner h1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-73%, -50%);
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  white-space: nowrap;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6); /* giúp chữ rõ ràng hơn */
 }
 
 .background-banner p {
-    position: absolute;
-    top: 75%;
-    left: 50%;
-    color: white; 
-    max-width: 50%;
-    transform: translate(-90%, -50%);
-    
+  position: absolute;
+  top: 75%;
+  left: 50%;
+  color: white;
+  max-width: 50%;
+  transform: translate(-90%, -50%);
 }
 
 .ask-box {

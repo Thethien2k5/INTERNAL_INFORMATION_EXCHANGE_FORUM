@@ -14,6 +14,9 @@ const createFileRouter = require("./router/fileRouter.js"); // Import router đ�
 const tokenRouter = require('./router/tokenRouter'); // Import router để xử lý token
 const forumRouters = require("./router/forumRouter.js"); // Import router để xử lý forum
 
+
+const {router: SetDataRouter }= require("./router/SetData");
+const { router: checkAndGetDataRouter } = require("./router/CheckAndGetData");
 // --------------------Khởi tạo--------------------
 const app = express();
 // --------------------Cấu hình CORS--------------------
@@ -77,6 +80,8 @@ app.use("/api", fileRouter); // Sử dụng router để xử lý upload file
 app.use("/api/forums", forumRouters); // Sử dụng router để xử lý các diễn đàn
 app.use("/api", tokenRouter); // Sử dụng router để xử lý token
 
+app.use("/api", checkAndGetDataRouter);
+app.use("/api", SetDataRouter);
 // --------------------Xử lý lỗi--------------------
 httpsServer.on("error", (err) => {
   if (err.code === "EADDRINUSE") {

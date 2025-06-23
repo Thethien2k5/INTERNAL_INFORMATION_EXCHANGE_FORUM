@@ -1,106 +1,93 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sidebar</title>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
-    
-    <link rel="stylesheet" href="/templates/static/css/sidebar.css">
-    <link rel="icon" href="/templates/static/images/logoT3V.png">
-</head>
-<body>
-    <!-- Sidebar -->
-    <div id="slidebar">
-        <input type="checkbox" id="menu-toggle" hidden/>
+<div id="slidebar">
+  <input type="checkbox" id="menu-toggle" hidden />
 
-        <label for="menu-toggle" class="menu-toggle">
-            <i class="fa-solid fa-bars"></i>
-        </label>
+  <label for="menu-toggle" class="menu-toggle">
+    <i class="fa-solid fa-bars"></i>
+  </label>
 
-        <div class="menu">
-            <div class="menu_header">
-                <h2>Menu</h2>
-            </div>
-            <div class="menu_item">
-                <a href="#">
-                    <i class="fa-solid fa-house"></i>
-                    <span>Trang Chủ</span>
-                </a>
-            </div>
-            <div class="menu_item">
-                <a href="/templates/web/forums.html">
-                    <i class="fa-solid fa-people-group"></i>
-                    <span>Diễn đàn hỏi đáp</span>
-                </a>
-            </div>
-            <div class="menu_item">
-                <a href="/templates/chat.html">
-                    <i class="fa-solid fa-comment"></i>
-                    <span>Chat</span>
-                </a>
-            </div>
-            <div class="menu_item">
-                <a href="#">
-                    <i class="fa-solid fa-phone"></i>
-                    <span>Trợ giúp 1900-2323</span>
-                </a>
-            </div>
-            <div class="menu_item">
-                <a href="#">
-                    <i class="fa-solid fa-bug"></i>
-                    <span>Góp ý</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Dashboard -->
-        <div class="navboard">
-            <div class="navboard_header">
-                <a href="/templates/web/index.html">
-                    <img src="/templates/static/images/logoT3V.png" alt="#">
-                </a>
-            </div>
-
-            
-            <div class="nav-right">
-                <ul>
-                    <li>
-                        <!-- Theme Toggle -->
-                        <div class="theme-toggle">
-                            <i class="fa-solid fa-moon" id="theme-icon"></i>
-                        </div>
-                    </li>
-                    <li>
-                        <!--Notification-->
-                        <div class="bell">
-                            <i class="fa-regular fa-bell"></i>
-                        </div>
-                    </li>
-                    <li>
-                        <!-- User-->
-                        <div id="user-container">
-                            <i id="default-user-icon" class="fa-solid fa-user" style="font-size: 24px; cursor: pointer;"></i>
-                            <img src="/templates/static/images/default-avatar.png" id="user-avatar-icon" style="margin-top:5px ; width: 38px; height: 38px; border-radius: 50%; cursor: pointer;" alt="Avatar">
-                            
-                        </div>
-
-                        <!-- Popup User Menu -->
-                        <div id="userMenu" class="user-menu hidden">
-                            <ul>
-                                <li><a href="/templates/web/imformation.html">Cài đặt thông tin</a></li>
-                                <li><a href="#" onclick="logout()">Đăng xuất</a></li>
-                            </ul>
-                        </div>
-
-                    </li>
-                </ul>
-            </div>
-        </div>
+  <div class="menu">
+    <div class="menu_header">
+      <h2>Menu</h2>
     </div>
 
+    <div class="menu_item">
+      <a href="./home.html">
+        <i class="fa-solid fa-house"></i>
+        <span>Trang Chủ</span>
+      </a>
+    </div>
 
-    <script src="/templates/static/js/sidebar.js"></script>
-</body>
-</html>
+    <div class="menu_item">
+      <a href="./Courses.html" data-url="/Courses.html">
+        <i class="fa-solid fa-people-group"></i>
+        <span>Đăng ký học phần</span>
+      </a>
+    </div>
+
+    <div class="menu_item">
+      <a href="./chat_clients.html" data-url="/chat_clients.html">
+        <i class="fa-solid fa-comment"></i>
+        <span>Chat</span>
+      </a>
+    </div>
+
+    <div class="menu_item">
+      <a href="#" onclick="alert('Liên hệ: +84-902846205'); return false;">
+        <i class="fa-solid fa-phone"></i>
+        <span>Trợ giúp <br />+84-902846205</span>
+      </a>
+    </div>
+
+    <div class="menu_item">
+      <a href="#" onclick="alert('Cảm ơn bạn đã góp ý!'); return false;">
+        <i class="fa-solid fa-bug"></i>
+        <span>Góp ý</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="navboard">
+    <div class="navboard_header">
+      <a href="/index.html">
+        <img src="/templates/static/images/logoT3V.png" alt="#" />
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <ul>
+        <li>
+          <div class="theme-toggle">
+            <i class="fa-solid fa-moon" id="theme-icon"></i>
+          </div>
+        </li>
+        <li>
+          <div class="bell">
+            <i class="fa-regular fa-bell"></i>
+          </div>
+        </li>
+        <li>
+          <div id="user-container">
+            <i id="default-user-icon" class="fa-solid fa-user" style="font-size: 24px; cursor: pointer"></i>
+            <img
+              src="/templates/static/images/default-avatar.png"
+              id="user-avatar-icon"
+              style="margin-top: 5px; width: 38px; height: 38px; border-radius: 50%; cursor: pointer"
+              alt="Avatar"
+            />
+          </div>
+
+          <div id="userMenu" class="user-menu hidden">
+            <ul>
+              <li>
+                <a href="/information.html" data-url="/information.html">Cài đặt thông tin</a>
+              </li>
+              <li>
+                <a href="#" onclick="logout(); return false;">Đăng xuất</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

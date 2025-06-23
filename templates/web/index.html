@@ -1,70 +1,128 @@
 <!DOCTYPE html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>T3V Helper - Diễn đàn hỏi đáp</title>
-    <!-- CSS -->
-    <link rel="stylesheet" href="/templates/static/css/sidebar.css">
-    <link rel="stylesheet" href="/templates/static/css/forums.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
-    <link rel="icon" href="/templates/static/images/logoT3V.png">
-</head>
-<body>
-    <!-- Sidebar -->
+    <link rel="stylesheet" href="/templates/static/css/sidebar.css" />
+    <link rel="stylesheet" href="/templates/static/css/forums.css" />
+    <link rel="stylesheet" href="/templates/static/css/home.css" />
+    <link rel="stylesheet" href="/templates/static/css/chat_clients.css" />
+    <link rel="stylesheet" href="/templates/static/css/Courses.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css"
+    />
+    <link rel="icon" href="/templates/static/images/logoT3V.png" />
+
+    <style>
+      main {
+        margin-top: 60px; /* đẩy nội dung main xuống dưới thanh header */
+        max-height: 100%;
+      }
+    </style>
+  </head>
+  <body>
     <div id="sidebar-container"></div>
     <script src="/templates/static/js/sidebar.js"></script>
     <script>
-        fetch('/sidebar.html')
-            .then(res => res.text())
-            .then(html => {
-                document.getElementById('sidebar-container').innerHTML = html;
-                initSidebar();
-            });
+      // Hàm tải sidebar và khởi tạo
+      fetch("/sidebar.html")
+        .then((res) => res.text())
+        .then((html) => {
+          document.getElementById("sidebar-container").innerHTML = html;
+          initSidebar(); // Hàm initSidebar() từ sidebar.js
+
+          // Sau khi sidebar được tải, khởi tạo logic điều hướng
+          initNavigation();
+        });
     </script>
 
-    <div class="background-banner">
-        <img src="/templates/static/images/banner.webp" alt="#">
-        <h1>
-            Diễn đàn Học phần Tự động – Nơi trao đổi kiến thức chuyên sâu
-        </h1>
-        <p>
-            Cùng thảo luận, chia sẻ kinh nghiệm và giải đáp các vấn đề liên quan đến học phần Tự động. Tập trung vào điều khiển,
-             tự động hóa, hệ thống thông minh và các ứng dụng trong thực tiễn.
-        </p>
-    </div>
+    <main id="main-content">
+      <p>Đang tải nội dung...</p>
+    </main>
 
-    <!-- Thanh nhập câu hỏi -->
-    <div class="ask-box" onclick="openModal()">
-        <input type="text" placeholder="Tạo chủ đề..." readonly>
-        <button type="button">
-            <i class="fa-regular fa-message"></i> 
-        </button>
-    </div>
+    <script>
+      // Hàm tải nội dung
+      async function loadContent(url, pushState = true) {
+        const mainContentArea = document.getElementById("main-content");
+        if (!mainContentArea) return;
 
-    <!-- Popup Bài viết mới -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span class="title">Bài viết mới</span>
-                <span class="close" onclick="closeModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <input type="text" placeholder="Chủ đề">
-                <textarea placeholder="Mô tả..."></textarea>
-                <div class="modal-footer">
-                    <button class="submit">Tạo</button>
-                </div>
-            </div>
-        </div>
-    </div>
+        mainContentArea.innerHTML =
+          '<p class="loading-indicator">Đang tải nội dung...</p>';
 
+        try {
+          const response = await fetch(url);
+          if (!response.ok)
+            throw new Error(`HTTP error! status: ${response.status}`);
 
-    <!-- Container để chứa các bài viết sẽ được tạo động -->
-    <div id="posts-container"></div>
-    
-    
-    <!-- JavaScript -->
-    <script src="/templates/static/js/forums.js"></script>
-</body>
+          const html = await response.text();
+          mainContentArea.innerHTML = html;
+
+          // Xử lý các script trong nội dung tải về
+          const scripts = mainContentArea.querySelectorAll("script");
+          scripts.forEach((oldScript) => {
+            const newScript = document.createElement("script");
+            if (oldScript.src) {
+              newScript.src = oldScript.src;
+              newScript.async = false;
+            } else {
+              newScript.textContent = oldScript.textContent;
+            }
+            document.body.appendChild(newScript);
+          });
+
+          if (pushState && window.location.pathname !== url) {
+            history.pushState({ url }, "", url);
+          }
+        } catch (err) {
+          console.error("Lỗi khi tải nội dung:", err);
+          mainContentArea.innerHTML = `<p class="error-message">Lỗi khi tải nội dung: ${err.message}</p>`;
+        }
+      }
+
+      // Xử lý sự kiện popstate
+      window.addEventListener("popstate", function (event) {
+        const path = event.state?.url || "home.html";
+        loadContent(path, false);
+      });
+
+      // Khởi tạo trang
+      document.addEventListener("DOMContentLoaded", function () {
+        // Load sidebar
+        fetch("/sidebar.html")
+          .then((res) => res.text())
+          .then((html) => {
+            document.getElementById("sidebar-container").innerHTML = html;
+            initSidebar();
+            initNavigation();
+
+            // Load nội dung ban đầu dựa trên URL
+            const path = window.location.pathname;
+            if (path === "/" || path === "/index.html" || path === "") {
+              loadContent("home.html", false);
+            } else if (!path.includes(".html")) {
+              loadContent(path + ".html", false);
+            }
+          });
+      });
+
+      function initNavigation() {
+        document.addEventListener("click", function (event) {
+          const link = event.target.closest(".menu_item a");
+          if (link && link.href) {
+            event.preventDefault();
+            const url = link.getAttribute("href");
+            if (url && url !== "#") {
+              loadContent(url);
+            }
+          }
+        });
+      }
+    </script>
+  </body>
 </html>

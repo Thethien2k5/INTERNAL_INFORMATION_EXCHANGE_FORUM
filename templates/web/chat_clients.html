@@ -1,25 +1,34 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zalo - Nhóm lập trình Mạng</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/templates/static/css/chat_clients.css">
-</head>
 <body data-theme="light">
-    <div class="app-container">
-        <!-- Left sidebar - Danh sách nhóm -->
-        <aside class="groups-sidebar" id="groupsSidebar">
-            <div class="search-bar">
-                <input type="text" class="search-input" placeholder="Tìm kiếm">
-            </div>
-            
-            <div style="padding: 10px 16px;">
-                <button id="showCreateGroupModalBtn" style="width: 100%; padding: 10px; border-radius: 8px; border: none; background-color: var(--zalo-primary); color: white; cursor: pointer; font-weight: bold;">
-                <i class="fas fa-plus"></i> Tạo nhóm mới
-                </button>
-            </div>
+  <style>
+    body {
+      overflow: hidden;
+      height: 100vh;
+    }
+  </style>
+  <div class="app-container">
+    <!-- Left sidebar - Danh sách nhóm -->
+    <aside class="groups-sidebar" id="groupsSidebar">
+      <div class="search-bar">
+        <input type="text" class="search-input" placeholder="Tìm kiếm" />
+      </div>
+
+      <div style="padding: 10px 16px">
+        <button
+          id="showCreateGroupModalBtn"
+          style="
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background-color: var(--zalo-primary);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+          "
+        >
+          <i class="fas fa-plus"></i> Tạo nhóm mới
+        </button>
+      </div>
 
             <div class="group-categories">
                 <div class="category">
@@ -182,108 +191,127 @@
             </div>
         </aside>
 
-        <!-- Context Menus -->
-        <div class="context-menu" id="messageContextMenu">
-            <button class="context-item">
-                <i class="fas fa-download"></i>
-                <span>Tải về</span>
-            </button>
-            <button class="context-item">
-                <i class="fas fa-copy"></i>
-                <span>Sao chép nội dung</span>
-            </button>
-            <button class="context-item">
-                <i class="fas fa-info-circle"></i>
-                <span>Xem chi tiết</span>
-            </button>
-            <div class="context-divider"></div>
-            <button class="context-item">
-                <i class="fas fa-trash"></i>
-                <span>Thu hồi</span>
-            </button>
-            <button class="context-item">
-                <i class="fas fa-times"></i>
-                <span>Xóa phía tôi</span>
-            </button>
-            <div class="context-divider"></div>
-            <button class="context-item">
-                <i class="fas fa-thumbtack"></i>
-                <span>Ghim tin nhắn</span>
-            </button>
-            <button class="context-item">
-                <i class="fas fa-bookmark"></i>
-                <span>Đánh dấu tin nhắn</span>
-            </button>
-        </div>
-
-        <!-- Context menu cho chế độ im lặng -->
-        <div class="context-menu" id="muteContextMenu">
-            <button class="context-item" data-time="1">
-                <span>1 giờ</span>
-            </button>
-            <button class="context-item" data-time="2">
-                <span>2 giờ</span>
-            </button>
-            <button class="context-item" data-time="4">
-                <span>4 giờ</span>
-            </button>
-            <button class="context-item" data-time="8">
-                <span>8 giờ</span>
-            </button>
-            <button class="context-item" data-time="24">
-                <span>24 giờ</span>
-            </button>
-            <div class="context-divider"></div>
-            <button class="context-item" data-time="custom">
-                <i class="fas fa-cog"></i>
-                <span>Tùy chỉnh</span>
-            </button>
-        </div>
-
-        <!-- Image Preview Modal -->
-        <div class="modal" id="imageModal">
-            <div class="modal-content">
-                <button class="modal-close" id="modalClose">
-                    <i class="fas fa-times"></i>
-                </button>
-                <img class="modal-image" id="modalImage" src="" alt="">
-            </div>
-        </div>
-
-        <!-- Hidden file inputs -->
-        <input type="file" id="imageInput" accept="image/*" style="display: none;">
-        <input type="file" id="fileInput" style="display: none;">
-    </div>
-    <!-- Container để chứa các bài viết sẽ được tạo động -->
-    <div id="posts-container"></div>
-    
-    <div id="auth-overlay" style="display: none;">
-        <div class="loader"></div>
-        <p>No! 'Đăng nhập' trước đê. <br>Để chuyển trang cho...</p>
+    <!-- Context Menus -->
+    <div class="context-menu" id="messageContextMenu">
+      <button class="context-item">
+        <i class="fas fa-download"></i>
+        <span>Tải về</span>
+      </button>
+      <button class="context-item">
+        <i class="fas fa-copy"></i>
+        <span>Sao chép nội dung</span>
+      </button>
+      <button class="context-item">
+        <i class="fas fa-info-circle"></i>
+        <span>Xem chi tiết</span>
+      </button>
+      <div class="context-divider"></div>
+      <button class="context-item">
+        <i class="fas fa-trash"></i>
+        <span>Thu hồi</span>
+      </button>
+      <button class="context-item">
+        <i class="fas fa-times"></i>
+        <span>Xóa phía tôi</span>
+      </button>
+      <div class="context-divider"></div>
+      <button class="context-item">
+        <i class="fas fa-thumbtack"></i>
+        <span>Ghim tin nhắn</span>
+      </button>
+      <button class="context-item">
+        <i class="fas fa-bookmark"></i>
+        <span>Đánh dấu tin nhắn</span>
+      </button>
     </div>
 
-    <div class="app-container"> </div>
-
-    <div class="modal" id="createGroupModal">
-        <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header">
-                <h2 class="modal-title">Tạo Nhóm Mới</h2>
-                <button class="modal-close" id="closeCreateGroupModal">&times;</button>
-            </div>
-        <form id="createGroupForm" style="padding: 16px;">
-                <label for="groupName">Tên nhóm:</label>
-                <input type="text" id="groupName" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                <label for="groupTopic">Chủ đề (Topic):</label>
-                <textarea id="groupTopic" style="width: 100%; padding: 8px; min-height: 80px;"></textarea>
-                <button type="submit" style="width: 100%; padding: 10px; margin-top: 10px; border: none; background-color: var(--zalo-primary); color: white; cursor: pointer; border-radius: 8px;">Tạo Nhóm</button>
-        </form>
-        </div>
+    <!-- Context menu cho chế độ im lặng -->
+    <div class="context-menu" id="muteContextMenu">
+      <button class="context-item" data-time="1">
+        <span>1 giờ</span>
+      </button>
+      <button class="context-item" data-time="2">
+        <span>2 giờ</span>
+      </button>
+      <button class="context-item" data-time="4">
+        <span>4 giờ</span>
+      </button>
+      <button class="context-item" data-time="8">
+        <span>8 giờ</span>
+      </button>
+      <button class="context-item" data-time="24">
+        <span>24 giờ</span>
+      </button>
+      <div class="context-divider"></div>
+      <button class="context-item" data-time="custom">
+        <i class="fas fa-cog"></i>
+        <span>Tùy chỉnh</span>
+      </button>
     </div>
 
+    <!-- Image Preview Modal -->
+    <div class="modal" id="imageModal">
+      <div class="modal-content">
+        <button class="modal-close" id="modalClose">
+          <i class="fas fa-times"></i>
+        </button>
+        <img class="modal-image" id="modalImage" src="" alt="" />
+      </div>
+    </div>
+
+    <!-- Hidden file inputs -->
+    <input type="file" id="imageInput" accept="image/*" style="display: none" />
+    <input type="file" id="fileInput" style="display: none" />
+  </div>
+  <!-- Container để chứa các bài viết sẽ được tạo động -->
+  <div id="posts-container"></div>
+
+  <div id="auth-overlay" style="display: none">
+    <div class="loader"></div>
+    <p>No! 'Đăng nhập' trước đê. <br />Để chuyển trang cho...</p>
+  </div>
+
+  <div class="app-container"></div>
+
+  <div class="modal" id="createGroupModal">
+    <div class="modal-content" style="max-width: 400px">
+      <div class="modal-header">
+        <h2 class="modal-title">Tạo Nhóm Mới</h2>
+        <button class="modal-close" id="closeCreateGroupModal">&times;</button>
+      </div>
+      <form id="createGroupForm" style="padding: 16px">
+        <label for="groupName">Tên nhóm:</label>
+        <input
+          type="text"
+          id="groupName"
+          required
+          style="width: 100%; padding: 8px; margin-bottom: 10px"
+        />
+        <label for="groupTopic">Chủ đề (Topic):</label>
+        <textarea
+          id="groupTopic"
+          style="width: 100%; padding: 8px; min-height: 80px"
+        ></textarea>
+        <button
+          type="submit"
+          style="
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            background-color: var(--zalo-primary);
+            color: white;
+            cursor: pointer;
+            border-radius: 8px;
+          "
+        >
+          Tạo Nhóm
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/templates/static/js/app-config.js"></script>
+  <script src="/templates/static/js/apiService.js"></script>
+  <script src="/templates/static/js/chat_clients.js"></script>
 </body>
-<script src="/templates/static/js/app-config.js"></script>
-
-<script src="/templates/static/js/apiService.js"></script>
-
-<script src="/templates/static/js/chat_clients.js"></script>
-</html>

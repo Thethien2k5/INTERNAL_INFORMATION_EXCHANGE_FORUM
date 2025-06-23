@@ -28,7 +28,7 @@ function initSidebar() {
 
   // Avatar login
   const user = JSON.parse(localStorage.getItem("user"));
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   const userIcon = document.getElementById("user-avatar-icon");
   const defaultIcon = document.getElementById("default-user-icon");
   const userMenu = document.getElementById("userMenu");
@@ -72,11 +72,17 @@ function initSidebar() {
 }
 
 function isLoggedIn() {
-  return localStorage.getItem("token") !== null;
+  return localStorage.getItem("accessToken") !== null;
 }
 
 function logout() {
   localStorage.removeItem("token");
   localStorage.removeItem("user"); 
-  window.location.href = "/`templates`/web/forums.html";
+  window.location.href = "login.html";
 }
+
+window.addEventListener('storage', function(e) {
+  if (e.key === 'user') {
+    initSidebar();
+  }
+});

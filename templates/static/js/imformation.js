@@ -1,68 +1,114 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const avatarInput = document.getElementById('avatar-input');
-  const avatarPreview = document.getElementById('avatar-preview');
-  const form = document.querySelector('form');
+    const avatarInput = document.getElementById('avatar-input');
+    const avatarPreview = document.getElementById('avatar-preview');
+    const form = document.querySelector('form');
+    const nameInput = document.getElementById('name');
+    const mssvInput = document.getElementById('mssv');
 
-  // Load dữ liệu user từ localStorage nếu có
-  const userData = JSON.parse(localStorage.getItem('user')) || {};
-  const userProfile = JSON.parse(localStorage.getItem('userProfile')) || {};
-  
-  // Ưu tiên dữ liệu từ userProfile nếu có, nếu không thì dùng từ user
-  if (userProfile.avatar || userData.avatar) avatarPreview.src = userProfile.avatar || userData.avatar;
-  if (userProfile.ho || userData.ho) document.getElementById('ho').value = userProfile.ho || userData.ho;
-  if (userProfile.ten || userData.ten) document.getElementById('ten').value = userProfile.ten || userData.ten;
-  if (userProfile.gioitinh || userData.gioitinh) {
-    const genderRadios = document.getElementsByName('gioitinh');
-    genderRadios.forEach(radio => {
-      if (radio.value === (userProfile.gioitinh || userData.gioitinh)) radio.checked = true;
+    // Biến để lưu file ảnh người dùng đã chọn (nếu có)
+    let selectedAvatarFile = null;
+
+    // Hàm để lấy thông tin user từ server và điền vào form
+    const loadUserProfile = async () => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            alert('Bạn chưa đăng nhập!');
+            window.location.href = '/login.html';
+            return;
+        }
+
+        const apiURL = API_CONFIG.getApiUrl();
+
+        try {
+            const res = await fetch(`${apiURL}/api/user/me`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                const user = data.user;
+                // Điền thông tin vào form
+                avatarPreview.src = user.avatar;
+                nameInput.value = user.name || '';
+                mssvInput.value = user.mssv || '';
+                // Cập nhật lại localStorage với dữ liệu mới nhất
+                localStorage.setItem('user', JSON.stringify(user));
+            } else {
+                alert('Không thể lấy thông tin người dùng: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Lỗi khi tải thông tin user:', error);
+            alert('Đã xảy ra lỗi khi tải thông tin.');
+        }
+    };
+
+    // Khi người dùng chọn ảnh mới
+    avatarInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Lưu lại file đã chọn để gửi lên server
+        selectedAvatarFile = file;
+
+        // Hiển thị ảnh preview cho người dùng xem
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            avatarPreview.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
     });
-  }
 
-  // Khi người dùng chọn ảnh, hiển thị preview
-  avatarInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    // Khi người dùng nhấn nút "Lưu thông tin"
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      avatarPreview.src = event.target.result; // Dữ liệu ảnh dạng base64
-    };
-    reader.readAsDataURL(file);
-  });
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+            return;
+        }
 
-  // Xử lý lưu thông tin khi submit form
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
+        // Tạo đối tượng FormData để gửi cả text và file
+        const formData = new FormData();
+        formData.append('name', nameInput.value.trim());
+        formData.append('mssv', mssvInput.value.trim());
 
-    const ho = document.getElementById('ho').value.trim();
-    const ten = document.getElementById('ten').value.trim();
-    const gender = document.querySelector('input[name="gioitinh"]:checked').value;
-    const avatar = avatarPreview.src; // Lấy avatar hiện tại
+        // Nếu người dùng đã chọn một file ảnh mới, thêm nó vào formData
+        if (selectedAvatarFile) {
+            formData.append('avatar', selectedAvatarFile);
+        }
 
-    if (!ho || !ten) {
-      alert("Vui lòng nhập đầy đủ họ và tên");
-      return;
-    }
+        const apiURL = API_CONFIG.getApiUrl();
 
-    // Tạo object userProfile lưu vào localStorage
-    const userProfile = {
-      ho,
-      ten,
-      name: ho + ' ' + ten,
-      gioitinh: gender,
-      avatar
-    };
+        try {
+            const res = await fetch(`${apiURL}/api/user/profile`, {
+                method: 'POST',
+                headers: {
+                    // Không cần 'Content-Type', trình duyệt sẽ tự đặt khi dùng FormData
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
 
-    // Lưu vào cả user và userProfile
-    localStorage.setItem('userProfile', JSON.stringify(userProfile));
-    
-    // Cập nhật lại thông tin user hiện tại nếu đang đăng nhập
-    if (localStorage.getItem('token')) {
-      const currentUser = JSON.parse(localStorage.getItem('user')) || {};
-      const updatedUser = { ...currentUser, ...userProfile };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-    }
+            const data = await res.json();
 
-    alert("Lưu thông tin thành công!");
-  });
+            if (data.success) {
+                alert('Cập nhật thông tin thành công!');
+                // Tải lại thông tin mới sau khi cập nhật thành công
+                await loadUserProfile();
+                window.location.reload(); // Tải lại trang để sidebar cập nhật
+            } else {
+                alert('Cập nhật thất bại: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Lỗi khi cập nhật profile:', error);
+            alert('Đã xảy ra lỗi khi cập nhật.');
+        }
+    });
+
+    // Chạy hàm tải thông tin khi trang được load
+    loadUserProfile();
 });

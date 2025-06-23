@@ -2,11 +2,20 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
+
 const { FE_PORT, getLocalIP } = require("./config.js"); // Import cổng của BE_Server từ config.js
 
+///-------Các dịch vụ API -----
+// Import router API cho học phần
+const { router: checkAndGetDataRouter } = require("./router/CheckAndGetData");
+const {router: SetDataRouter }= require("./router/SetData");
 
+///
 const app = express();
+app.use(express.json()); // Cấu hình để nhận dữ liệu JSON từ client
 
+app.use("/api", checkAndGetDataRouter);
+app.use("/api", SetDataRouter);
 // --------------------Phục vụ File Tĩnh--------------------
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'templates', 'web', 'login.html'));

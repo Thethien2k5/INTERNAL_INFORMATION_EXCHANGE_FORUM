@@ -1,11 +1,9 @@
-const socketIoScript = document.createElement('script');
+const socketIoScript = document.createElement("script");
 socketIoScript.src = `${API_CONFIG.getApiUrl()}/socket.io/socket.io.js`;
 document.head.appendChild(socketIoScript);
 
-
-function initializeApp () {
-
-     // ---------------------------------DOM Elements--------------------------------
+function initializeApp() {
+  // ---------------------------------DOM Elements--------------------------------
 
     const sendBtn = document.getElementById('sendBtn');
     const messageInput = document.getElementById('messageInput');
@@ -85,15 +83,19 @@ function renderSingleMessage(msg, isLocal) {
                         <div class="file-size">${fileSize}</div>
                     </div>
                 </a>`;
-        }
-        
-        messageDiv.innerHTML = `
+    }
+
+    messageDiv.innerHTML = `
             <div class="message-avatar">
-                <img src="${msg.avatar || '/templates/static/images/khongbiet.jpg'}" alt="avatar">
+                <img src="${
+                  msg.avatar || "/templates/static/images/khongbiet.jpg"
+                }" alt="avatar">
             </div>
             <div class="message-content">
                 <div class="message-header">
-                    <span class="message-sender">${isSentByMe ? 'Bạn' : msg.username}</span>
+                    <span class="message-sender">${
+                      isSentByMe ? "Bạn" : msg.username
+                    }</span>
                     <span class="message-time">${messageTime}</span>
                 </div>
                 ${messageBubbleContent}
@@ -259,11 +261,13 @@ function renderSingleMessage(msg, isLocal) {
             memberItem.className = 'member-item';
             memberItem.innerHTML = `
                 <div class="member-avatar">
-                    <img src="${member.avatar || '/templates/static/images/khongbiet.jpg'}" alt="avatar" style="width:100%; height:100%; object-fit:cover;">
+                    <img src="${
+                      member.avatar || "/templates/static/images/khongbiet.jpg"
+                    }" alt="avatar" style="width:100%; height:100%; object-fit:cover;">
                 </div>
                 <div class="member-info">
-                    <div class="member-name">${member.username}</div>
-                    <div class="member-status status-online">Đang hoạt động</div>
+                    <div class="member-name">${member.Name}</div>
+                    
                 </div>
             `;
             memberListContainer.appendChild(memberItem);
@@ -773,18 +777,16 @@ function renderSingleMessage(msg, isLocal) {
     });
 */
 
-
-    // ======================== HÀM MAIN ========================
-    function main() {
-        // Khởi tạo Socket.IO
-        initializeSocket();
-        // Tải danh sách diễn đàn
-        loadUserForums();
-    }
-    main();
+  // ======================== HÀM MAIN ========================
+  function main() {
+    // Khởi tạo Socket.IO
+    initializeSocket();
+    // Tải danh sách diễn đàn
+    loadUserForums();
+  }
+  main();
 }
 
-
 socketIoScript.onload = () => {
-    initializeApp();
+  initializeApp();
 };

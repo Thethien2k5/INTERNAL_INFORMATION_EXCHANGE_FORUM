@@ -1,6 +1,6 @@
 // Nạp import thư viện mysql2/promise để sử dụng kết nối Promise-based
 // Thư viện này cho phép sử dụng async/await để xử lý kết nối cơ sở dữ liệu một cách dễ dàng hơn
-const mysql = require('mysql2/promise');
+const mysql = require("mysql2/promise");
 
 // Tạo pool kết nối dùng chung
 const pool = mysql.createPool({
@@ -12,7 +12,7 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
 });
-
+//====== Các hàm có nhiệm vụ kiểm tra thông tin user========
 // Hàm kiểm tra email đã tồn tại trong DB chưa
 async function CheckEmail(email) {
   const [rows] = await pool.execute(
@@ -21,6 +21,7 @@ async function CheckEmail(email) {
   );
   return rows.length > 0;
 }
+//kiểm tra tên người dùng
 async function CheckUserName(email) {
   const [rows] = await pool.execute(
     "SELECT 1 FROM if_users WHERE username = ? LIMIT 1",
@@ -28,16 +29,24 @@ async function CheckUserName(email) {
   );`x`
   return rows.length > 0;
 }
-
-//Thêm user
-async function AddUser(username, email, password) {
-  const [result] = await pool.execute(
-    "INSERT INTO if_users (username, email, password_hash) VALUES (?, ?, ?)",
-    [username, email, password]
+//Kiểm tra ID tồn tại
+async function CheckUserId(userId) {
+  const [rows] = await pool.execute(
+    "SELECT 1 FROM if_users WHERE id = ? LIMIT 1",
+    [userId]
   );
-  // return result.insertId; // Trả về ID của user mới thêm
+  return rows.length > 0; // Trả về true nếu ID tồn tại
+}
+//====Các hàm có nhiệm vụ chỉnh sửa thông tin user======
+//Thêm user
+async function AddUser(id, Name, username, email, password_hash) {
+  const [result] = await pool.execute(
+    "INSERT INTO if_users (id, Name, username, email, password_hash) VALUES (?, ?, ?, ?, ?)",
+    [ id, Name, username, email, password_hash]
+  );
   return result.affectedRows > 0; // Trả về true nếu thêm thành công
 }
+//====== Các hàm có nhiệm lấy dự liệu user từ database========
 //Get name
 async function GetPassword_hash(username) {
   const [rows] = await pool.execute(
@@ -57,12 +66,11 @@ async function GetAvatar(username) {
 // Lấy thông tin người dùng theo tên đăng nhập
 async function getUserByUsername(username) {
   const [rows] = await pool.execute(
-    "SELECT id, username, email, avatar FROM if_users WHERE username = ? LIMIT 1",
+    "SELECT id, Name, email, avatar FROM if_users WHERE username = ? LIMIT 1",
     [username]
   );
   return rows.length > 0 ? rows[0] : null;
 }
-
 // Lấy thông tin người dùng theo ID
 async function getUserById(userId) {
   const [rows] = await pool.execute(
@@ -80,5 +88,7 @@ module.exports = {
   AddUser,
   GetPassword_hash,
   GetAvatar,
-  getUserByUsername
+  getUserByUsername,
+  getUserById,
+  CheckUserId,
 };
