@@ -1,12 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  console.log("register.js đã được tải và đang chạy!"); 
-
-
-
+  
   const registerForm = document.getElementById("registerForm");
   const otpBox = document.getElementById("otpBox");
   const loader = document.getElementById("loadingOverlay");
+  const registerBtn = document.getElementById("registerBtn");
   let generatedOTP = "";
   let userEmail = "";
 
@@ -23,10 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return; // Dừng lại nếu không tìm thấy form
   }
 
-  
-  registerForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
+  registerBtn.addEventListener("click", async () => {
+    // Không còn e và e.preventDefault()
     showLoader();
 
     const apiURL = API_CONFIG.getApiUrl();

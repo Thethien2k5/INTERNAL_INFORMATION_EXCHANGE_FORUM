@@ -23,11 +23,10 @@
     <script src="/templates/static/js/sidebar.js" defer></script>
 
     <style>
-      main {
+     #main-content {
         margin-top: 60px; /* đẩy nội dung main xuống dưới thanh header */
-        padding-left: 1rem; /* Thêm một chút khoảng cách cho nội dung */
         max-height: 100%;
-      }
+     }
     </style>
   </head>
 
@@ -39,26 +38,26 @@
     </main>
 
     <script>
-      // Hàm loadContent giữ nguyên như cũ
+      // Hàm loadContent 
       async function loadContent(url, pushState = true) {
-        const mainContentArea = document.getElementById("main-content");
+        const mainContentArea = document.getElementById("main-content"); // chuẩn bị cái khung để chuẩn bị chèn nội dung mới vào
         if (!mainContentArea) {
           console.error("Không tìm thấy #main-content!");
           return;
         }
         mainContentArea.innerHTML = '<p class="loading-indicator">Đang tải nội dung...</p>';
         try {
-          const fetchUrl = `/pages/${url}`;
-          const response = await fetch(fetchUrl);
+          const fetchUrl = `/pages/${url}`; // Tạo đường dẫn để yêu cầu file
+          const response = await fetch(fetchUrl); //Cái yêu cầu này sẽ được gửi đến server_Fe để lấy nội dung 
           if (!response.ok) {
             throw new Error(`Không tìm thấy trang: ${url} (status: ${response.status})`);
           }
-          const html = await response.text();
-          mainContentArea.innerHTML = html;
+          const html = await response.text(); 
+          mainContentArea.innerHTML = html; // hiển thị nội dung html server gửi về
 
           // Chạy các script bên trong nội dung vừa tải (phần này vẫn cần thiết cho các trang con)
-          const scripts = Array.from(mainContentArea.querySelectorAll("script"));
-          for (const oldScript of scripts) {
+          const scripts = Array.from(mainContentArea.querySelectorAll("script")); // marg lưu các script được lưu
+          for (const oldScript of scripts) { 
             const newScript = document.createElement("script");
             if (oldScript.src) {
               await new Promise(resolve => {
@@ -81,24 +80,28 @@
         }
       }
 
-      // Hàm initNavigation giữ nguyên
+      // Hàm initNavigation 
       function initNavigation() {
-        document.body.addEventListener("click", function (event) {
-          const link = event.target.closest("a");
-          if (link && link.getAttribute('href')) {
-            const href = link.getAttribute('href');
-            if (href.startsWith('/') || href.startsWith('./')) {
-              event.preventDefault();
-              const cleanUrl = href.replace('./', '').replace('.html', '');
-              if (cleanUrl && cleanUrl !== '#') {
-                loadContent(cleanUrl);
-              }
+      document.body.addEventListener("click", function (event) {
+        const link = event.target.closest("a");
+        
+        // KIỂM TRA NẾU LINK TỒN TẠI VÀ KHÔNG PHẢI LÀ LINK ĐĂNG NHẬP
+        if (link && link.getAttribute('href') && link.getAttribute('href') !== '/login') {
+          const href = link.getAttribute('href');
+          
+          if (href.startsWith('/') || href.startsWith('./')) {
+            event.preventDefault(); // Chỉ ngăn chặn hành vi mặc định cho các link nội bộ SPA
+            const cleanUrl = href.replace('./', '').replace('.html', '');
+            if (cleanUrl && cleanUrl !== '#') {
+              loadContent(cleanUrl);
             }
           }
-        });
-      }
+        }
+        // Nếu là link /login, chúng ta không làm gì cả, để trình duyệt tự điều hướng
+      });
+    }
 
-      // Hàm popstate giữ nguyên
+      // Hàm popstate 
       window.addEventListener("popstate", function (event) {
         const url = (event.state && event.state.url) || "home";
         loadContent(url, false);

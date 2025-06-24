@@ -60,7 +60,7 @@ body {
 /* Layout */
 .app-container {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 60px);
   position: relative;
   overflow: hidden;
 }
@@ -83,7 +83,7 @@ body {
 
 .search-input {
   width: 100%;
-  padding: 8px 12px;
+  padding: 8px 15px;
   border-radius: 20px;
   border: 1px solid var(--border-light);
   background: var(--bg-light);
@@ -205,7 +205,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 9px 16px;
   border-bottom: 1px solid var(--border-light);
   background: var(--bg-light);
   z-index: 5;
@@ -302,9 +302,6 @@ body {
   }
 }
 
-.message.sent {
-  justify-content: flex-end;
-}
 
 .message-avatar {
   width: 36px;
@@ -504,21 +501,21 @@ body {
 }
 
 .group-info-header {
-  padding: 16px;
+  padding: 2px;
   text-align: center;
   border-bottom: 1px solid var(--border-light);
 }
 
 .group-avatar-large {
-  width: 80px;
-  height: 80px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: var(--border-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  margin: 0 auto 12px;
+  font-size: 20px;
+  margin: 0 auto 0px;
   overflow: hidden;
 }
 
@@ -652,7 +649,7 @@ body {
   display: flex;
   justify-content: center;
   gap: 16px;
-  margin-bottom: 16px;
+  margin: 16px;
 }
 
 .group-tool {
@@ -742,14 +739,6 @@ body {
   font-size: 16px;
 }
 
-.message-input-container {
-  flex: 1;
-  background: var(--bg-light);
-  border: 1px solid var(--border-light);
-  border-radius: 20px;
-  padding: 12px 16px;
-  transition: var(--transition);
-}
 
 .message-input-container:focus-within {
   border-color: var(--zalo-primary);
@@ -1202,25 +1191,25 @@ body {
     margin-top: 5px;
     padding: 0 16px;
     text-align: right;
-    height: 15px; /* Giữ chiều cao ổn định */
+    height: 15px; 
 }
 
-/* Sửa lại input-tool để dùng với label */
+
 .input-tool {
-    /* ... các thuộc tính cũ ... */
+
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .message-input-container {
-    display: flex; /* SỬA */
-    flex-direction: column; /* SỬA */
+    display: flex; 
+    flex-direction: column; 
     flex: 1;
     background: var(--bg-light);
     border: 1px solid var(--border-light);
     border-radius: 20px;
-    padding: 8px 12px; /* Giảm padding một chút */
+    padding: 5px 12px; 
     transition: var(--transition);
 }
 
@@ -1236,5 +1225,5 @@ body {
     min-height: 20px;
     line-height: 1.4;
     font-family: inherit;
-    padding: 4px; /* Thêm padding cho textarea */
+    padding: 4px; 
 }

@@ -25,11 +25,11 @@ function hideLoader() {
 // xử lý đăng nhập
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
+  const loginSubmitBtn = document.getElementById("loginSubmitBtn");
 
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    showLoader(); ////
+  loginSubmitBtn.addEventListener("click", async () => {
+    // Không còn tham số event (e) và không cần e.preventDefault() nữa
+    showLoader();
 
     const username = loginForm.username.value.trim();
     const password = loginForm.password.value;

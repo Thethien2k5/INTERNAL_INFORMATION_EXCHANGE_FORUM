@@ -22,11 +22,17 @@ app.use("/api", SetDataRouter);
 app.use('/templates/static', express.static(path.join(__dirname, '..', 'templates', 'static')));
 
 // 2. DÒNG MỚI: Thêm route ảo /pages để phục vụ các file HTML con
-// Khi client gọi fetch('/pages/home'), server sẽ tìm file 'home.html' trong thư mục 'templates/web'
 const webPagesPath = path.join(__dirname, '..', 'templates', 'web');
 app.use('/pages', express.static(webPagesPath, { extensions: ['html'] }));
 
-// 3. Route "Bắt tất cả" (Catch-All)
+
+// 3. THÊM MỚI: Tạo route riêng cho trang login
+// Khi người dùng truy cập /login, chúng ta sẽ trả về file login.html
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'templates', 'web', 'login.html'));
+});
+
+// 4. Route "Bắt tất cả" (Catch-All)
 // Bất kỳ yêu cầu nào không phải là API hoặc file tĩnh sẽ được trả về file index.html chính
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'templates', 'web', 'index.html'));
