@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+  console.log("register.js đã được tải và đang chạy!"); 
+
+
+
   const registerForm = document.getElementById("registerForm");
   const otpBox = document.getElementById("otpBox");
   const loader = document.getElementById("loadingOverlay");
@@ -13,6 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (loader) loader.style.display = "none";
   }
 
+  if (!registerForm) {
+      console.error("Không tìm thấy form với id='registerForm'!");
+      return; // Dừng lại nếu không tìm thấy form
+  }
+
+  
   registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
