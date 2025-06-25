@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (err) {
       hideLoader(); ////
-      alert("(login.js)Lỗi đăng nhập: " + err.message);
+      alert("(login.js)Tài khoản không tồn tại: " + err.message);
     }
   });
 });

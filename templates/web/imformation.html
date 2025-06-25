@@ -1,62 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- CSS -->
-    <link rel="stylesheet" href="/templates/static/css/sidebar.css">
-    <link rel="stylesheet" href="/templates/static/css/imformation.css">
-    <link rel="icon" href="/templates/static/images/logoT3V.png">
+    <link rel="stylesheet" href="/templates/static/css/sidebar.css" />
+    <link rel="stylesheet" href="/templates/static/css/imformation.css" />
+    <link rel="icon" href="/templates/static/images/logoT3V.png" />
 
     <title>T3V - Thông tin tài khoản</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- Sidebar -->
     <div id="sidebar-container"></div>
     <script src="/templates/static/js/sidebar.js"></script>
     <script>
-        fetch('./sidebar.html')
-            .then(res => res.text())
-            .then(html => {
-                document.getElementById('sidebar-container').innerHTML = html;
-                initSidebar();
-            });
+      fetch("./sidebar.html")
+        .then((res) => res.text())
+        .then((html) => {
+          document.getElementById("sidebar-container").innerHTML = html;
+          initSidebar();
+        });
     </script>
 
     <div class="main-content">
-        <div class="avatar-container">
-            <i id="default-avatar-preview" class="fa-solid fa-user"
-                style="font-size: 48px; color: #ff2e63; display: none;"></i>
-            <img id="avatar-preview" src="" alt="Avatar">
-            <input type="file" id="avatar-input" accept="image/*" hidden>
-            <button type="button" class="avatar-button" onclick="document.getElementById('avatar-input').click()">Chọn
-                hình</button>
-            <p class="avatar-note">Dùng hình 18+ sẽ bị khóa tài khoản vĩnh viễn.</p>
-        </div>
+      <div class="avatar-container">
+        <i
+          id="default-avatar-preview"
+          class="fa-solid fa-user"
+          style="font-size: 48px; color: #ff2e63; display: none"
+        ></i>
+        <img id="avatar-preview" src="" alt="Avatar" />
+        <input type="file" id="avatar-input" accept="image/*" hidden />
+        <button
+          type="button"
+          class="avatar-button"
+          onclick="document.getElementById('avatar-input').click()"
+        >
+          Chọn hình
+        </button>
+        <p class="avatar-note">Dùng hình 18+ sẽ bị khóa tài khoản vĩnh viễn.</p>
+      </div>
 
-        <div class="profile-container">
-            <h2>Thông tin cá nhân</h2>
-            <form>
-                <label for="name">Họ và Tên</label>
-                <input type="text" id="name" name="name">
+      <div class="profile-container">
+        <form>
+          <h2>Thông tin cá nhân</h2>
 
-                <label for="id">Mã Số</label>
-                <input type="text" id="id" name="id" readonly>
+          <label for="name">Họ và Tên</label>
+          <input type="text" id="name" name="name" />
 
-                <div class="gender-group">
-                    <label>Giới tính:</label>
-                    <label><input type="radio" name="gioitinh" value="Nam" checked> Nam</label>
-                    <label><input type="radio" name="gioitinh" value="Nữ"> Nữ</label>
-                </div>
+          <label for="id">Mã Số</label>
+          <input type="text" id="id" name="id" readonly />
 
-                <button type="submit" class="save-button">Lưu</button>
-            </form>
-        </div>
+          <div class="gender-group">
+            <label>Giới tính:</label>
+            <label><input type="radio" name="gioitinh" value="0" /> Nam</label>
+            <label><input type="radio" name="gioitinh" value="1" /> Nữ</label>
+          </div>
+          <button type="submit" class="save-button">Lưu</button>
+        </form>
+      </div>
     </div>
 
+    <script src="/templates/static/js/app-config.js"></script>
     <script src="/templates/static/js/imformation.js"></script>
-</body>
-
+  </body>
 </html>

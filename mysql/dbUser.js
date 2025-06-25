@@ -38,7 +38,7 @@ async function CheckUserId(userId) {
   return rows.length > 0; // Trả về true nếu ID tồn tại
 }
 //====Các hàm có nhiệm vụ chỉnh sửa thông tin user======
-//Thêm user
+//Thêm user mới
 async function AddUser(id, Name, username, email, password_hash) {
   const [result] = await pool.execute(
     "INSERT INTO if_users (id, Name, username, email, password_hash) VALUES (?, ?, ?, ?, ?)",
@@ -46,6 +46,36 @@ async function AddUser(id, Name, username, email, password_hash) {
   );
   return result.affectedRows > 0; // Trả về true nếu thêm thành công
 }
+//Chỉnh sửa thông tin user
+async function SetInforUser(id, name, gender, avatar) {
+  const fields = [];
+  const values = [];
+
+  if (name !== undefined) {
+    fields.push("Name = ?");
+    values.push(name);
+  }
+
+  if (gender !== undefined) {
+    fields.push("gender = ?");
+    values.push(gender);
+  }
+
+  if (avatar !== undefined) {
+    fields.push("avatar = ?");
+    values.push(avatar);
+  }
+
+  if (fields.length === 0) return false;
+
+  values.push(id); // Cho điều kiện WHERE
+
+  const sql = `UPDATE if_users SET ${fields.join(", ")} WHERE id = ?`;
+
+  const [result] = await pool.execute(sql, values);
+  return result.affectedRows > 0;
+}
+
 //====== Các hàm có nhiệm lấy dự liệu user từ database========
 //Get name
 async function GetPassword_hash(username) {
@@ -65,7 +95,7 @@ async function GetAvatar(username) {
 // Lấy thông tin người dùng theo tên đăng nhập
 async function getUserByUsername(username) {
   const [rows] = await pool.execute(
-    "SELECT id, Name, email, avatar FROM if_users WHERE username = ? LIMIT 1",
+    "SELECT id, Name, gender, email, avatar FROM if_users WHERE username = ? LIMIT 1",
     [username]
   );
   return rows.length > 0 ? rows[0] : null;
@@ -74,7 +104,7 @@ async function getUserByUsername(username) {
 async function getUserById(userId) {
   try {
     const [rows] = await pool.query(
-      'SELECT id, Name as name, username, email, avatar FROM if_users WHERE id = ?',
+      'SELECT id, Name, gender, username, email, avatar FROM if_users WHERE id = ?',
       [userId]
     );
     return rows[0];
@@ -95,4 +125,5 @@ module.exports = {
   getUserByUsername,
   getUserById,
   CheckUserId,
+  SetInforUser,
 };

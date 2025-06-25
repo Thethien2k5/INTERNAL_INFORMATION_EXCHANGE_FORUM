@@ -4,28 +4,29 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const verifyToken = require("../middleware/verifyToken");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
-// Import các hàm từ cơ sở dữ liệu
 const {
   GetPassword_hash,
-  GetAvatar,
   getUserByUsername,
   getUserById,
+  SetInforUser,
 } = require("../../mysql/dbUser");
+
 const { storeRefreshToken } = require("../../mysql/db.Token");
 const { jwtSecret } = require("../config");
 
-// Route để lấy thông tin user hiện tại
+// ==== Lấy thông tin user hiện tại
 router.get("/user/me", verifyToken, async (req, res) => {
   try {
     const user = await getUserById(req.user.userId);
     if (!user) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "Không tìm thấy thông tin người dùng.",
-        });
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy thông tin người dùng.",
+      });
     }
 
     res.json({
@@ -37,21 +38,19 @@ router.get("/user/me", verifyToken, async (req, res) => {
         email: user.email,
         avatar: user.avatar
           ? `uploads/AvatarsUser/${user.avatar}`
-          : "templates/static/images/___.jpg",
+          : "templates/static/images/khongbiet.jpg",
       },
     });
   } catch (err) {
     console.error("Lỗi khi lấy thông tin user:", err);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Lỗi server khi lấy thông tin người dùng.",
-      });
+    res.status(500).json({
+      success: false,
+      message: "Lỗi server khi lấy thông tin người dùng.",
+    });
   }
 });
 
-// Xử lý POST /api/login
+// ==== Xử lý login
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
@@ -70,42 +69,32 @@ router.post("/login", async (req, res) => {
 
     const hash = await GetPassword_hash(username);
     if (!hash) {
-      // Trường hợp này hiếm khi xảy ra nếu user tồn tại, nhưng vẫn nên kiểm tra
-      return res
-        .status(500)
-        .json({
-          success: false,
-          message: "Không tìm thấy thông tin xác thực.",
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Không tìm thấy thông tin xác thực.",
+      });
     }
 
     const match = await bcrypt.compare(password, hash);
 
     if (match) {
-      // Mật khẩu chính xác, bắt đầu tạo và gửi tokens
-
-      // 1. Tạo Access Token (ngắn hạn)
       const accessTokenPayload = { userId: user.id, username: user.username };
       const accessToken = jwt.sign(accessTokenPayload, jwtSecret, {
         expiresIn: "15m",
       });
 
-      // 2. Tạo Refresh Token (dài hạn)
       const refreshToken = crypto.randomBytes(64).toString("hex");
-      const refreshTokenExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // Hạn 7 ngày
+      const refreshTokenExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-      // 3. Lưu Refresh Token vào CSDL
       await storeRefreshToken(user.id, refreshToken, refreshTokenExpiry);
 
-      // 4. Gửi Refresh Token về client qua HttpOnly Cookie để bảo mật
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true, // Chỉ gửi cookie qua HTTPS
+        secure: true,
         sameSite: "strict",
         expires: refreshTokenExpiry,
       });
 
-      // 5. Gửi Access Token và thông tin user cơ bản về client qua JSON (đây là phản hồi cuối cùng)
       res.json({
         success: true,
         message: "Đăng nhập thành công!",
@@ -113,24 +102,169 @@ router.post("/login", async (req, res) => {
         user: {
           id: user.id,
           username: user.username,
+          gender: user.gender,
+          Name: user.Name,
           avatar: user.avatar
             ? `uploads/AvatarsUser/${user.avatar}`
             : "templates/static/images/khongbiet.jpg",
         },
       });
     } else {
-      // Mật khẩu không khớp
       res
         .status(401)
         .json({ success: false, message: "Sai tên đăng nhập hoặc mật khẩu!" });
     }
   } catch (err) {
-    // Xử lý các lỗi khác, ví dụ như lỗi kết nối CSDL (nếu lại xảy ra)
     console.error("(Repair_Login.js)Lỗi đăng nhập:", err);
     res
       .status(500)
       .json({ success: false, message: "(Repair_Login.js)Lỗi server!" });
   }
 });
+////
+// Cấu hình lưu file avatar
+const avatarStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const dir = path.join(__dirname, "../../uploads/AvatarsUser");
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    cb(null, Date.now() + ext);
+  },
+});
+const uploadAvatar = multer({ storage: avatarStorage });
+// Route cập nhật thông tin cá nhân
+router.post(
+  "/user/profile",
+  verifyToken,
+  uploadAvatar.single("avatar"),
+  async (req, res) => {
+    // const userId = req.user.id;
+    const {userId, Name, gender } = req.body;
+    let avatarFile = null;
+    try {
+      // Lấy thông tin user hiện tại
+      const user = await getUserById(userId);
+      if (!user) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Không tìm thấy user." });
+      }
+      // Nếu upload avatar mới, xóa file cũ nếu có và tên file khác tên mới
+      if (req.file) {
+        if (user.avatar && user.avatar !== req.file.filename) {
+          const oldAvatarPath = path.join(
+            __dirname,
+            "../../uploads/AvatarsUser",
+            user.avatar
+          );
+          if (fs.existsSync(oldAvatarPath)) {
+            fs.unlinkSync(oldAvatarPath);
+          }
+        }
+        avatarFile = req.file.filename;
+      } else {
+        avatarFile = user.avatar;
+      }
+      // Cập nhật thông tin vào CSDL
+
+      await SetInforUse(userId, Name, gender, avatarFile);
+      res.json({
+        success: true,
+        message: "Cập nhật thành công!",
+        user: {
+          id: userId,
+          Name: Name,
+          gender: gender,
+          avatar: avatarFile
+            ? `uploads/AvatarsUser/${avatarFile}`
+            : "templates/static/images/khongbiet.jpg",
+        },
+      });
+    } catch (err) {
+      res
+        .status(500)
+        .json({ success: false, message: "Lỗi server khi cập nhật profile." });
+    }
+  }
+);
+
+// // ==== Multer để xử lý upload avatar
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     const uploadPath = path.join(__dirname, "/uploads/AvatarUser");
+//     fs.mkdirSync(uploadPath, { recursive: true });
+//     cb(null, uploadPath);
+//   },
+//   filename: function (req, file, cb) {
+//     const ext = path.extname(file.originalname);
+//     const uniqueName = `avatar_${Date.now()}${ext}`;
+//     cb(null, uniqueName);
+//   },
+// });
+// const upload = multer({ storage });
+
+// // ==== Cập nhật thông tin user
+// router.post(
+//   "/user/profile",
+//   verifyToken,
+//   upload.single("avatar"),
+//   async (req, res) => {
+//     try {
+//       const userId = req.user.userId;
+//       const { name, gender } = req.body;
+
+//       const updateData = {};
+//       if (name) updateData.name = name;
+//       if (gender !== undefined) updateData.gender = gender;
+//       if (req.file) updateData.avatar = req.file.filename;
+
+//       if (Object.keys(updateData).length === 0) {
+//         return res
+//           .status(400)
+//           .json({
+//             success: false,
+//             message: "Không có thông tin nào để cập nhật.",
+//           });
+//       }
+
+//       const success = await SetInforUser(
+//         userId,
+//         updateData.name,
+//         updateData.gender,
+//         updateData.avatar
+//       );
+
+//       if (success) {
+//         res.json({
+//           success: true,
+//           message: "Cập nhật thông tin thành công!",
+//           user: {
+//             id: userId,
+//             name: updateData.name,
+//             gender: updateData.gender,
+//             avatar: updateData.avatar
+//               ? `uploads/AvatarUser/${updateData.avatar}`
+//               : "templates/static/images/khongbiet.jpg",
+//           },
+//         });
+//       } else {
+//         res
+//           .status(400)
+//           .json({ success: false, message: "Không cập nhật được thông tin." });
+//       }
+//     } catch (error) {
+//       console.error("Lỗi khi cập nhật profile:", error);
+//       res
+//         .status(500)
+//         .json({
+//           success: false,
+//           message: "Lỗi server khi cập nhật thông tin.",
+//         });
+//     }
+//   }
+// );
 
 module.exports = router;
