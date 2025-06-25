@@ -18,21 +18,20 @@ app.use("/api", SetDataRouter);
 
 // --- Cấu hình phục vụ File Tĩnh ---
 
-// 1. Phục vụ các tài nguyên như CSS, JS, ảnh từ thư mục 'static'
+// Phục vụ các tài nguyên như CSS, JS, ảnh từ thư mục 'static'
 app.use('/templates/static', express.static(path.join(__dirname, '..', 'templates', 'static')));
 
-// 2. DÒNG MỚI: Thêm route ảo /pages để phục vụ các file HTML con
-const webPagesPath = path.join(__dirname, '..', 'templates', 'web');
-app.use('/pages', express.static(webPagesPath, { extensions: ['html'] }));
-
-
-// 3. THÊM MỚI: Tạo route riêng cho trang login
 // Khi người dùng truy cập /login, chúng ta sẽ trả về file login.html
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'templates', 'web', 'login.html'));
 });
 
-// 4. Route "Bắt tất cả" (Catch-All)
+// Route ảo /pages để phục vụ các file HTML con
+const webPagesPath = path.join(__dirname, '..', 'templates', 'web');
+app.use('/pages', express.static(webPagesPath, { extensions: ['html'] }));
+
+
+
 // Bất kỳ yêu cầu nào không phải là API hoặc file tĩnh sẽ được trả về file index.html chính
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'templates', 'web', 'index.html'));

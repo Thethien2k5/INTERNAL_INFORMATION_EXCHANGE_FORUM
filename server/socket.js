@@ -51,7 +51,7 @@ function initializeSocket(io) {
                     const roomName = `forum_${forumId}`
                     // .to (Gửi sự kiện đến ....)
                     // .emit (Phát sự kiện tới client hiện tại gửi)
-                    socket.broadcast.to(roomName).emit('newMessage', messageForClient);
+                    socket.to(roomName).emit('newMessage', messageForClient);
                     console.log(`Broadcast message to room ${roomName}`);
                 }
             }catch(error){

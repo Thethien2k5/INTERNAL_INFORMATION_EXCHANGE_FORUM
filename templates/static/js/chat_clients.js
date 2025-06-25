@@ -1,8 +1,8 @@
-const socketIoScript = document.createElement("script");
-socketIoScript.src = `${API_CONFIG.getApiUrl()}/socket.io/socket.io.js`;
-document.head.appendChild(socketIoScript);
 
-function initializeApp() {
+
+(async function (){
+
+    await window.socketIoReady;
   // ---------------------------------DOM Elements--------------------------------
 
     const sendBtn = document.getElementById('sendBtn');
@@ -37,8 +37,8 @@ function initializeApp() {
             setTimeout(() => overlay.classList.add('show'), 10);
         }
         setTimeout(() => {
-            window.location.href = '/login.html';
-        }, 3500);
+            window.location.replace('/login.html');
+        }, 2000);
         return;
     }
 
@@ -777,16 +777,6 @@ function renderSingleMessage(msg, isLocal) {
     });
 */
 
-  // ======================== HÀM MAIN ========================
-  function main() {
-    // Khởi tạo Socket.IO
-    initializeSocket();
-    // Tải danh sách diễn đàn
-    loadUserForums();
-  }
-  main();
-}
+initializeSocket();
 
-socketIoScript.onload = () => {
-  initializeApp();
-};
+})();
