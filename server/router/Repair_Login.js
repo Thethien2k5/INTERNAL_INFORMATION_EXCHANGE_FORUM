@@ -37,7 +37,7 @@ router.get("/user/me", verifyToken, async (req, res) => {
         name: user.name,
         email: user.email,
         avatar: user.avatar
-          ? `uploads/AvatarsUser/${user.avatar}`
+          ? `${user.avatar}`
           : "templates/static/images/khongbiet.jpg",
       },
     });
@@ -105,7 +105,7 @@ router.post("/login", async (req, res) => {
           gender: user.gender,
           Name: user.Name,
           avatar: user.avatar
-            ? `uploads/AvatarsUser/${user.avatar}`
+            ? `${user.avatar}`
             : "templates/static/images/khongbiet.jpg",
         },
       });
@@ -170,7 +170,7 @@ router.post(
       }
       // Cập nhật thông tin vào CSDL
 
-      await SetInforUse(userId, Name, gender, avatarFile);
+      await SetInforUser(userId, Name, gender, avatarFile);
       res.json({
         success: true,
         message: "Cập nhật thành công!",
@@ -179,7 +179,7 @@ router.post(
           Name: Name,
           gender: gender,
           avatar: avatarFile
-            ? `uploads/AvatarsUser/${avatarFile}`
+            ? `${avatarFile}`
             : "templates/static/images/khongbiet.jpg",
         },
       });
@@ -190,81 +190,5 @@ router.post(
     }
   }
 );
-
-// // ==== Multer để xử lý upload avatar
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     const uploadPath = path.join(__dirname, "/uploads/AvatarUser");
-//     fs.mkdirSync(uploadPath, { recursive: true });
-//     cb(null, uploadPath);
-//   },
-//   filename: function (req, file, cb) {
-//     const ext = path.extname(file.originalname);
-//     const uniqueName = `avatar_${Date.now()}${ext}`;
-//     cb(null, uniqueName);
-//   },
-// });
-// const upload = multer({ storage });
-
-// // ==== Cập nhật thông tin user
-// router.post(
-//   "/user/profile",
-//   verifyToken,
-//   upload.single("avatar"),
-//   async (req, res) => {
-//     try {
-//       const userId = req.user.userId;
-//       const { name, gender } = req.body;
-
-//       const updateData = {};
-//       if (name) updateData.name = name;
-//       if (gender !== undefined) updateData.gender = gender;
-//       if (req.file) updateData.avatar = req.file.filename;
-
-//       if (Object.keys(updateData).length === 0) {
-//         return res
-//           .status(400)
-//           .json({
-//             success: false,
-//             message: "Không có thông tin nào để cập nhật.",
-//           });
-//       }
-
-//       const success = await SetInforUser(
-//         userId,
-//         updateData.name,
-//         updateData.gender,
-//         updateData.avatar
-//       );
-
-//       if (success) {
-//         res.json({
-//           success: true,
-//           message: "Cập nhật thông tin thành công!",
-//           user: {
-//             id: userId,
-//             name: updateData.name,
-//             gender: updateData.gender,
-//             avatar: updateData.avatar
-//               ? `uploads/AvatarUser/${updateData.avatar}`
-//               : "templates/static/images/khongbiet.jpg",
-//           },
-//         });
-//       } else {
-//         res
-//           .status(400)
-//           .json({ success: false, message: "Không cập nhật được thông tin." });
-//       }
-//     } catch (error) {
-//       console.error("Lỗi khi cập nhật profile:", error);
-//       res
-//         .status(500)
-//         .json({
-//           success: false,
-//           message: "Lỗi server khi cập nhật thông tin.",
-//         });
-//     }
-//   }
-// );
 
 module.exports = router;
