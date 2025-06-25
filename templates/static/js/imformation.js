@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const formData = new FormData();
 
     const currentUser = JSON.parse(localStorage.getItem("user"));
-    formData.append("userId", currentUser.id); // Sửa từ "id" thành "userId"
+    formData.append("userId", currentUser.id); 
     formData.append("Name", nameInput.value.trim());
 
     if (genderValue !== null) {

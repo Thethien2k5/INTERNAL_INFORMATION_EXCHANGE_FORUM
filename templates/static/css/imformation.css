@@ -3,7 +3,7 @@ body {
     margin: 0;
     padding: 0;
     height: 100vh;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 body .menu-toggle {
@@ -57,12 +57,10 @@ body .menu-toggle {
     border-radius: 10px;
     width: 400px;
     margin: 40px auto 0 auto;
-}
-
-.profile-container h2 {
-    text-align: center;
+    text-align: left;
     margin-bottom: 20px;
 }
+
 
 label {
     display: block;
@@ -128,4 +126,40 @@ input[type="text"] {
 input[type="text"],
 input[type="id"] {
     border: 1px solid #ccc;
+}
+/* ===Trở lại==  */
+
+.back-text {
+/* --- PHẦN THÊM VÀO ĐỂ DI CHUYỂN --- */
+  position: relative; 
+  top: -8px;          
+  left: 5px;         
+
+  /* Style  */
+  font-size: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-block;
+  margin: 10px 15px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  transition: opacity 0.2s ease;
+}
+.back-text:hover{
+    opacity: 0.7;
+}
+/* --- TÙY CHỈNH MÀU SẮC THEO THEME --- */
+
+/* Theme sáng */
+:root[data-theme="light"] .back-text {
+  color: #333333; 
+  background-color: #f8f8f8;
+  border: 2px solid #ddd;
+}
+
+/* Theme tối */
+:root[data-theme="dark"] .back-text {
+  color: #dc71c3; 
+  background-color: #21222c; 
+   border: 2px solid #555;
 }

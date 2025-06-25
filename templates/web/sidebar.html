@@ -65,7 +65,7 @@
             <i class="fa-regular fa-bell"></i>
           </div>
         </li>
-        <li>
+        <!-- <li>
           <div id="user-container">
             <i id="default-user-icon" class="fa-solid fa-user" style="font-size: 24px; cursor: pointer"></i>
           </div>
@@ -74,6 +74,38 @@
             <ul>
               <li>
                 <a href="./imformation.html" data-url="/information.html">Cài đặt thông tin</a>
+              </li>
+              <li>
+                <a href="#" onclick="logout(); return false;">Đăng xuất</a>
+              </li>
+            </ul>
+          </div>
+        </li> -->
+
+        <li>
+          <div id="user-container">
+            <!-- Avatar người dùng (ẩn mặc định) -->
+            <img
+              id="user-avatar"
+              class="hidden user-avatar"
+              alt="User Avatar"
+              style="cursor: pointer"
+            />
+
+            <!-- Icon người dùng mặc định -->
+            <i
+              id="default-user-icon"
+              class="fa-solid fa-user"
+              style="font-size: 24px; cursor: pointer"
+            ></i>
+          </div>
+
+          <div id="userMenu" class="user-menu hidden">
+            <ul>
+              <li>
+                <a href="./imformation.html" data-url="/information.html"
+                  >Cài đặt thông tin</a
+                >
               </li>
               <li>
                 <a href="#" onclick="logout(); return false;">Đăng xuất</a>

@@ -30,11 +30,32 @@ function initSidebar() {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("accessToken");
   const defaultIcon = document.getElementById("default-user-icon");
+  const avatarImg = document.getElementById("user-avatar");
   const userMenu = document.getElementById("userMenu");
 
+  const isImformationPage = window.location.pathname.includes("imformation");
+
+  if (isImformationPage) {
+    // Nếu đang ở trang imformation.html → ẩn cả avatar và icon
+    if (defaultIcon) defaultIcon.style.display = "none";
+    if (avatarImg) avatarImg.style.display = "none";
+  } else if (token && user && user.avatar) {
+    // Đã đăng nhập, có avatar → hiện avatar, ẩn icon
+    if (defaultIcon) defaultIcon.style.display = "none";
+    if (avatarImg) {
+      avatarImg.src = "/uploads/" + user.avatar;
+      avatarImg.style.display = "block";
+    }
+  } else {
+    // Chưa đăng nhập hoặc không có avatar → hiện icon, ẩn avatar
+    if (defaultIcon) defaultIcon.style.display = "block";
+    if (avatarImg) avatarImg.style.display = "none";
+  }
+
   // Click icon → toggle menu nếu đã login
-  if (defaultIcon) {
-    defaultIcon.addEventListener("click", (e) => {
+  const toggleTarget = token && user ? avatarImg : defaultIcon;
+  if (toggleTarget) {
+    toggleTarget.addEventListener("click", (e) => {
       e.stopPropagation();
       if (isLoggedIn()) {
         userMenu.classList.toggle("hidden");
@@ -46,7 +67,7 @@ function initSidebar() {
 
   // Ẩn menu khi click ra ngoài
   document.addEventListener("click", (e) => {
-    if (userMenu && !userMenu.contains(e.target) && e.target !== defaultIcon) {
+    if (userMenu && !userMenu.contains(e.target) && e.target !== toggleTarget) {
       userMenu.classList.add("hidden");
     }
   });
@@ -62,8 +83,8 @@ function logout() {
   window.location.href = "login.html";
 }
 
-window.addEventListener('storage', function (e) {
-  if (e.key === 'user') {
+window.addEventListener("storage", function (e) {
+  if (e.key === "user") {
     initSidebar();
   }
 });

@@ -13,7 +13,7 @@
 [data-theme="dark"] {
   /* Dark theme variables (Dracula theme inspired) */
   --bg-color: #282a36;
-  --text-color: #dc71c3;
+  --text-color: #21222c;
   --sidebar-bg: #21222c;
   --menu-hover: #6272a4;
   --border-color: #6272a4;
@@ -444,3 +444,11 @@ Sidebar Styles
   margin-left: 0;
 }
 
+/* User icon  */
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: inline-block;
+}
