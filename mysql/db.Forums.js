@@ -94,6 +94,6 @@ module.exports = {
   getForumsForUser,
   getForumMembers,
   getForumById,
-  removeMemberFromForum,
+  //removeMemberFromForum,
   IsUserInForum,
 };
