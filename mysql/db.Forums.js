@@ -94,9 +94,6 @@ module.exports = {
   getForumsForUser,
   getForumMembers,
   getForumById,
-<<<<<<< HEAD
   removeMemberFromForum,
   IsUserInForum,
-=======
->>>>>>> ThongvaAI
 };
