@@ -1,105 +1,81 @@
-const express = require('express'); //Tạo server
-const multer = require('multer'); // Tạo cầu nối từ tương tác người dùng đến server
-const path = require('path'); // Xử lý đường dẫn file
-const fs = require('fs'); // fs = file system, xử lý file
-const  {saveMessage}  = require('../../mysql/db.Messages'); // Import hàm saveMessage từ fileController
+// File: server/router/fileRouter.js
 
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const { saveMessage } = require('../../mysql/db.Messages');
+const verifyToken = require('../middleware/verifyToken'); // Bảo vệ route bằng middleware xác thực
 
-
-// --------------------Tạo router--------------------
-function createFileRouter (io){
-    const router = express.Router(); // Tạo router (bộ định tuyến)
-
-    // Tạo thư mục uploads nếu chưa tồn tại
-    const uploadsDir = path.join(__dirname,'..','..','uploads');// "__dirname" là thư mục hiện tại của file đang chạy
+function createFileRouter(io) {
+    const router = express.Router();
+    const uploadsDir = path.join(__dirname, '..', '..', 'uploads');
     if (!fs.existsSync(uploadsDir)) {
         fs.mkdirSync(uploadsDir, { recursive: true });
     }
-    // Cấu hình multer để lưu file
+
     const storage = multer.diskStorage({
-        destination: (req, file, cb) => { // Đặt thư mục lưu trữ file
-            // Kiểm tra và tạo thư mục uploads nếu chưa tồn tại
-            cb(null, uploadsDir); // "cb" là callback, trả về thư mục lưu trữ (đối số đầu tiên là lỗi, đối số thứ hai là thứ ta muốn trả về)
-        },
+        destination: (req, file, cb) => { cb(null, uploadsDir); },
         filename: (req, file, cb) => {
-            // Tạo tên file duy nhất để tránh trùng lặp
-            // Sử dụng timestamp và một số ngẫu nhiên để tạo tên file duy nhất
             const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-            // Lọc tên file gốc để chỉ giữ lại các ký tự an toàn
-            // Chỉ cho phép các ký tự chữ cái, số, dấu chấm, dấu gạch ngang và dấu gạch dưới
             const safeOriginalName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '');
-            // Trả về tên file mới với tiền tố duy nhất
             cb(null, uniqueSuffix + '-' + safeOriginalName);
         }
     });
 
-    // Giới hạn kích thước file upload
-    const upload = multer({
-        storage: storage,
-        limits: {
-            fileSize: 100 * 1024 * 1024 // Giới hạn 100MB
-        }
-    });
+    const upload = multer({ storage: storage, limits: { fileSize: 100 * 1024 * 1024 } });
 
-    // API endpoint để upload file
-        // 200 : Ok
-        // 201 : Created thành công
-        // 400 : Bad Request(Client gửi request không hợp lệ)
-        // 401 : Unauthorized (Thiếu token/ không hợp lệ)
-        // 403 : Forbidden,(không có quyền truy cập )
-        // 404 : Not Found
-        // 500 : Internal Server Error (lỗi phía server)
+    // Middleware 'verifyToken' sẽ kiểm tra token trước khi xử lý upload
+    router.post('/upload', verifyToken, upload.array('file', 10), async (req, res) => {
+        const { forumId } = req.body;
+        const userId = req.user.userId; // Lấy userId từ token đã được giải mã
 
-    // Định nghĩa route để upload file
-    router.post('/upload', upload.array('file',10),async(req, res) => {
-        const {forumID, userID} = req.body; // Lấy forumID và userID từ body của request
-        
-        if (!forumID || !userID) {
-            return res.status(400).json({ error: 'Không thấy thông tin phòng hoặc user' });
+        if (!forumId) {
+            return res.status(400).json({ success: false, message: 'Thiếu thông tin forumId' });
         }
         if (!req.files || req.files.length === 0) {
-            return res.status(400).json({ error: 'Không có file nào được upload.' });
+            return res.status(400).json({ success: false, message: 'Không có file nào được tải lên.' });
         }
 
-        try{
-            const uploadedFiles = [];
-            for (const file of req.files){
-                // Thông tin tên file, đường dẫn, kích thước và loại MIME
-                const fileInfo = {
-                    filename: file.filename,
-                    filePath: file.path,
-                    fileSize: file.size,
-                    fileMimeType: file.mimetype,
-                };
-                // Thông tin tin nhắn 
+        try {
+            const uploadedFileMessages = [];
+            for (const file of req.files) {
                 const messageData = {
-                    fileInfo: fileInfo, // Thông tin file ở phía trên đó
-                    forumID: forumID,
-                    userID: userID,
-                    contentType: 'file', // Đánh dấu đây là tin nhắn dạng file
-                    contentText: file.originalname, // Lưu tên gốc của file vào content_text
+                    forumId: forumId,
+                    userId: userId,
+                    contentType: 'file',
+                    contentText: file.originalname,
+                    fileInfo: {
+                        fileName: file.filename,
+                        filePath: file.path,
+                        fileSize: file.size,
+                        fileMimeType: file.mimetype,
+                    }
                 };
 
-                const saveMessage = await saveMessage(messageData); // Lưu tin nhắn vào cơ sở dữ liệu
-                
-                // Kiểm tra xem việc lưu tin nhắn có thành công không
-                if (saveMessage.success) {
-                    // Nếu lưu thành công, thêm thông tin file vào mảng uploadedFiles
-                    uploadedFiles.push(saveMessage.data); // Thêm thông tin file vào mảng
-                    // Gửi sự kiện 'newMessage' đến tất cả client trong phòng chat
-                    io.to(forumID).emit('newMessage', saveMessage.data); 
-                } 
-                res.status(201).json({
-                    message: 'File uploaded thành công',
-                    files: uploadedFiles // Trả về thông tin file đã upload
-                });
+                const savedResult = await saveMessage(messageData);
+
+                if (savedResult && savedResult.success) {
+                    uploadedFileMessages.push(savedResult.data);
+                    // Phát tin nhắn real-time tới tất cả client trong phòng
+                    const roomName = `forum_${forumId}`;
+                    io.to(roomName).emit('newMessage', savedResult.data);
+                }
             }
-        }catch (error) {
-            console.error('Lỗi khi upload file:', error);
-            res.status(500).json({ error: 'Đã xảy ra lỗi khi upload file.' });
+
+            res.status(201).json({
+                success: true,
+                message: 'Các tệp đã được tải lên và gửi thành công!',
+                data: uploadedFileMessages
+            });
+
+        } catch (error) {
+            console.error('Lỗi khi xử lý file upload:', error);
+            res.status(500).json({ success: false, message: 'Lỗi server khi xử lý file.' });
         }
-        
     });
+
     return router;
 }
-module.exports = createFileRouter; // Xuất router để sử dụng trong các file khác
+
+module.exports = createFileRouter;

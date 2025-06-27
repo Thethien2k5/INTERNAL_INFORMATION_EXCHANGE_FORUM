@@ -1,45 +1,54 @@
+// server/FE_server.js
+
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
 
-const { FE_PORT, getLocalIP } = require("./config.js"); // Import cổng của BE_Server từ config.js
-
-///-------Các dịch vụ API -----
-// Import router API cho học phần
+const { FE_PORT, getLocalIP } = require("./config.js");
 const { router: checkAndGetDataRouter } = require("./router/CheckAndGetData");
 const { router: SetDataRouter } = require("./router/SetData");
 
-///
 const app = express();
-app.use(express.json()); // Cấu hình để nhận dữ liệu JSON từ client
+app.use(express.json());
 
+// --- Cấu hình API Routes ---
 app.use("/api", checkAndGetDataRouter);
 app.use("/api", SetDataRouter);
-// --------------------Phục vụ File Tĩnh--------------------
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "templates", "web", "login.html"));
+
+// --- Cấu hình phục vụ File Tĩnh ---
+
+// Phục vụ các tài nguyên như CSS, JS, ảnh từ thư mục 'static'
+app.use('/templates/static', express.static(path.join(__dirname, '..', 'templates', 'static')));
+
+// Khi người dùng truy cập /login, chúng ta sẽ trả về file login.html
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'templates', 'web', 'login.html'));
 });
-
-app.use(express.static(path.join(__dirname, "..", "templates", "web")));
-
-app.use(
-  "/templates/static",
-  express.static(path.join(__dirname, "..", "templates", "static"))
-);
-
 //Để có infor có thể tìm được ảnh hiển thị lên (frond end)
 app.use(
   "/uploads",
   express.static(path.join(__dirname, "..", "uploads", "AvatarsUser"))
 );
 
-// --------------------Cấu hình HTTPS--------------------
+// Route ảo /pages để phục vụ các file HTML con
+const webPagesPath = path.join(__dirname, '..', 'templates', 'web');
+app.use('/pages', express.static(webPagesPath, { extensions: ['html'] }));
+
+
+
+// Bất kỳ yêu cầu nào không phải là API hoặc file tĩnh sẽ được trả về file index.html chính
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'templates', 'web', 'index.html'));
+});
+
+// --- Cấu hình HTTPS và Khởi tạo Server (Giữ nguyên phần còn lại) ---
+// ... (giữ nguyên code từ đây trở xuống)
 let httpsServer;
 const certDir = path.join(__dirname, "certs");
 const keyPath = path.join(certDir, "server.key");
 const certPath = path.join(certDir, "server.cert");
-// Kiểm tra xem thư mục certs đã tồn tại chưa, nếu chưa thì tạo mới
+
 if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
   // Mảng chứ "key" và "cert" để làm tham số tạo server HTTPS
   const httpsOptions = {
@@ -67,7 +76,6 @@ httpsServer.listen(FE_PORT, "0.0.0.0", () => {
   });
 });
 
-// --------------------Xử lý lỗi--------------------
 httpsServer.on("error", (err) => {
   if (err.code === "EADDRINUSE") {
     console.error(

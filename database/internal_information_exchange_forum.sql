@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th6 23, 2025 lúc 07:42 AM
+-- Thời gian đã tạo: Th6 23, 2025 lúc 08:29 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -60,7 +60,7 @@ CREATE TABLE `if_forums` (
   `CourseID` int(12) NOT NULL,
   `CourseName` varchar(100) NOT NULL,
   `topic` text DEFAULT NULL,
-  `created_by_user_id` int(10) UNSIGNED NOT NULL,
+  `created_by_user_id` bigint(20) UNSIGNED NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -88,8 +88,8 @@ INSERT INTO `if_forums` (`id`, `CourseID`, `CourseName`, `topic`, `created_by_us
 
 CREATE TABLE `if_forum_members` (
   `id` int(10) UNSIGNED NOT NULL,
-  `forum_id` int(12) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED NOT NULL,
+  `forum_id` int(10) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
   `joined_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -119,7 +119,7 @@ INSERT INTO `if_forum_members` (`id`, `forum_id`, `user_id`, `joined_at`) VALUES
 CREATE TABLE `if_messages` (
   `id` int(10) UNSIGNED NOT NULL,
   `forum_id` int(10) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
   `content_type` enum('text','file') NOT NULL,
   `content_text` text DEFAULT NULL,
   `file_name` varchar(255) DEFAULT NULL,
@@ -144,7 +144,7 @@ INSERT INTO `if_messages` (`id`, `forum_id`, `user_id`, `content_type`, `content
 
 CREATE TABLE `if_refresh_tokens` (
   `id` int(10) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
   `token` varchar(255) NOT NULL,
   `expires_at` datetime NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -212,7 +212,7 @@ INSERT INTO `if_refresh_tokens` (`id`, `user_id`, `token`, `expires_at`, `create
 --
 
 CREATE TABLE `if_users` (
-  `id` int(12) UNSIGNED NOT NULL,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `Name` varchar(225) NOT NULL,
   `username` varchar(50) NOT NULL,
   `email` varchar(255) NOT NULL,

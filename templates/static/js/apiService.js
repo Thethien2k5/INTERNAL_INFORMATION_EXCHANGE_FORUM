@@ -1,4 +1,3 @@
-
 const apiService = {
 
     async fetch(url, options = {}) {
@@ -6,19 +5,22 @@ const apiService = {
         let accessToken = localStorage.getItem('accessToken');
         
         // Thiết lập header mặc định
-        options.headers = {
-            ...options.headers,
-            'Content-Type': 'application/json',
+        const defaultHeaders = {
             'Authorization': `Bearer ${accessToken}`
         };
+        if (!(options.body instanceof FormData)) {
+            defaultHeaders['Content-Type'] = 'application/json';
+        }
+
+        options.headers = { ...defaultHeaders, ...options.headers };
+
 
         // Gọi API lần đầu
         let response = await fetch(API_CONFIG.getApiUrl() + url, options);
 
         // Nếu gặp lỗi 401 hoặc 403 (do token hết hạn)
         if (response.status === 401 || response.status === 403) {
-            console.log('Access Token đã hết hạn.');
-            
+        
             const refreshSuccess = await this.refreshToken();
 
             if (refreshSuccess) {
@@ -78,7 +80,7 @@ const apiService = {
             body: JSON.stringify(forumData)
         });
     },
-
+    
 
 
     // Hàm đăng xuất

@@ -60,7 +60,7 @@ body {
 /* Layout */
 .app-container {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 60px);
   position: relative;
   overflow: hidden;
 }
@@ -83,7 +83,7 @@ body {
 
 .search-input {
   width: 100%;
-  padding: 8px 12px;
+  padding: 8px 15px;
   border-radius: 20px;
   border: 1px solid var(--border-light);
   background: var(--bg-light);
@@ -205,7 +205,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 9px 16px;
   border-bottom: 1px solid var(--border-light);
   background: var(--bg-light);
   z-index: 5;
@@ -302,9 +302,6 @@ body {
   }
 }
 
-.message.sent {
-  justify-content: flex-end;
-}
 
 .message-avatar {
   width: 36px;
@@ -504,21 +501,21 @@ body {
 }
 
 .group-info-header {
-  padding: 16px;
+  padding: 2px;
   text-align: center;
   border-bottom: 1px solid var(--border-light);
 }
 
 .group-avatar-large {
-  width: 80px;
-  height: 80px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: var(--border-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  margin: 0 auto 12px;
+  font-size: 20px;
+  margin: 0 auto 0px;
   overflow: hidden;
 }
 
@@ -652,7 +649,7 @@ body {
   display: flex;
   justify-content: center;
   gap: 16px;
-  margin-bottom: 16px;
+  margin: 16px;
 }
 
 .group-tool {
@@ -742,14 +739,6 @@ body {
   font-size: 16px;
 }
 
-.message-input-container {
-  flex: 1;
-  background: var(--bg-light);
-  border: 1px solid var(--border-light);
-  border-radius: 20px;
-  padding: 12px 16px;
-  transition: var(--transition);
-}
 
 .message-input-container:focus-within {
   border-color: var(--zalo-primary);
@@ -1130,7 +1119,223 @@ body {
 
 /* Thêm icon cho header chat */
 .chat-title .group-avatar-header {
-  width: 40px;
-  height: 40px;
-  font-size: 18px;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+}
+
+
+
+/* --- CSS CHO KHU VỰC CHỜ FILE --- */
+
+#file-staging-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 0 8px 0; /* Thêm padding dưới nếu có file */
+    max-height: 150px; /* Giới hạn chiều cao, nếu nhiều file sẽ có thanh cuộn */
+    overflow-y: auto;
+}
+
+.staged-file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--hover-light);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+    padding: 6px 10px;
+    font-size: 13px;
+    max-width: 200px;
+}
+
+.staged-file-icon {
+    font-size: 18px;
+    color: var(--zalo-primary);
+}
+
+.staged-file-info {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.staged-file-name {
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.staged-file-size {
+    font-size: 11px;
+    color: var(--text-secondary-light);
+}
+
+.remove-staged-file {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text-secondary-light);
+    padding: 2px;
+}
+.remove-staged-file:hover {
+    color: var(--zalo-red);
+}
+
+/* --- CSS CHO THANH THÔNG BÁO DUNG LƯỢNG --- */
+#upload-progress-info {
+    font-size: 12px;
+    color: var(--text-secondary-light);
+    margin-top: 5px;
+    padding: 0 16px;
+    text-align: right;
+    height: 15px; 
+}
+
+
+.input-tool {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-input-container {
+    display: flex; 
+    flex-direction: column; 
+    flex: 1;
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 5px 12px; 
+    transition: var(--transition);
+}
+
+.message-input {
+    width: 100%;
+    border: none;
+    background: none;
+    outline: none;
+    resize: none;
+    font-size: 14px;
+    color: var(--text-light);
+    max-height: 120px;
+    min-height: 20px;
+    line-height: 1.4;
+    font-family: inherit;
+    padding: 4px; 
+}
+
+
+
+.message-bubble.file-message {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    background: var(--message-received-light);
+    border: 1px solid var(--border-light);
+    cursor: default; /* Bỏ con trỏ pointer mặc định của thẻ a */
+}
+
+.message.sent .message-bubble.file-message {
+    background: #e0f0ff; /* Màu xanh nhạt cho tin nhắn gửi đi */
+}
+
+
+.file-message .file-icon-wrapper {
+    font-size: 24px;
+    color: var(--zalo-primary);
+    flex-shrink: 0;
+}
+
+.file-message .file-info {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.file-message .file-name {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-message .file-size {
+    font-size: 12px;
+    color: var(--text-secondary-light);
+}
+
+.file-message .download-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--hover-light);
+    color: var(--text-secondary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.file-message .download-button:hover {
+    background: var(--zalo-primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* --- Context Menu Styling --- */
+.context-menu {
+    position: fixed;
+    z-index: 1000;
+    width: 220px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    padding: 8px 0;
+    transform-origin: top left;
+    transform: scale(0.95);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+.context-menu.show {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.context-menu .context-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+}
+
+.context-menu .context-item:hover {
+    background-color: #f5f5f5;
+}
+
+.context-menu .context-item i {
+    margin-right: 12px;
+    width: 16px;
+    text-align: center;
+    color: #555;
+}
+
+.context-menu .context-divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 6px 0;
 }

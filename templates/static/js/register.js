@@ -1,7 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+  
   const registerForm = document.getElementById("registerForm");
   const otpBox = document.getElementById("otpBox");
   const loader = document.getElementById("loadingOverlay");
+  const registerBtn = document.getElementById("registerBtn");
   let generatedOTP = "";
   let userEmail = "";
 
@@ -13,9 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (loader) loader.style.display = "none";
   }
 
-  registerForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  if (!registerForm) {
+      console.error("Không tìm thấy form với id='registerForm'!");
+      return; // Dừng lại nếu không tìm thấy form
+  }
 
+  registerBtn.addEventListener("click", async () => {
+    // Không còn e và e.preventDefault()
     showLoader();
 
     const apiURL = API_CONFIG.getApiUrl();

@@ -53,7 +53,7 @@ async function IsUserInForum(ForumID, UserID) {
 // Lấy tất cả các nhóm chat mà một người dùng đang tham gia.
 async function getForumsForUser(userId) {
   const sql = `
-    SELECT f.id, f.CourseID, f.CourseName, f.topic, f.created_at
+    SELECT f.id, f.CourseID, f.CourseName AS name , f.topic, f.created_at
     FROM if_forums f
     JOIN if_forum_members fm ON f.id = fm.forum_id
     WHERE fm.user_id = ?
@@ -82,11 +82,11 @@ async function getForumById(forumId) {
 }
 
 // Rời khỏi một nhóm chat.
-async function removeMemberFromForum(forumId, userId) {
-  const sql = `DELETE FROM if_forum_members WHERE forum_id = ? AND user_id = ?`;
-  const [result] = await pool.execute(sql, [forumId, userId]);
-  return result.affectedRows > 0;
-}
+// async function removeMemberFromForum(forumId, userId) {
+//   const sql = `DELETE FROM if_forum_members WHERE forum_id = ? AND user_id = ?`;
+//   const [result] = await pool.execute(sql, [forumId, userId]);
+//   return result.affectedRows > 0;
+// }
 
 module.exports = {
   createForum,
@@ -94,6 +94,9 @@ module.exports = {
   getForumsForUser,
   getForumMembers,
   getForumById,
+<<<<<<< HEAD
   removeMemberFromForum,
   IsUserInForum,
+=======
+>>>>>>> ThongvaAI
 };
