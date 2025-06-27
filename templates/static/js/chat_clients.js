@@ -72,16 +72,22 @@ function renderSingleMessage(msg, isLocal) {
         if (msg.content_type === 'text') {
             messageBubbleContent = `<div class="message-bubble">${msg.content_text.replace(/\n/g, '<br>')}</div>`;
         } else {
+            const dataAttributes = `data-file-path="${msg.file_path || ''}" data-file-name="${msg.file_name || ''}"`;
             const downloadPath = `${API_CONFIG.getApiUrl()}/uploads/${msg.file_path.split(/[\\/]/).pop()}`;
             const fileSize = msg.file_size ? (msg.file_size / 1024 / 1024).toFixed(2) + ' MB' : '';
             messageBubbleContent = `
-                <a href="${downloadPath}" target="_blank" download="${msg.file_name}" class="message-bubble file-message" style="text-decoration: none; color: inherit;">
-                    <div class="file-icon"><i class="fas fa-file-download"></i></div>
-                    <div class="file-info">
-                        <div class="file-name">${msg.file_name || 'Tập tin'}</div>
-                        <div class="file-size">${fileSize}</div>
-                    </div>
-                </a>`;
+            <div class="message-bubble file-message" ${dataAttributes}>
+                <div class="file-icon-wrapper">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="file-info">
+                    <div class="file-name">${msg.file_name || 'Tập tin'}</div>
+                    <div class="file-size">${fileSize}</div>
+                </div>
+                <a href="${downloadPath}" download="${msg.file_name}" class="download-button" title="Tải xuống">
+                    <i class="fas fa-download"></i>
+                </a>
+            </div>`;
     }
 
     messageDiv.innerHTML = `
@@ -402,6 +408,60 @@ function renderSingleMessage(msg, isLocal) {
         this.style.height = Math.min(this.scrollHeight, 120) + 'px';
         sendBtn.disabled = this.value.trim() === '' && stagedFiles.length === 0;
     });
+    // ======================== CONTEXT MENU CHO TIN NHẮN ========================
+    const messageContextMenu = document.getElementById('messageContextMenu');
+    const downloadContextBtn = messageContextMenu.querySelector('.context-item'); // Giả sử nút tải về là nút đầu tiên
+
+    let currentContextMenuTarget = null; // Lưu trữ tin nhắn đang được click chuột phải
+
+    // Hàm ẩn context menu
+    function hideContextMenu() {
+        if (messageContextMenu) {
+            messageContextMenu.classList.remove('show');
+        }
+        currentContextMenuTarget = null;
+    }
+
+    // Lắng nghe sự kiện click chuột phải trên vùng tin nhắn
+    messagesArea.addEventListener('contextmenu', (event) => {
+        // Chỉ hoạt động trên các tin nhắn là file
+        const targetFileMessage = event.target.closest('.file-message');
+        if (!targetFileMessage) {
+            return;
+        }
+
+        event.preventDefault(); // Ngăn menu mặc định của trình duyệt
+        currentContextMenuTarget = targetFileMessage;
+
+        // Hiển thị menu tại vị trí con trỏ
+        messageContextMenu.style.top = `${event.clientY}px`;
+        messageContextMenu.style.left = `${event.clientX}px`;
+        messageContextMenu.classList.add('show');
+    });
+
+    // Lắng nghe sự kiện click trên nút "Tải về" của context menu
+    downloadContextBtn.addEventListener('click', () => {
+        if (!currentContextMenuTarget) return;
+
+        const filePath = currentContextMenuTarget.getAttribute('data-file-path');
+        const fileName = currentContextMenuTarget.getAttribute('data-file-name');
+
+        if (filePath && fileName) {
+            // Tạo một thẻ <a> ẩn để kích hoạt việc tải xuống
+            const downloadLink = document.createElement('a');
+            downloadLink.href = `${API_CONFIG.getApiUrl()}/uploads/${filePath.split(/[\\/]/).pop()}`;
+            downloadLink.download = fileName; // Thuộc tính này yêu cầu trình duyệt tải file về
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+        
+        hideContextMenu(); // Ẩn menu sau khi click
+    });
+
+// Lắng nghe sự kiện click toàn cục để ẩn menu khi click ra ngoài
+window.addEventListener('click', hideContextMenu);
+
 
 initializeSocket();
 loadUserForums();

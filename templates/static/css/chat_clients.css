@@ -1227,3 +1227,115 @@ body {
     font-family: inherit;
     padding: 4px; 
 }
+
+
+
+.message-bubble.file-message {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    background: var(--message-received-light);
+    border: 1px solid var(--border-light);
+    cursor: default; /* Bỏ con trỏ pointer mặc định của thẻ a */
+}
+
+.message.sent .message-bubble.file-message {
+    background: #e0f0ff; /* Màu xanh nhạt cho tin nhắn gửi đi */
+}
+
+
+.file-message .file-icon-wrapper {
+    font-size: 24px;
+    color: var(--zalo-primary);
+    flex-shrink: 0;
+}
+
+.file-message .file-info {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.file-message .file-name {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-message .file-size {
+    font-size: 12px;
+    color: var(--text-secondary-light);
+}
+
+.file-message .download-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--hover-light);
+    color: var(--text-secondary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.file-message .download-button:hover {
+    background: var(--zalo-primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* --- Context Menu Styling --- */
+.context-menu {
+    position: fixed;
+    z-index: 1000;
+    width: 220px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    padding: 8px 0;
+    transform-origin: top left;
+    transform: scale(0.95);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+.context-menu.show {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.context-menu .context-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+}
+
+.context-menu .context-item:hover {
+    background-color: #f5f5f5;
+}
+
+.context-menu .context-item i {
+    margin-right: 12px;
+    width: 16px;
+    text-align: center;
+    color: #555;
+}
+
+.context-menu .context-divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 6px 0;
+}

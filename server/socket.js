@@ -2,11 +2,33 @@
 
 
 // Import hàm lưu tin nhắn từ module db.Messages 
-const { saveMessage,getMessagesForForum } = require('../mysql/db.Messages');
-
+const jwt = require('jsonwebtoken');
+const { saveMessage } = require('../mysql/db.Messages');
+const {jwtSecret } = require('./config');
 
 // Hàm khởi tạo Socket.IO
 function initializeSocket(io) {
+    io.use((socket, next) => {
+        const token = socket.handshake.auth.token;  // lấy token từ handshake auth mà client gửi lên khi kết nối được
+        if (!token) {
+            return next (new Error('Lỗi xác thực: Không có tìm thấy token'));
+        }
+
+        jwt.verify(token, jwtSecret, (err, decoded) => {
+            if (err) {
+                return next(new Error('Lỗi xác thực: Token không hợp lệ hoặc đã hết hạn'));
+            }
+
+            if (!decoded.userId) {
+                console.error(`[AUTH] Kết nối bị từ chối (userId không có trong token payload): ${socket.id}`);
+                return next(new Error('Authentication error: userId missing in token.'));
+            }
+            // Nếu token hợp lê,
+            socket.user = decoded; // Lưu thông tin người dùng đã giải mã vào socket
+            next(); // Cho phép kết nối tiếp tục
+        });
+    });
+
     // Bắt (lắng nghe) sự kiện client kết nối tới server
     io.on('connection', (socket) => {
         console.log('Client đã kết nối', socket.id);
@@ -28,8 +50,9 @@ function initializeSocket(io) {
         socket.on('sendMessage', async (data) => {
 
             try{
+                const userId = socket.user.userId; // Lấy userId từ thông tin người dùng đã giải mã trong socket
                 //Gán giá trị phong cách ChatGPT chỉ~
-                const { forumId, userId, messageText } = data;
+                const { forumId, messageText } = data;
                 if (!forumId || !userId || !messageText) {
                     console.error('Dữ liệu tin nhắn không hợp lệ:', data);
                     return;
