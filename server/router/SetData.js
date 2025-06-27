@@ -16,7 +16,7 @@ router.post("/AddAccordingToCode", async (req, res) => {
     //Kiểm tra đã đăng ký chưa
     if (await CheckIsUserInForum(ForumId, userID)) {
       return res.json({
-        success: false, message:"Bạn đã đăng ký trước đó\n Vui lòng không thao tác lại"
+        success: false
       });
     }
     const result = await joinForum(ForumId, userID);

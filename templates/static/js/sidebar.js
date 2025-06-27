@@ -52,6 +52,8 @@ function initSidebar() {
     if (avatarImg) avatarImg.style.display = "none";
   }
 
+ 
+
   // Click icon → toggle menu nếu đã login
   const toggleTarget = token && user ? avatarImg : defaultIcon;
   if (toggleTarget) {
@@ -71,6 +73,33 @@ function initSidebar() {
       userMenu.classList.add("hidden");
     }
   });
+
+  // Tự động ẩn sidebar khi click ra ngoài
+document.addEventListener("click", function (e) {
+  const sidebar = document.getElementById("slidebar");
+  const menuToggleCheckbox = document.getElementById("menu-toggle");
+
+  if (
+    sidebar &&
+    menuToggleCheckbox &&
+    !sidebar.contains(e.target) &&
+    menuToggleCheckbox.checked
+  ) {
+    menuToggleCheckbox.checked = false;
+  }
+});
+
+// Tự động ẩn sidebar khi click vào các mục menu điều hướng
+const navLinks = document.querySelectorAll(".menu_item a");
+navLinks.forEach(link => {
+  link.addEventListener("click", () => {
+    const menuToggleCheckbox = document.getElementById("menu-toggle");
+    if (menuToggleCheckbox) {
+      menuToggleCheckbox.checked = false;
+    }
+  });
+});
+
 }
 
 function isLoggedIn() {

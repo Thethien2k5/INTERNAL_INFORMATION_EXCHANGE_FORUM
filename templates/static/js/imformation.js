@@ -1,4 +1,5 @@
-document.addEventListener("DOMContentLoaded", () => {
+(function initImformationPage(){
+   console.log("Hàm initImformationPage đã được gọi."); // Thêm dòng này để kiểm tra
   const avatarInput = document.getElementById("avatar-input");
   const avatarPreview = document.getElementById("avatar-preview");
   const defaultAvatarPreview = document.getElementById(
@@ -146,4 +147,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Khởi động
   loadUserProfile();
-});
+})();

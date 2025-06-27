@@ -13,7 +13,7 @@
 [data-theme="dark"] {
   /* Dark theme variables (Dracula theme inspired) */
   --bg-color: #282a36;
-  --text-color: #21222c;
+  --text-color: #dc71c3;
   --sidebar-bg: #21222c;
   --menu-hover: #6272a4;
   --border-color: #6272a4;
@@ -35,8 +35,7 @@ body {
   overflow-x: auto;
 }
 
-Sidebar Styles
-#slidebar {
+Sidebar Styles #slidebar {
   background-color: var(--sidebar-bg);
   border-right: 1px solid var(--border-color);
   transition: all 0.3s ease;
