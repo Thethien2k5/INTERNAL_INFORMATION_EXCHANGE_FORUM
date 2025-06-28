@@ -1,5 +1,5 @@
-(function initImformationPage(){
-   console.log("Hàm initImformationPage đã được gọi."); // Thêm dòng này để kiểm tra
+(function initImformationPage() {
+  console.log("Hàm initImformationPage đã được gọi."); // Thêm dòng này để kiểm tra
   const avatarInput = document.getElementById("avatar-input");
   const avatarPreview = document.getElementById("avatar-preview");
   const defaultAvatarPreview = document.getElementById(
@@ -26,7 +26,7 @@
       defaultAvatarPreview.style.display = "none";
     } else {
       //Nếu không có avatar
-      avatarPreview.src = "/templates/static/images/khongbiet.jpg";
+      avatarPreview.src = "/uploads/logoT3V.png";
       avatarPreview.style.display = "none";
       defaultAvatarPreview.style.display = "block";
     }
@@ -100,7 +100,7 @@
     const formData = new FormData();
 
     const currentUser = JSON.parse(localStorage.getItem("user"));
-    formData.append("userId", currentUser.id); 
+    formData.append("userId", currentUser.id);
     formData.append("Name", nameInput.value.trim());
 
     if (genderValue !== null) {

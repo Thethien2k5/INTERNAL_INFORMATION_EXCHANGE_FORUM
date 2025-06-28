@@ -38,7 +38,7 @@ router.get("/user/me", verifyToken, async (req, res) => {
         email: user.email,
         avatar: user.avatar
           ? `${user.avatar}`
-          : "templates/static/images/khongbiet.jpg",
+          : "logoT3V.png",
       },
     });
   } catch (err) {
@@ -106,7 +106,7 @@ router.post("/login", async (req, res) => {
           Name: user.Name,
           avatar: user.avatar
             ? `${user.avatar}`
-            : "templates/static/images/khongbiet.jpg",
+            : "logoT3V.png",
         },
       });
     } else {
@@ -180,7 +180,7 @@ router.post(
           gender: gender,
           avatar: avatarFile
             ? `${avatarFile}`
-            : "templates/static/images/khongbiet.jpg",
+            : "logoT3V.png",
         },
       });
     } catch (err) {

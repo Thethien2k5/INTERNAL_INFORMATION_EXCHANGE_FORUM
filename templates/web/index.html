@@ -87,26 +87,25 @@
           const html = await response.text();
           mainContentArea.innerHTML = html; // hiển thị nội dung html server gửi về
 
-///===== Đánh dấu mới của Thiêndz
-// Chạy lại các script có trong nội dung HTML vừa được tải
-const tempDiv = document.createElement("div");
-tempDiv.innerHTML = html;
-const scriptTags = tempDiv.querySelectorAll("script[src]");
+          ///===== Đánh dấu mới của Thiêndz
+          // Chạy lại các script có trong nội dung HTML vừa được tải
+          const tempDiv = document.createElement("div");
+          tempDiv.innerHTML = html;
+          const scriptTags = tempDiv.querySelectorAll("script[src]");
 
-for (const scriptTag of scriptTags) {
-  const newScript = document.createElement("script");
-  newScript.src = scriptTag.src;
-  newScript.type = scriptTag.type || "text/javascript";
-  newScript.async = false;
+          for (const scriptTag of scriptTags) {
+            const newScript = document.createElement("script");
+            newScript.src = scriptTag.src;
+            newScript.type = scriptTag.type || "text/javascript";
+            newScript.async = false;
 
-  // Đợi script load xong trước khi thực thi tiếp
-  await new Promise((resolve, reject) => {
-    newScript.onload = resolve;
-    newScript.onerror = reject;
-    document.body.appendChild(newScript);
-  });
-}
-
+            // Đợi script load xong trước khi thực thi tiếp
+            await new Promise((resolve, reject) => {
+              newScript.onload = resolve;
+              newScript.onerror = reject;
+              document.body.appendChild(newScript);
+            });
+          }
 
           if (url === "login") {
             // Nếu là trang login, ẩn sidebar và navboard đi
@@ -226,6 +225,27 @@ for (const scriptTag of scriptTags) {
           document.body.innerHTML = `<p style="color: red; font-size: 1.2em;">Lỗi nghiêm trọng: ${err.message}. Không thể tải giao diện chính.</p>`;
         }
       }
+
+      //Reload sidebar mỗi khi chuyển hướng
+      (function monitorPageChangesAndReload() {
+        let currentPath = window.location.pathname;
+
+        const originalPushState = history.pushState;
+        history.pushState = function (...args) {
+          originalPushState.apply(this, args);
+          const newPath = window.location.pathname;
+          if (newPath !== currentPath) {
+            location.reload();
+          }
+        };
+
+        window.addEventListener("popstate", () => {
+          const newPath = window.location.pathname;
+          if (newPath !== currentPath) {
+            location.reload();
+          }
+        });
+      })();
 
       // Chạy hàm khởi tạo
 

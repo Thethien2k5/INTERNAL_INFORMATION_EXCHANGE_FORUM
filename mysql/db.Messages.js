@@ -63,7 +63,7 @@ async function getMessagesForForum(forumId) {
                 m.id,
                 m.forum_id,
                 m.user_id,
-                u.username,
+                u.Name,
                 u.avatar,
                 m.content_type,
                 m.content_text,
