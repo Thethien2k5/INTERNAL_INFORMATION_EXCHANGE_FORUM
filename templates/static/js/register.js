@@ -130,3 +130,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+// Cho phép nhấn Enter để đăng ký hoặc xác nhận OTP
+document.addEventListener("DOMContentLoaded", () => {
+  const registerForm = document.getElementById("registerForm");
+  const registerBtn = document.getElementById("registerBtn");
+  if (registerForm && registerBtn) {
+    registerForm.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        registerBtn.click();
+      }
+    });
+  }
+});

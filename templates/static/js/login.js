@@ -67,3 +67,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+// Cho phép nhấn Enter để đăng nhập
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("loginForm");
+  const loginSubmitBtn = document.getElementById("loginSubmitBtn");
+  if (loginForm && loginSubmitBtn) {
+    loginForm.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        loginSubmitBtn.click();
+      }
+    });
+  }
+});
