@@ -62,7 +62,9 @@
   // --------------------- Render từng tin nhắn + file đã gửi --------------------------
   function renderSingleMessage(msg, isLocal) {
     const messageDiv = document.createElement("div");
-    const isSentByMe = msg.user_id === user.id;
+    let msgIdAsInt = parseInt(msg.user_id);
+    let currentUserIdAsInt = parseInt(user.id);
+    const isSentByMe = msgIdAsInt === currentUserIdAsInt;
     messageDiv.className = `message ${isSentByMe ? "sent" : "received"}`;
     if (isLocal) messageDiv.style.opacity = "0.7"; // Làm mờ tin nhắn đang gửi
 

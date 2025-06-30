@@ -107,9 +107,29 @@ function isLoggedIn() {
 }
 
 function logout() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  window.location.href = "login.html";
+  // Xóa thông tin đăng nhập
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('user');
+
+  // Ẩn các overlay có thể còn sót lại từ trang chat để tránh lỗi hiển thị
+  const chatOverlay = document.getElementById('auth-overlay');
+  if (chatOverlay) {
+    chatOverlay.style.display = 'none';
+  }
+  
+  const loginLoader = document.getElementById('loadingOverlay');
+  if (loginLoader) {
+      loginLoader.style.display = 'none';
+  }
+
+  // Gọi hàm loadContent của SPA để chuyển trang một cách "sạch sẽ"
+  // Hàm loadContent đã được định nghĩa toàn cục trong index.html
+  if (window.loadContent) {
+    window.loadContent('login'); 
+  } else {
+    // Nếu có lỗi, dùng cách điều hướng truyền thống để đảm bảo vẫn đăng xuất được
+    window.location.href = '/login';
+  }
 }
 
 window.addEventListener("storage", function (e) {

@@ -15,7 +15,7 @@ async function saveMessage(messageData) {
             (forum_id, user_id, content_type, content_text, file_name, file_path, file_size, file_mime_type) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `;
-        const [result] = await pool.execute(sql, [
+        const [result] = await connection.execute(sql, [
             forumId,
             userId,
             contentType,
@@ -32,7 +32,7 @@ async function saveMessage(messageData) {
 
         const selectSql = `
             SELECT
-                m.id, m.forum_id, m.user_id, u.username, u.avatar,
+                m.id, m.forum_id, m.user_id,u.Name, u.username,u.avatar,
                 m.content_type, m.content_text, m.file_name, m.file_path,
                 m.file_size, m.file_mime_type, m.created_at
             FROM if_messages m
@@ -50,8 +50,14 @@ async function saveMessage(messageData) {
         
         return { success: false, message: 'Thông làm biếng' };
     } catch (error) {
+        await connection.rollback();
         console.error('Lỗi khi lưu tin nhắn vào DB:', error);
         return false;
+    }finally {
+        // LUÔN LUÔN trả kết nối về pool sau khi dùng xong
+        if (connection) {
+            connection.release();
+        }
     }
 }
 

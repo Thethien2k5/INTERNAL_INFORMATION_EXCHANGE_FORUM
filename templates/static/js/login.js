@@ -23,10 +23,9 @@ function hideLoader() {
 }
 
 // xử lý đăng nhập
-document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("loginForm");
-  const loginSubmitBtn = document.getElementById("loginSubmitBtn");
-
+const loginForm = document.getElementById("loginForm");
+const loginSubmitBtn = document.getElementById("loginSubmitBtn");
+if (loginForm && loginSubmitBtn) {
   loginSubmitBtn.addEventListener("click", async () => {
     // Không còn tham số event (e) và không cần e.preventDefault() nữa
     showLoader();
@@ -56,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("user", JSON.stringify(data.user));
         hideLoader(); ////
         alert("Đăng nhập thành công!");
-        window.location.href = "./index.html"; // Hoặc trang chính của bạn
+        window.location.href = "./index"; // Hoặc trang chính của bạn
       } else {
         hideLoader(); ////
         alert("Lỗi ở login: " + data.message);
@@ -66,18 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("(login.js)Tài khoản không tồn tại: " + err.message);
     }
   });
-});
-
-// Cho phép nhấn Enter để đăng nhập
-document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("loginForm");
-  const loginSubmitBtn = document.getElementById("loginSubmitBtn");
-  if (loginForm && loginSubmitBtn) {
-    loginForm.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        loginSubmitBtn.click();
-      }
-    });
-  }
-});
+  loginForm.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      loginSubmitBtn.click();
+    }
+  });
+}
