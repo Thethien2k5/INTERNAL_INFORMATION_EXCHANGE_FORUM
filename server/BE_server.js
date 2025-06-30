@@ -13,7 +13,7 @@ const {initializeSocket} = require("./socket.js"); // Import hàm khởi tạo S
 const createFileRouter = require("./router/fileRouter.js"); // Import router để xử lý upload file
 const tokenRouter = require('./router/tokenRouter'); // Import router để xử lý token
 const forumRouters = require("./router/forumRouter.js"); // Import router để xử lý forum
-
+const cryptoRouter = require("./router/cryptoRouter.js"); // Import router để xử lý mã hóa
 
 const {router: SetDataRouter }= require("./router/SetData");
 const { router: checkAndGetDataRouter } = require("./router/CheckAndGetData");
@@ -81,7 +81,7 @@ app.use("/api", loginRoutes);
 app.use("/api", fileRouter); // Sử dụng router để xử lý upload file
 app.use("/api/forums", forumRouters); // Sử dụng router để xử lý các diễn đàn
 app.use("/api", tokenRouter); // Sử dụng router để xử lý token
-
+app.use("/api", cryptoRouter); // Sử dụng router để xử lý mã hóa
 app.use("/api", checkAndGetDataRouter);
 app.use("/api", SetDataRouter);
 // --------------------Xử lý lỗi--------------------

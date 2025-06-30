@@ -1,4 +1,5 @@
 (async function () {
+
   await window.socketIoReady;
   // ---------------------------------DOM Elements--------------------------------
 
@@ -26,7 +27,9 @@
   let stagedFiles = [];
   const MAX_TOTAL_SIZE = 100 * 1024 * 1024; // 100MB
   const MAX_FILE_COUNT = 10;
-
+  // =============================== STATE MỚI CHO MÃ HÓA ==========================
+  let userKeyPair = null; // Cặp khóa của người dùng
+  let sharedKeys = {}; // Lưu trữ khóa chia sẻ với từng người dùng {forumId: sharedKey}
   // ======================== XÁC THỰC NGƯỜI DÙNG ========================
   if (!user || !localStorage.getItem("accessToken")) {
     if (overlay) {
@@ -37,6 +40,34 @@
       window.location.replace("/login.html");
     }, 2000);
     return;
+  }
+  // ===========================KHỞI TẠO MÃ HÓA==========================
+  async function initializeEncryption() {
+    const privateKeyJWk = localStorage.getItem(`privateKey_${user.id}`);
+    if (privateKeyJWk) {
+      const privateKey = await cryptoService.importPrivateKeyFromJWK(JSON.parse(privateKeyJWk));
+      const publicKeyJWk = localStorage.getItem(`publicKey_${user.id}`);
+      const publicKey = await cryptoService.importPublicKeyFromJWK(JSON.parse(publicKeyJWk));
+      userKeyPair = { privateKey, publicKey };
+      console.log("Khóa người dùng đã được khởi tạo từ localStorage");
+    } else {
+      console.log("Chưa có khóa người dùng, tạo mới ....");
+      const keys = await cryptoService.generateUserKeys();
+      userKeyPair = keys;
+      const exportPrivateKey = await cryptoService.exportKeyToJWK(userKeyPair.privateKey);
+      const exportPublicKey = await cryptoService.exportKeyToJWK(userKeyPair.publicKey);
+      localStorage.setItem(`privateKey_${user.id}`, JSON.stringify(exportPrivateKey));
+      localStorage.setItem(`publicKey_${user.id}`, JSON.stringify(exportPublicKey));
+      try {
+        await apiService.fetch("/api/users/updateKeys",{
+          method: "POST",
+          body: JSON.stringify({publicKey: JSON.stringify(exportPublicKey)}),
+        });
+      } catch (error) {
+        console.error("Lỗi khi cập nhật khóa công khai:", error);
+        alert('Không thể đồng bộ khóa mã hóa với server. Vui lòng tải lại trang.');
+      }
+    }
   }
 
   // ======================== KHỞI TẠO SOCKET.IO ========================
@@ -49,6 +80,10 @@
     );
     socket.on("newMessage", (message) => {
       if (message.forum_id === currentForumId) {
+        if (message.content_text === 'text' && forumSharedKeys[currentForumId]){
+          // Mã hóa nội dung tin nhắn nếu có khóa chia sẻ
+          message.content_text = cryptoService.decryptMessage(forumSharedKeys[currentForumId], message.content_text);
+        }
         renderSingleMessage(message, false);
         scrollToBottom();
       }
@@ -73,6 +108,7 @@
 
     let messageBubbleContent = "";
     if (msg.content_type === "text") {
+      // -----------Hiển thị nội dung giải mã
       messageBubbleContent = `<div class="message-bubble">${msg.content_text.replace(
         /\n/g,
         "<br>"
@@ -103,7 +139,7 @@
                 </a>
             </div>`;
     }
-////=====
+
     const avatarUrl = msg.avatar ? `/uploads/${msg.avatar}` : "/templates/static/images/logoT3V.png";
     messageDiv.innerHTML = `
             <div class="message-avatar">
@@ -129,8 +165,21 @@
         '<p style="text-align: center; color: #888;">Chưa có tin nhắn nào. Hãy là người đầu tiên!</p>';
       return;
     }
-    messages.forEach((msg) => renderSingleMessage(msg, false));
-    scrollToBottom();
+    const sharedKey = forumSharedKeys[currentForumId];
+    if (!sharedKey) {
+      messagesArea.innerHTML = '<p style="text-align: center; color: red;">Lỗi: Không thể thiết lập khóa mã hóa cho nhóm này.</p>';
+      return;
+    }
+    Promise.all(messages.map(async (msg) => {
+      if (msg.content_type === 'text') {
+        msg.content_text = await cryptoService.decryptMessage(sharedKey, msg.content_text);
+      }
+      
+      return msg;
+      })).then(decryptedMessages => {
+        decryptedMessages.forEach(msg => renderSingleMessage(msg, false));
+        scrollToBottom();
+      });
   }
 
   function updateStagingArea() {
@@ -201,12 +250,18 @@
 
     if (messageText === "" && stagedFiles.length === 0) return;
 
+    const sharedKey = forumSharedKeys[currentForumId];
+      if (!sharedKey) {
+        alert("Lỗi: không thể gửi tin nhắn vì chưa thiết lập được kênh mã hóa an toàn.");
+      return;
+    }
+
     sendBtn.disabled = true;
 
     try {
       if (stagedFiles.length > 0) {
-        const formData = new FormData();
-        stagedFiles.forEach((file) => {
+          const formData = new FormData();
+          stagedFiles.forEach((file) => {
           formData.append("file", file);
         });
 
@@ -248,7 +303,7 @@
     }
   }
 
-  async function selectForum(id, forumName) {
+  async function selectForum(id, forumName, members) {
     if (id === currentForumId) return;
 
     if (socket && currentForumId) {
@@ -261,23 +316,42 @@
     messagesArea.innerHTML = '<div class="loader"></div>';
     memberListContainer.innerHTML = '<div class="loader"></div>';
 
-    if (socket) {
-      socket.emit("joinRoom", { forumId: currentForumId });
-    }
-
+    //! Lưu ý từ Thông: Mô hình nhóm, là một cách đơn giản mà tất cả thành viên trong nhóm dùng chung 1 khóa đối xứng
+    //! Ở đây, Thông sử dụng người tạo nhóm sẽ tạo ra một khóa chung và phân phối nó
+    //! Và ta sẽ đơn giản hóa bằng cách dùng public key của người tạo nhóm kết hợp với private key của user hiện tại
     try {
-      const [messagesRes, membersRes] = await Promise.all([
-        apiService.fetch(`/api/forums/${currentForumId}/messages`),
-        apiService.fetch(`/api/forums/${currentForumId}/members`),
-      ]);
-      if (messagesRes.success) renderMessages(messagesRes.data);
-      if (membersRes.success) renderMembers(membersRes.data);
-    } catch (error) {
+      const otherMember = member.find(m=>m.id !== user.id);
+      if (ohterMember){
+        const ohtrPublicKey = await cryptoService.importPublicKeyFromJWK(JSON.parse(otherMember.publicKey));
+        const sharedKey = await cryptoService.deriveSharedKey(userKeyPair.privateKey, ohtrPublicKey);
+      }else if (member.length === 1) { //Trường hợp nhóm chỉ có 1 thành viên
+        forumSharedKeys[currentForumId] = 'don_coi'; 
+      }
+      else {
+        throw new Error('Không tìm thấy thành viên hợp lệ để tạo khóa phiên.');
+      }
+    } catch (e) {
+        console.error("Lỗi khi tạo khóa phiên:", e);
+        alert("Không thể thiết lập kết nối mã hóa cho nhóm này.");
+        return;
+    }
+    
+    if (socket) {
+      socket.emit("joinForum", { forumId: id, userId: user.id });
+    }
+    try{
+      const messagesRes = await apiService.fetch(`/api/forums/${currentForumId}/messages`);
+      if (messagesRes.success) {
+        renderMessages(messagesRes.data);
+      }
+      renderMembers(members);
+    }catch(error) {
       console.error(`Lỗi khi tải dữ liệu cho forum ${currentForumId}:`, error);
       messagesArea.innerHTML = `<p style="color: red; text-align: center;">${error.message}</p>`;
     }
   }
-  //Danh sách thành viên
+
+  // //Danh sách thành viên
   function renderMembers(members) {
     if (!memberListContainer) return;
     memberListContainer.innerHTML = "";
@@ -317,15 +391,24 @@
                     }</div>
                 </div> `;
 
-      forumItem.addEventListener("click", () => {
-        document
-          .querySelectorAll(".group-item")
-          .forEach((item) => item.classList.remove("active"));
-        forumItem.classList.add("active");
-        selectForum(forum.id, forum.name);
+      forumItem.addEventListener("click", async () => {
+      // Lấy danh sách thành viên chi tiết TRƯỚC KHI chọn forum
+              try {
+                  const membersRes = await apiService.fetch(`/api/forums/${forum.id}/members/details`);
+                  if(membersRes.success) {
+                      document.querySelectorAll('.group-item').forEach(item => item.classList.remove('active'));
+                      forumItem.classList.add('active');
+                      selectForum(forum.id, forum.name, membersRes.data);
+                  } else {
+                      throw new Error(membersRes.message);
+                  }
+              } catch(error) {
+                  alert('Không thể lấy thông tin thành viên cho nhóm này.');
+                  console.error(error);
+              }
+          });
+          groupList.appendChild(forumItem);
       });
-      groupList.appendChild(forumItem);
-    });
   }
 
   async function loadUserForums() {

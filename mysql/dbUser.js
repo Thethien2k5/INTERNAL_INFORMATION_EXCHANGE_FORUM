@@ -104,7 +104,7 @@ async function getUserByUsername(username) {
 async function getUserById(userId) {
   try {
     const [rows] = await pool.query(
-      'SELECT id, Name, gender, username, email, avatar FROM if_users WHERE id = ?',
+      'SELECT id, Name, gender, username, email, avatar, publc_key FROM if_users WHERE id = ?',
       [userId]
     );
     return rows[0];
@@ -113,7 +113,21 @@ async function getUserById(userId) {
     throw error;
   }
 }
-
+// ============= Các hàm lấy khóa công khai ====================
+// Hàm cập nhật public key cho user
+async function setPublicKey (userId, publicKey){
+  const sql = 'UPDATA if_users SET public_key = ? WHERE id = ?';
+  const [rows] = await pool.execute(sql, [publicKey, userId]);
+  return rows.affectedRows > 0; // Trả về true nếu cập nhật thành công
+}
+// Hàm lấy public key của user
+async function getPublicKey(userId) {
+  const [rows] = await pool.query(
+        'SELECT id, Name, gender, username, email, avatar FROM if_users WHERE id = ?',
+        [userId]
+  );
+return rows.length > 0 ? rows[0].public_key : null;
+}
 //xuất (export) các biến/hàm ra ngoài file
 module.exports = {
   pool,
@@ -126,4 +140,6 @@ module.exports = {
   getUserById,
   CheckUserId,
   SetInforUser,
+  setPublicKey,
+  getPublicKey
 };

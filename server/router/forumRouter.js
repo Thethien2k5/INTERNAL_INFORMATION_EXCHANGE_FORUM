@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
 
 
 // Lấy danh sách thành viên của một forum cụ thể
-router.get('/:forumId/members', async (req, res) => {
+/*router.get('/:forumId/members', async (req, res) => {
     const { forumId } = req.params;
     try {
         const members = await getForumMembers(forumId);
@@ -34,7 +34,7 @@ router.get('/:forumId/members', async (req, res) => {
         console.error('Lỗi khi lấy danh sách thành viên ở file forumRouter:', error);
         res.status(500).json({ success: false, message: 'Lỗi lấy danh sách thành viên của forum ở file forumRouter' });
     }
-});
+});*/
 
 // Lấy danh sách tin nhắn của một forum cụ thể
 router.get('/:forumId/messages', async (req, res) => {

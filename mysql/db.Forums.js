@@ -62,7 +62,7 @@ async function getForumsForUser(userId) {
   return forums;
 }
 
-// Lấy danh sách tất cả thành viên trong một nhóm chat cụ thể
+// Ở bên cryptoRouter.js, có hàm lấy thành viên của nhóm chat.
 async function getForumMembers(forumId) {
   const sql = `
         SELECT u.id, u.Name, u.avatar
