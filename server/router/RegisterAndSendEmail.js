@@ -396,21 +396,18 @@ router.post("/send-otp", async (req, res) => {
 
 // API thêm user mới (sau khi xác thực OTP)
 router.post("/add-user", async (req, res) => {
-  const { username, email, password, publicKey, privateKey, salt } = req.body;
-  if (!username || !email || !password || !publicKey || !privateKey || !salt) {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
     return res
       .status(400)
       .json({ success: false, message: "Thiếu thông tin!" });
   }
+  const ok = await ProcessingInformationWhenAddingUsers(
+    username,
+    email,
+    password
+  );
   try {
-    const ok = await ProcessingInformationWhenAddingUsers(
-      username,
-      email,
-      password,
-      publicKey,
-      privateKey,
-      salt
-    );
     // Gọi hàm xử lý thông tin người dùng
     if (ok) {
       res.json({ success: true, message: "Đăng ký thành công!" });

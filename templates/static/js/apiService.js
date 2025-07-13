@@ -1,4 +1,4 @@
-const apiService = {
+export const apiService = {
 
     async fetch(url, options = {}) {
         // Lấy token từ localStorage

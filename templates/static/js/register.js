@@ -98,27 +98,13 @@ if (registerForm && submitRegisterBtn) {
       }
 
       try {
-        const userKeys = await cryptoService.generateUserKey();
-        const publicKeyJwk = await cryptoService.exportKeyToJwk(userKeys.publicKey);
-        const privateKeyJwk = await cryptoService.eportKeyToJwk(userKeys.privateKey);
-        
-        const salt = cryptoService.getRandomValues(new Uint8Array(16));
-        const kek = await cryptoService.deriveKeyFromPassword(password, salt);
-        const encryptedPrivateKeyBase64 = await cryptoService.encryptPrivateKey(kek, privateKeyJwk);
         const res = await fetch(apiURL + "/api/add-user", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-          body: JSON.stringify({ 
-            username, 
-            email, 
-            password,
-            publicKey: JSON.stringify(publicKeyJwk),
-            privateKey: encryptedPrivateKeyBase64,
-            salt: JSON.stringify(Array.from(salt))
-          }),
+          body: JSON.stringify({ username, email, password }),
         });
 
         const result = await res.json();

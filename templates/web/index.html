@@ -36,11 +36,19 @@
       <p>Đang tải giao diện...</p>
     </main>
 
-    <script src="/templates/static/js/app-config.js"></script>
-    <script src="/templates/static/js/apiService.js"></script>
-    <script src="/templates/static/js/crytoService.js"></script> 
-    <script src="/templates/static/js/sidebar.js"></script>
+    
+    <script  src="/templates/static/js/sidebar.js"></script>
     <script>
+
+
+      // Import các module cần thiết ngay tại đây
+      import { API_CONFIG } from '/templates/static/js/app-config.js';
+      import { apiService } from '/templates/static/js/apiService.js';
+
+      // Gán vào window để các script cũ hơn (nếu có) vẫn có thể truy cập
+      window.API_CONFIG = API_CONFIG;
+      window.apiService = apiService;
+
       // Tạo đối tượng bất đồng bộ
       window.socketIoReady = new Promise((res) => {
         if (typeof io !== "undefined") {

@@ -39,10 +39,10 @@ async function CheckUserId(userId) {
 }
 //====Các hàm có nhiệm vụ chỉnh sửa thông tin user======
 //Thêm user mới
-async function AddUser(id, Name, username, email, password_hash, public_key, private_key, salt) {
+async function AddUser(id, Name, username, email, password_hash) {
   const [result] = await pool.execute(
-    "INSERT INTO if_users (id, Name, username, email, password_hash, public_key, private_key, salt) VALUES (?, ?, ?, ?, ?,?,?,?)",
-    [id, Name, username, email, password_hash, public_key, private_key, salt]
+    "INSERT INTO if_users (id, Name, username, email, password_hash) VALUES (?, ?, ?, ?, ?)",
+    [id, Name, username, email, password_hash]
   );
   return result.affectedRows > 0; // Trả về true nếu thêm thành công
 }

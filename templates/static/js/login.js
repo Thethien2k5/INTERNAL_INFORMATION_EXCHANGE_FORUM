@@ -56,14 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("user", JSON.stringify(data.user));
         hideLoader(); ////
         alert("Đăng nhập thành công!");
-        try{
-          // Đảm bảo nơi lưu trữ của signal được khởi tạo
-          await signalStorage.init();
-          await keyManager.initializeKeys();
-        }
-        catch(error){
-          console.error("Không thể khởi tạo được giao thức signal",error);
-        }
         window.location.href = "./index.html"; // Hoặc trang chính của bạn
       } else {
         hideLoader(); ////

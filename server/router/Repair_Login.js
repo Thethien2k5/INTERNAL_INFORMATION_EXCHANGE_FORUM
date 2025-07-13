@@ -29,7 +29,7 @@ router.get("/user/me", verifyToken, async (req, res) => {
       user: {
         id: user.id,
         username: user.username,
-        name: user.Name,
+        name: user.name,
         email: user.email,
         avatar: user.avatar
           ? `${user.avatar}`
@@ -52,63 +52,11 @@ router.post("/login", async (req, res) => {
     return res.status(400).json({ success: false, message: "Thiếu thông tin!" });
   }
   try {
-    const user = await getUserByUsername(username);
-    if (!user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Sai tên đăng nhập hoặc mật khẩu!" });
+    const result = await handleLogin(username, password);
+    if (!result.success) {
+      return res.status(result.status).json({ success: false, message: result.message });
     }
-
-    const hash = await GetPassword_hash(username);
-    if (!hash) {
-      return res.status(500).json({
-        success: false,
-        message: "Không tìm thấy thông tin xác thực.",
-      });
-    }
-
-    const match = await bcrypt.compare(password, hash);
-
-    if (match) {
-      const accessTokenPayload = { userId: user.id, username: user.username };
-      const accessToken = jwt.sign(accessTokenPayload, jwtSecret, {
-        expiresIn: "15m",
-      });
-
-      const refreshToken = crypto.randomBytes(64).toString("hex");
-      const refreshTokenExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-
-      await storeRefreshToken(user.id, refreshToken, refreshTokenExpiry);
-
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "strict",
-        expires: refreshTokenExpiry,
-      });
-
-      res.json({
-        success: true,
-        message: "Đăng nhập thành công!",
-        accessToken: accessToken,
-        user: {
-          id: user.id,
-          username: user.username,
-          gender: user.gender,
-          Name: user.Name,
-          avatar: user.avatar
-            ? `${user.avatar}`
-            : "logoT3V.png",
-          public: user.public_key,
-          private: user.private_key,
-          salt: user.salt
-        },
-      });
-    } else {
-      res
-        .status(401)
-        .json({ success: false, message: "Sai tên đăng nhập hoặc mật khẩu!" });
-    }
+    res.json(result);
   } catch (err) {
     console.error("(Repair_Login.js)Lỗi đăng nhập:", err);
     res.status(500).json({ success: false, message: "(Repair_Login.js)Lỗi server!" });

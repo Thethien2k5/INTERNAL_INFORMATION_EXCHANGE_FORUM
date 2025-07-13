@@ -1,19 +1,14 @@
-(function(window){
+export const API_CONFIG = {
+  BE_PORT: 5000,
 
-    if (typeof window.API_CONFIG !== 'undefined') return;
+  getBaseUrl: function () {
+    const hostname = window.location.hostname;
+    return `https://${hostname}:${this.BE_PORT}`;
+  },
 
-    window.API_CONFIG = {
-        BE_PORT:5000,
+  getApiUrl: function () {
+    return this.getBaseUrl();
+  },
+};
 
-        getBaseUrl: function() {
-            const hostname = window.location.hostname;
-            return `https://${hostname}:${this.BE_PORT}`;
-        },
-
-        getApiUrl: function() {
-            return this.getBaseUrl();
-        },
-
-    };
-})(window);
 
